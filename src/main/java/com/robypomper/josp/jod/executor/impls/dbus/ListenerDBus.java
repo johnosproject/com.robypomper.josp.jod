@@ -39,7 +39,8 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
 
     private static final String PROP_DBUS_NAME = "dbus_name";
     private static final String PROP_DBUS_OBJ_PATH = "dbus_obj_path";
-    private static final String DEF_PROP_DBUS_OBJ_PATH = "";
+    private static final String DEF_PROP_DBUS_OBJ_PATH = "/";
+    private static final String PROP_DBUS_IFACE = "dbus_iface";
     private static final String PROP_DBUS_PROP = "dbus_prop";
     private static final String PROP_INIT_DATA = "init_data";
     private static final String DEF_PROP_INIT_DATA = "0";
@@ -51,6 +52,7 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
     protected boolean isListening = false;
     protected final String dbus_name;
     protected final String dbus_obj_path;
+    protected final String dbus_iface;
     protected final String dbus_prop;
     protected String value;
 
@@ -77,6 +79,7 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
         Map<String, String> configs = splitConfigsStrings(configsStr);
         dbus_name = parseConfigString(configs, PROP_DBUS_NAME);
         dbus_obj_path = parseConfigString(configs, PROP_DBUS_OBJ_PATH, DEF_PROP_DBUS_OBJ_PATH);
+        dbus_iface = parseConfigString(configs, PROP_DBUS_IFACE);
         dbus_prop = parseConfigString(configs, PROP_DBUS_PROP);
         value = parseConfigString(configs, PROP_INIT_DATA, DEF_PROP_INIT_DATA);
         log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' listen for changes on '%s/%s' bus/property.", getName(), dbus_name, dbus_prop));
@@ -96,14 +99,14 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
     @Override
     public void listen() {
         log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Start '%s' listener", getName()));
-        dbus_instance.registerListenerChanged(dbus_prop, this);
+        dbus_instance.registerListenerChanged(dbus_obj_path, dbus_iface, dbus_prop, this);
         isListening = true;
     }
 
     @Override
     public void halt() {
         log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Stop '%s' listener server", getName()));
-        dbus_instance.deregisterListenerChanged(dbus_prop, this);
+        dbus_instance.deregisterListenerChanged(dbus_obj_path, dbus_iface, dbus_prop, this);
         isListening = false;
     }
 
@@ -112,12 +115,9 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
 
     @Override
     public void onPropUpdated(String objPath, String iface, String propKey, Variant<?> propValue) {
-        if (dbus_prop.compareToIgnoreCase(propKey) != 0)
-            return;
-
         String newStatus = propValue.getValue().toString();
         if (!convertAndSetStatus(newStatus))
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
+            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
     }
 
 }

@@ -14,11 +14,11 @@ import java.util.Vector;
 public class DBusInstance extends AbstractPropertiesChangedHandler implements AutoCloseable {
 
     public interface ListenerChanged {
-        void onPropUpdated(String infName, String objPath, String propKey, Variant<?> proValue);
+        void onPropUpdated(String objPath, String iface, String propKey, Variant<?> proValue);
     }
 
     public interface ListenerRemoved {
-        void onPropRemoved(String infName, String objPath, String propKey);
+        void onPropRemoved(String objPath, String iface, String propKey);
     }
 
 
@@ -29,10 +29,11 @@ public class DBusInstance extends AbstractPropertiesChangedHandler implements Au
 
     private final AutoCloseable props_token;
 
-    private final Map<String, Vector<ListenerChanged>> listeners_changed = new HashMap<>();
+    // obj_path > property > listeners
+    private final Map<String, Map<String, Vector<ListenerChanged>>> listeners_changed = new HashMap<>();
 
-    private final Map<String, Vector<ListenerRemoved>> listeners_removed = new HashMap<>();
-
+    // obj_path > property > listeners
+    private final Map<String, Map<String, Vector<ListenerRemoved>>> listeners_removed = new HashMap<>();
 
     //
 
@@ -63,43 +64,69 @@ public class DBusInstance extends AbstractPropertiesChangedHandler implements Au
 
     @Override
     public void handle(Properties.PropertiesChanged propChanges) {
-        String interfaceName = propChanges.getInterfaceName();
         String objPath = propChanges.getPath();
+        String iface = propChanges.getInterfaceName();
+        String obj_code = objPath + "::" + iface;
 
-        for (Map.Entry<String, Variant<?>> entry : propChanges.getPropertiesChanged().entrySet())
-            if (listeners_changed.containsKey(entry.getKey()))
-                for (ListenerChanged l : listeners_changed.get(entry.getKey()))
-                    l.onPropUpdated(interfaceName, objPath, entry.getKey(), entry.getValue());
+        if (listeners_changed.containsKey(obj_code)) {
+            Map<String, Vector<ListenerChanged>> obj_listeners_changed = listeners_changed.get(obj_code);
 
-        for (String p : propChanges.getPropertiesRemoved())
+            for (Map.Entry<String, Variant<?>> prop : propChanges.getPropertiesChanged().entrySet())
+                if (obj_listeners_changed.containsKey(prop.getKey()))
+                    for (ListenerChanged l : obj_listeners_changed.get(prop.getKey()))
+                        l.onPropUpdated(objPath, iface, prop.getKey(), prop.getValue());
+        }
+
+        for (String p : propChanges.getPropertiesRemoved()) {
+            Map<String, Vector<ListenerRemoved>> obj_listeners_removed = listeners_removed.get(obj_code);
+
             if (listeners_removed.containsKey(p))
-                for (ListenerRemoved l : listeners_removed.get(p))
-                    l.onPropRemoved(interfaceName, objPath, p);
+                for (ListenerRemoved l : obj_listeners_removed.get(p))
+                    l.onPropRemoved(objPath, iface, p);
+        }
     }
 
 
     // Listener registers
 
-    public void registerListenerChanged(String property, ListenerChanged l) {
-        if (!listeners_changed.containsKey(property))
-            listeners_changed.put(property, new Vector<>());
-        listeners_changed.get(property).add(l);
+    public void registerListenerChanged(String objPath, String iface, String property, ListenerChanged l) {
+        String obj_code = objPath + "::" + iface;
+        if (!listeners_changed.containsKey(obj_code))
+            listeners_changed.put(obj_code, new HashMap<>());
+        Map<String, Vector<ListenerChanged>> listeners_obj = listeners_changed.get(obj_code);
+
+        if (!listeners_obj.containsKey(property))
+            listeners_obj.put(property, new Vector<>());
+        Vector<ListenerChanged> listeners_property = listeners_obj.get(property);
+
+        listeners_property.add(l);
     }
 
-    public void registerListenerRemoved(String property, ListenerRemoved l) {
-        if (!listeners_removed.containsKey(property))
-            listeners_removed.put(property, new Vector<>());
-        listeners_removed.get(property).add(l);
+    public void registerListenerRemoved(String objPath, String iface, String property, ListenerRemoved l) {
+        String obj_code = objPath + "::" + iface;
+        if (!listeners_removed.containsKey(obj_code))
+            listeners_removed.put(obj_code, new HashMap<>());
+        Map<String, Vector<ListenerRemoved>> listeners_obj = listeners_removed.get(obj_code);
+
+        if (!listeners_obj.containsKey(property))
+            listeners_obj.put(property, new Vector<>());
+        Vector<ListenerRemoved> listeners_property = listeners_obj.get(property);
+
+        listeners_property.add(l);
     }
 
-    public void deregisterListenerChanged(String property, ListenerChanged l) {
-        if (listeners_changed.containsKey(property))
-            listeners_changed.get(property).remove(l);
+    public void deregisterListenerChanged(String objPath, String iface, String property, ListenerChanged l) {
+        String obj_code = objPath + "::" + iface;
+        if (listeners_changed.containsKey(obj_code))
+            if (listeners_changed.get(obj_code).containsKey(property))
+                listeners_changed.get(obj_code).get(property).remove(l);
     }
 
-    public void deregisterListenerRemoved(String property, ListenerRemoved l) {
-        if (listeners_removed.containsKey(property))
-            listeners_removed.get(property).remove(l);
+    public void deregisterListenerRemoved(String objPath, String iface, String property, ListenerRemoved l) {
+        String obj_code = objPath + "::" + iface;
+        if (listeners_removed.containsKey(obj_code))
+            if (listeners_removed.get(obj_code).containsKey(property))
+                listeners_removed.get(obj_code).get(property).remove(l);
     }
 
 

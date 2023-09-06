@@ -5,35 +5,30 @@
     "descr_long": "This structure provide an object with basic pillars and structured examples.",
 
     "contains": {
-        "DBusTest" : {
-            "type": "JODContainer",
-            "BooleanProp" : {
-                "type": "BooleanState",
-                "listener" : "dbus://dbus_name=com.test.dbus;dbus_prop=property0;init_data=1;"
-            },
-            "RangeProp" : {
-                "type": "RangeState",
-                "listener" : "dbus://dbus_name=com.test.dbus;dbus_prop=property1;init_data=1;",
-                "min": "0",
-                "max": "20",
-                "step": "0.1"
-            },
+        "BooleanProp" : {
+            "type": "BooleanState",
+            "listener" : "dbus://dbus_name=com.test.dbus;dbus_iface=com.test.dbus.ITest;dbus_prop=property0;init_data=1;"
+        },
+        "RangeProp" : {
+            "type": "RangeState",
+            "listener" : "dbus://dbus_name=com.test.dbus;dbus_iface=com.test.dbus.ITest;dbus_prop=property1;init_data=1;",
+            "min": "0",
+            "max": "20",
+            "step": "0.1"
         },
 
-        "FWVictronTest" : {
-            "type": "JODContainer",
-            "Load State" : {
-                "type": "BooleanState",
-                "listener" : "dbus://dbus_name=com.victron;dbus_obj_path=/smartsolar_mppt;dbus_prop=load_state;init_data=1;"
-            },
-            "Battery Voltage" : {
-                "type": "RangeState",
-                "listener" : "dbus://dbus_name=com.victron;dbus_obj_path=/smartsolar_mppt;dbus_prop=battery_voltage;init_data=1;",
-                "min": "0",
-                "max": "20",
-                "step": "0.1"
-            }
+        "Load State" : {
+            "type": "BooleanState",
+            "listener" : "dbus://dbus_name=com.victron;dbus_obj_path=/smartsolar_mppt;dbus_iface=com.victron.SmartSolarMPPT;dbus_prop=load_state;init_data=1;"
+        },
+        "Battery Voltage" : {
+            "type": "RangeState",
+            "listener" : "dbus://dbus_name=com.victron;dbus_obj_path=/smartsolar_mppt;dbus_iface=com.victron.SmartSolarMPPT;dbus_prop=battery_voltage;init_data=1;",
+            "min": "0",
+            "max": "20",
+            "step": "0.1"
         }
+
     }
 
 }
