@@ -23,36 +23,7 @@ import com.robypomper.build.java.JavaRunnableUtils
 import com.robypomper.build.gradle.GradleBuildInfo
 
 /**
- * Gradle configurations to manage JOD and JSL as java implementations.
- *
- * Components list:
- * <ul>
- *     <li>
- *         JOSP JOD
- *     </li>
- * </ul>
- *
- * Summary:
- * <ul>
- *     <li>
- *         Components configs: sourceSets, configurations, dependencies and BuildInfo
- *     </li>
- *     <li>
- *         Runners Tasks: task to run components as java application
- *     </li>
- *     <li>
- *         Runners Configs Tasks: task to run components as java application with different configurations
- *     </li>
- *     <li>
- *         Runners Discovery Tasks: task to run components as java application with different discovery systems
- *     </li>
- *     <li>
- *         Publication configs: component's publications
- *     </li>
- *     <li>
- *         Publication tasks: publication's tasks to local repository
- *     </li>
- * </ul>
+ * Gradle configurations to manage JOD as java implementations.
  */
 
 
@@ -72,10 +43,9 @@ dependencies {
     jospJODImplementation "com.googlecode.clichemaven:cliche:${project.ext.get("version.cliche")}"
     jospJODImplementation "net.sourceforge.htmlcleaner:htmlcleaner:${project.ext.get("version.htmlcleaner")}"
     jospJODImplementation "com.jayway.jsonpath:json-path:${project.ext.get("version.json-path")}"
-    jospJODRuntimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${project.ext.get("version.apache.log4j")}"
-    jospJODRuntimeOnly "org.apache.logging.log4j:log4j-api:${project.ext.get("version.apache.log4j")}"
-    jospJODRuntimeOnly "org.apache.logging.log4j:log4j-core:${project.ext.get("version.apache.log4j")}"
+    jospJODRuntimeOnly "org.slf4j:slf4j-nop:${project.ext.get("version.slf4j")}"
 }
+
 
 GradleBuildInfo.makeBuildInfoForSourceSet(project, sourceSets.jospJOD, (String)project.ext.get("version.build.jospJOD"));
 
@@ -197,10 +167,10 @@ makeJODJavaRunnable('JmmDNS','discovery/jod_jmmdns.yml','struct_default.jod','pe
 // Publication configs
 // -------------------
 
-String jospJODName = 'JOSP Object Daemon'
-String jospJODArtifact = 'jospJOD'
-String jospJODVersion = project.ext.get("version.build.jospJOD")
-String jospJODDescription = "This is the JOSP JOD executable from John O.S. Project"
+String jospJODName = ext.get('artifactLongName')
+String jospJODArtifact = ext.get('artifactName')
+String jospJODVersion = ext.get('artifactVersion')
+String jospJODDescription = ext.get('artifactDescription')
 def jospJODPubDesc = new JavaPublicationUtils.Descriptor(project,sourceSets.jospJOD,jospJODName,jospJODArtifact,jospJODVersion,jospJODDescription)
         .setUrlsFromProject(project)
         .setLicenceGPLv3()

@@ -58,6 +58,16 @@ ext {
     set('projectUrl', 'https://www.johnosproject.org')
     set('projectGit', 'bitbucket.org:johnosproject_shared/com.robypomper.josp.git')
     set('projectGitUrl', 'https://bitbucket.org/johnosproject_shared/com.robypomper.josp')
+    set('projectArtifactsRepoUrl.Releases', "https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+    set('projectArtifactsRepoUrl.Snapshots', "https://oss.sonatype.org/content/repositories/snapshots/")
+
+    set('artifactLongName', 'JOSP Object Daemon')
+    set('artifactName', 'jospJOD')
+    set('artifactDescription', 'This is the JOSP JOD executable from John O.S. Project')
+    set('artifactGroupId', 'com.robypomper.josp')
+    set('artifactMainClass', 'com.robypomper.josp.jod.JODDaemon')
+    set('artifactLicence', 'GPLv3')
+    set('artifactLicenceUrl', 'https://www.gnu.org/licenses/gpl-3.0.html')
 
     // Preset build modes for JOSP Project
     //set('jospMode', ext.get('jospModes.DEV'))           // on first build, set jospDependenciesVersion=CURRENT

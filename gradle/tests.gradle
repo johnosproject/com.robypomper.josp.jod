@@ -74,8 +74,8 @@ dependencies {
     test_CommonsImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     test_CommonsRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     test_CommonsImplementation "com.robypomper.josp:jospJSL:${project.ext.get("version.deps.jospCommons")}"
-    test_CommonsImplementation sourceSets.jospJOD.output
-    test_CommonsImplementation sourceSets.jospJOD.runtimeClasspath
+    test_CommonsImplementation sourceSets.main.output
+    test_CommonsImplementation sourceSets.main.runtimeClasspath
 
 
     // JOD
