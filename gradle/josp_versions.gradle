@@ -100,6 +100,7 @@ ext {
     set('version.cliche'            , '110413')
     set('version.htmlcleaner'       , '2.29')
     set('version.json-path'         , '2.8.0')
+    set('version.dbus-java'         , '4.3.0')
     set('version.slf4j'             , '2.0.9')
     set('version.junit-jupiter'     , '5.10.0')
 }
