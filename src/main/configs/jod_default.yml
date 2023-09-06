@@ -32,7 +32,8 @@ jod.executor_mngr.pullers:
 jod.executor_mngr.listeners:
   'tstL://com.robypomper.josp.jod.executor.ListenerTest
    tstLAdv://com.robypomper.josp.jod.executor.ListenerTestAdv
-   file://com.robypomper.josp.jod.executor.ListenerFiles'
+   file://com.robypomper.josp.jod.executor.ListenerFiles
+   dbus://com.robypomper.josp.jod.executor.impls.dbus.ListenerDBus'
 jod.executor_mngr.executors:
   'tstE://com.robypomper.josp.jod.executor.ExecutorTest
    shell://com.robypomper.josp.jod.executor.ExecutorShell
