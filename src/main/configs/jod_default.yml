@@ -38,7 +38,8 @@ jod.executor_mngr.executors:
   'tstE://com.robypomper.josp.jod.executor.ExecutorTest
    shell://com.robypomper.josp.jod.executor.ExecutorShell
    file://com.robypomper.josp.jod.executor.ExecutorFiles
-   http://com.robypomper.josp.jod.executor.impls.http.ExecutorHTTP'
+   http://com.robypomper.josp.jod.executor.impls.http.ExecutorHTTP
+   dbus://com.robypomper.josp.jod.executor.impls.dbus.ExecutorDBus'
 
 
 ## Structure

@@ -1,12 +1,20 @@
 package com.robypomper.josp.jod.executor.impls.dbus;
 
+import org.freedesktop.dbus.Marshalling;
+import org.freedesktop.dbus.Tuple;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
+import org.freedesktop.dbus.errors.Error;
 import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.handlers.AbstractPropertiesChangedHandler;
 import org.freedesktop.dbus.interfaces.Properties;
+import org.freedesktop.dbus.messages.Message;
+import org.freedesktop.dbus.messages.MethodCall;
 import org.freedesktop.dbus.types.Variant;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -129,5 +137,123 @@ public class DBusInstance extends AbstractPropertiesChangedHandler implements Au
                 listeners_removed.get(obj_code).get(property).remove(l);
     }
 
+
+    // Remote methods
+
+    public Object invokeRemoteMethodCall(
+            String dbus_name, String dbus_obj_path, String dbus_iface,
+            String method_name, Object[] method_args, Class<?> method_return_type) {
+
+        boolean noResponse = method_return_type == null || method_return_type == Void.class;
+
+        MethodCall call;
+        try {
+            call = generateRemoteMethodCall(
+                    dbus_name, dbus_obj_path, dbus_iface,
+                    method_name, method_args);
+        } catch (Throwable t) {
+            System.err.printf("Can't prepare '%s' method call: %s%n", method_name, t);
+            t.printStackTrace();
+            return null;
+        }
+
+        try {
+            sessionConnection.sendMessage(call);
+        } catch (Throwable t) {
+            System.err.printf("Can't send '%s' method call: %s%n", method_name, t);
+            t.printStackTrace();
+            return null;
+        }
+
+        Object res = null;
+        if (noResponse) {
+            System.out.printf("Executed method '%s' with NO result%n", method_name);
+            return null;
+        }
+
+        Message reply = call.getReply();
+        if (null == reply) {
+            System.err.printf("Timeout reached waiting for '%s' method response%n", method_name);
+            return null;
+        }
+        if (reply instanceof Error) {
+            DBusExecutionException e = ((Error) reply).getException();
+            System.err.printf("Error waiting for '%s' method response: %s%n", method_name, e);
+            e.printStackTrace();
+            return null;
+        }
+        try {
+            res = convertRemoteMethodCallReturnValue(reply.getParameters(), method_return_type);
+        } catch (DBusException e) {
+            System.err.printf("Error parsing '%s' method response: %s%n", method_name, e);
+            e.printStackTrace();
+        }
+
+        System.out.printf("Executed method '%s' with result '%s'%n", method_name, res);
+        return res;
+    }
+
+    private MethodCall generateRemoteMethodCall(
+            String dbus_name, String dbus_obj_path, String dbus_iface,
+            String method_name, Object[] method_args) throws DBusException {
+
+        Class<?>[] method_params_types = new Class[method_args.length];
+        for (int i = 0; i < method_args.length; i++)
+            method_params_types[i] = method_args[i].getClass();
+        String sig = null;
+        if (method_params_types.length > 0) {
+            try {
+                sig = Marshalling.getDBusType(method_params_types);
+                method_args = Marshalling.convertParameters(method_args, method_params_types, sessionConnection);
+            } catch (DBusException _ex) {
+                throw new DBusExecutionException("Failed to construct D-Bus type: " + _ex.getMessage());
+            }
+        }
+        return new MethodCall(dbus_name, dbus_obj_path, dbus_iface, method_name,
+                Message.Flags.NO_AUTO_START, sig, method_args);
+    }
+
+    public Object convertRemoteMethodCallReturnValue(Object[] _rp, Class<?> retType) throws DBusException {
+        Object[] rp = _rp;
+        if (rp == null) {
+            if (null == retType || Void.TYPE.equals(retType)) {
+                return null;
+            } else {
+                throw new DBusException("Wrong return type (got void, expected a value)");
+            }
+        } else {
+            try {
+                rp = Marshalling.deSerializeParameters(rp, new Type[]{
+                        retType
+                }, sessionConnection);
+            } catch (Exception _ex) {
+                throw new DBusException(String.format("Wrong return type (failed to de-serialize correct types: %s )", _ex.getMessage()));
+            }
+        }
+
+        switch (rp.length) {
+            case 0:
+                if (null == retType || Void.TYPE.equals(retType)) {
+                    return null;
+                } else {
+                    throw new DBusException("Wrong return type (got void, expected a value)");
+                }
+            case 1:
+                return rp[0];
+            default:
+
+                // check we are meant to return multiple values
+                if (!Tuple.class.isAssignableFrom(retType)) {
+                    throw new DBusException("Wrong return type (not expecting Tuple)");
+                }
+
+                Constructor<?> cons = retType.getConstructors()[0];
+                try {
+                    return cons.newInstance(rp);
+                } catch (Exception _ex) {
+                    throw new DBusException(_ex.getMessage());
+                }
+        }
+    }
 
 }
