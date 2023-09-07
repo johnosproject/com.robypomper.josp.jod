@@ -50,13 +50,13 @@
 //@formatter:off
 
 
-def jospBuildVersion = hasProperty('OVERRIDE_jospBuildVersion')             // define which JOSP dependencies's versions current source code require
+def jospBuildVersion = hasProperty('OVERRIDE_jospBuildVersion')             // define which JOSP dependencies' versions current source code require
         ? ext.get('OVERRIDE_jospBuildVersion')
         : (ext.get('jospMode') == ext.get('jospModes.DEV')
             ? ext.get('jospVersions.NEXT')
             : ext.get('jospVersions.CURRENT')
         )
-jospBuildVersion += hasProperty('OVERRIDE_jospBuildClassifier')             // define which JOSP dependencies's versions current source code require
+jospBuildVersion += hasProperty('OVERRIDE_jospBuildClassifier')             // define which JOSP dependencies' versions current source code require
         ? '-' + ext.get('OVERRIDE_jospBuildClassifier')
         : (ext.get('jospMode') == ext.get('jospModes.DEV')
             ? '-DEV'

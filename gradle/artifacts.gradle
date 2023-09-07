@@ -26,12 +26,21 @@ import java.text.SimpleDateFormat
 
 /**
  * Project's artifacts' definitions from their sourceSets until their publications.
+ *
+ * Artifacts configured:
+ * - jospJOD: sourceSet.main
+ *
+ * Summary:
+ * - Sources configs
+ * - Runners Tasks
+ * - Publication configs
+ * - Utils methods
  */
 
 
-// ------------------
-// Components configs
-// ------------------
+// ----------------
+// Sources configs
+// ----------------
 
 sourceSets {}
 
@@ -46,7 +55,7 @@ dependencies {
     implementation "org.slf4j:slf4j-nop:${project.ext.get("version.slf4j")}"
 }
 
-GradleBuildInfo.makeBuildInfoForSourceSet(project, sourceSets.main, (String) project.ext.get("artifactVersion"));
+GradleBuildInfo.makeBuildInfoForSourceSet(project, sourceSets.main, (String) project.ext.get("artifactVersion"))
 
 
 // -------------
@@ -67,13 +76,13 @@ String MainClass = !hasProperty('artifactMainClass')
         : ext.get('artifactMainClass').replace("JODDaemon", "JODShell")
 
 tasks.run {
-    classpath(sourceSets.main.getRuntimeClasspath());
+    classpath(sourceSets.main.getRuntimeClasspath())
 
-    setWorkingDir(WorkingDir);
+    setWorkingDir(WorkingDir)
     doFirst {
         if (!WorkingDir.exists())
-            WorkingDir.mkdirs();
-    };
+            WorkingDir.mkdirs()
+    }
 
     if (MainClass != null)
         setMain(MainClass)
@@ -131,61 +140,61 @@ String pubMainClass = hasProperty('artifactMainClass') ? ext.get('artifactMainCl
 SourceSet pubSourcesSet = sourceSets.main
 
 tasks.jar {
-    doFirstArchiveBaseName(it, pubArtifact);
+    doFirstArchiveBaseName(it, pubArtifact)
 
-    //from(jospJODSourcesSet.getOutput());
+    //from(jospJODSourcesSet.getOutput())
 
-    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""));
+    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""))
 }
 
 tasks.register("jarDeps", org.gradle.jvm.tasks.Jar.class) {
-    setGroup(BasePlugin.BUILD_GROUP);
-    setClassifier(JavaPublicationUtils.CLASSIFIER_DEP);
-    doFirstArchiveBaseName(it, pubArtifact);
+    setGroup(BasePlugin.BUILD_GROUP)
+    setClassifier(JavaPublicationUtils.CLASSIFIER_DEP)
+    doFirstArchiveBaseName(it, pubArtifact)
 
-    List<File> fs = new ArrayList<>();
+    List<File> fs = new ArrayList<>()
     for (File f : pubSourcesSet.getRuntimeClasspath())
         if (f.exists() && !f.isDirectory())
-            fs.add(f);
-    from(fs);
+            fs.add(f)
+    from(fs)
 
-    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""));
+    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""))
 }
 
 tasks.javadoc {
-    setTitle(String.format("%s JavaDocs", Naming.capitalize(pubName)));
+    setTitle(String.format("%s JavaDocs", Naming.capitalize(pubName)))
 
-    FileCollection classPath = it.getClasspath();
-    classPath = classPath.plus(pubSourcesSet.getRuntimeClasspath());
-    classPath = classPath.plus(project.files(pubSourcesSet.getCompileClasspath().getFiles()));
-    classPath = classPath.plus(pubSourcesSet.getAnnotationProcessorPath());
-    setClasspath(classPath);
+    FileCollection classPath = it.getClasspath()
+    classPath = classPath + pubSourcesSet.getRuntimeClasspath()
+    classPath = classPath + project.files(pubSourcesSet.getCompileClasspath().getFiles())
+    classPath = classPath + pubSourcesSet.getAnnotationProcessorPath()
+    setClasspath(classPath)
 
-    setFailOnError(false);
+    setFailOnError(false)
 
-    enabled = !project.ext.get("disableDocs");
+    enabled = !project.ext.get("disableDocs")
 }
 
 tasks.register("jarDocs", org.gradle.jvm.tasks.Jar.class) {
-    setGroup(BasePlugin.BUILD_GROUP);
-    setClassifier(JavaPublicationUtils.CLASSIFIER_DOC);
-    doFirstArchiveBaseName(it, pubArtifact);
+    setGroup(BasePlugin.BUILD_GROUP)
+    setClassifier(JavaPublicationUtils.CLASSIFIER_DOC)
+    doFirstArchiveBaseName(it, pubArtifact)
 
-    from(tasks.javadoc.getOutputs());
+    from(tasks.javadoc.getOutputs())
 
-    enabled = !project.ext.get("disableDocs");
+    enabled = !project.ext.get("disableDocs")
 
-    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""));
+    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""))
 }
 
 tasks.register("jarSrc", org.gradle.jvm.tasks.Jar.class) {
-    setGroup(BasePlugin.BUILD_GROUP);
-    setClassifier(JavaPublicationUtils.CLASSIFIER_SRC);
-    doFirstArchiveBaseName(it, pubArtifact);
+    setGroup(BasePlugin.BUILD_GROUP)
+    setClassifier(JavaPublicationUtils.CLASSIFIER_SRC)
+    doFirstArchiveBaseName(it, pubArtifact)
 
-    from(pubSourcesSet.getAllSource());
+    from(pubSourcesSet.getAllSource())
 
-    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""));
+    getManifest().attributes(prepareManifestAttributes(pubSourcesSet, pubName, pubVersion, pubLicence, pubLicenceUrl, pubMainClass, ""))
 }
 
 publishing {
@@ -203,9 +212,9 @@ publishing {
     }
 }
 def pub_pom = publishing.publications."$pubArtifact".getPom()
-JavaPublicationUtils.initPom(pub_pom, pubName, pubDescription, pubUrl, pubGit, pubGitUrl, pubLicence, pubLicenceUrl);
+JavaPublicationUtils.initPom(pub_pom, pubName, pubDescription, pubUrl, pubGit, pubGitUrl, pubLicence, pubLicenceUrl)
 def pub_configs = configurations.getByName(pubSourcesSet.getImplementationConfigurationName())
-JavaPublicationUtils.injectDependenciesToPom(pub_pom, pub_configs, true);
+JavaPublicationUtils.injectDependenciesToPom(pub_pom, pub_configs, true)
 
 
 
@@ -216,37 +225,37 @@ JavaPublicationUtils.injectDependenciesToPom(pub_pom, pub_configs, true);
 static void doFirstArchiveBaseName(final org.gradle.jvm.tasks.Jar jarTask, String baseName) {
     jarTask.doFirst(new Action<Task>() {
         @Override
-        public void execute(Task task) {
-            jarTask.setBaseName(baseName);
+        void execute(Task task) {
+            jarTask.setBaseName(baseName)
         }
-    });
+    })
 }
 
 static Map<String, String> prepareManifestAttributes(SourceSet sourceSet, String name, String version, String licence, String licenceUrl, String mainClass, String nameExtension) {
     //@formatter:off
-    Map<String, String> res = new HashMap<>();
-    res.put("Implementation-Title"      , name + (nameExtension.isEmpty() ? "" : " - " + Naming.capitalize(nameExtension)));
-    res.put("Implementation-Version"    , version);
-    res.put("Implementation-Variant"    , (nameExtension.isEmpty() ? "default" : " - " + Naming.capitalize(nameExtension)));
+    Map<String, String> res = new HashMap<>()
+    res.put("Implementation-Title"      , name + (nameExtension.isEmpty() ? "" : " - " + Naming.capitalize(nameExtension)))
+    res.put("Implementation-Version"    , version)
+    res.put("Implementation-Variant"    , (nameExtension.isEmpty() ? "default" : " - " + Naming.capitalize(nameExtension)))
 
-    res.put("Licence"                   , licence);
-    res.put("Licence-Url"               , licenceUrl);
+    res.put("Licence"                   , licence)
+    res.put("Licence-Url"               , licenceUrl)
 
     if (mainClass != null)
-        res.put("Main-Class"            , mainClass);
+        res.put("Main-Class"            , mainClass)
 
-    res.put("Built-By"                  , System.getProperty("user.name"));
-    res.put("Build-Timestamp"           , new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()));
-    res.put("Created-By"                , String.format("Gradle %s", System.getProperty("gradle.gradleVersion}")));
-    res.put("Build-Jdk"                 , String.format("%s (%s %s)", System.getProperty("java.version"), System.getProperty("java.vendor"), System.getProperty("java.vm.version")));
-    res.put("Build-OS"                  , String.format("%s %s %s", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version")));
-    StringBuilder classPath = new StringBuilder();
+    res.put("Built-By"                  , System.getProperty("user.name"))
+    res.put("Build-Timestamp"           , new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()))
+    res.put("Created-By"                , String.format("Gradle %s", System.getProperty("gradle.gradleVersion}")))
+    res.put("Build-Jdk"                 , String.format("%s (%s %s)", System.getProperty("java.version"), System.getProperty("java.vendor"), System.getProperty("java.vm.version")))
+    res.put("Build-OS"                  , String.format("%s %s %s", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version")))
+    StringBuilder classPath = new StringBuilder()
     for (File f : sourceSet.getRuntimeClasspath().getFiles())
         if (f.getName().endsWith(".jar"))
-            classPath.append(String.format("libs/%s ", f.getName()));
-    res.put("Class-Path"                , classPath.toString());
+            classPath.append(String.format("libs/%s ", f.getName()))
+    res.put("Class-Path"                , classPath.toString())
 
-    //res.put("Build-Revision"            : versioning.info.commit);
+    //res.put("Build-Revision"            : versioning.info.commit)
     //@formatter:on
-    return res;
+    return res
 }
