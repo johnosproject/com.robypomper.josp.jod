@@ -96,10 +96,11 @@ ext {
 
 //@formatter:off
 ext {
-    set('version.slf4j'             , '1.7.30')
-    set('version.cli'               , '1.4')
+    set('version.cli'               , '1.5.0')
     set('version.cliche'            , '110413')
-    set('version.htmlcleaner'       , '2.24')
-    set('version.json-path'         , '2.4.0')
+    set('version.htmlcleaner'       , '2.29')
+    set('version.json-path'         , '2.8.0')
+    set('version.slf4j'             , '2.0.9')
+    set('version.junit-jupiter'     , '5.10.0')
 }
 //@formatter:on
