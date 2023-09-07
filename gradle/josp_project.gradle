@@ -69,6 +69,8 @@ ext {
     set('artifactLicence', 'GPLv3')
     set('artifactLicenceUrl', 'https://www.gnu.org/licenses/gpl-3.0.html')
 
+    set('gradleWrapperVersion', '8.3')
+
     // Preset build modes for JOSP Project
     set('jospMode', ext.get('jospModes.RELEASE'))       // valid values: DEV, SNAPSHOT or RELEASE
 
