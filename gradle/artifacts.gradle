@@ -86,7 +86,7 @@ tasks.run {
         setMain(MainClass)
 
     jvmArgs = [
-            '-Dlog4j.configurationFile=' + project.file(FileConfigs_Log4j2).absolutePath,
+            //'-Dlog4j.configurationFile=' + project.file(FileConfigs_Log4j2).absolutePath,
             //'-Djavax.net.debug=ssl'],
     ]
     args = [
