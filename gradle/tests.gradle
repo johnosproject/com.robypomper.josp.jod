@@ -40,53 +40,14 @@
 // SourceSes configs
 // -----------------
 
-sourceSets {
-
-    // Test's Commons
-
-    test_Commons {
-        java.srcDirs 'tests/test_Commons/java'
-        resources.srcDirs 'tests/test_Commons/resources'
-    }
-
-
-    // JOD
-
-    test_jospJODStruct {
-        java.srcDirs 'tests/test_jospJODStruct/java'
-        resources.srcDirs 'tests/test_jospJODStruct/resources'
-    }
-
-    test_jospJODComm {
-        java.srcDirs 'tests/test_jospJODComm/java'
-        resources.srcDirs 'tests/test_jospJODComm/resources'
-    }
-
-    test_jospJODExec {
-        java.srcDirs 'tests/test_jospJODExec/java'
-        resources.srcDirs 'tests/test_jospJODExec/resources'
-    }
-
-}
+sourceSets {}
 
 dependencies {
-    // Test's commons
-    test_CommonsImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
-    test_CommonsRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
-    test_CommonsImplementation "com.robypomper.josp:jospJSL:${project.ext.get("version.deps.jospCommons")}"
-    test_CommonsImplementation sourceSets.main.output
-    test_CommonsImplementation sourceSets.main.runtimeClasspath
-
-
-    // JOD
-    test_jospJODStructImplementation sourceSets.test_Commons.output
-    test_jospJODStructImplementation sourceSets.test_Commons.runtimeClasspath
-
-    test_jospJODCommImplementation sourceSets.test_Commons.output
-    test_jospJODCommImplementation sourceSets.test_Commons.runtimeClasspath
-
-    test_jospJODExecImplementation sourceSets.test_Commons.output
-    test_jospJODExecImplementation sourceSets.test_Commons.runtimeClasspath
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testImplementation "com.robypomper.josp:jospJSL:${project.ext.get("version.deps.jospJSL")}"
+    testImplementation sourceSets.main.output
+    testImplementation sourceSets.main.runtimeClasspath
 }
 
 
@@ -94,47 +55,9 @@ dependencies {
 // Tests Tasks
 // -----------
 
-task jospJODAllTest(type: Test) {
-    description = 'Runs all JOD tests.'
-    group = 'verification'
-}
-check.dependsOn jospJODAllTest
-
-task jospJODStructTest(type: Test) {
-    description = 'Runs JOD Communication tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.test_jospJODStruct.output.classesDirs
-    classpath = sourceSets.test_jospJODStruct.runtimeClasspath
-    shouldRunAfter test
+tasks.test {
     useJUnitPlatform()
-    //jvmArgs '-Djavax.net.debug=all'
 }
-jospJODAllTest.dependsOn jospJODStructTest
-
-task jospJODCommTest(type: Test) {
-    description = 'Runs JOD Communication tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.test_jospJODComm.output.classesDirs
-    classpath = sourceSets.test_jospJODComm.runtimeClasspath
-    shouldRunAfter test
-    useJUnitPlatform()
-    //jvmArgs '-Djavax.net.debug=all'
-}
-jospJODAllTest.dependsOn jospJODCommTest
-
-task jospJODExecTest(type: Test) {
-    description = 'Runs JOD Executors tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.test_jospJODExec.output.classesDirs
-    classpath = sourceSets.test_jospJODExec.runtimeClasspath
-    shouldRunAfter test
-    useJUnitPlatform()
-    //jvmArgs '-Djavax.net.debug=all'
-}
-jospJODAllTest.dependsOn jospJODExecTest
 
 
 // ----------------
@@ -144,11 +67,7 @@ jospJODAllTest.dependsOn jospJODExecTest
 // gradle > intellij settings
 idea {
     module {
-        testSourceDirs += project.sourceSets.test_jospJODStruct.java.srcDirs
-        testSourceDirs += project.sourceSets.test_jospJODStruct.resources.srcDirs
-        testSourceDirs += project.sourceSets.test_jospJODComm.java.srcDirs
-        testSourceDirs += project.sourceSets.test_jospJODComm.resources.srcDirs
-        testSourceDirs += project.sourceSets.test_jospJODExec.java.srcDirs
-        testSourceDirs += project.sourceSets.test_jospJODExec.resources.srcDirs
+        //testSourceDirs += project.sourceSets.test.java.srcDirs
+        //testSourceDirs += project.sourceSets.test.resources.srcDirs
     }
 }

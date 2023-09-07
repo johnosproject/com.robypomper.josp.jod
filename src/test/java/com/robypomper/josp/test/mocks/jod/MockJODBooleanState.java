@@ -23,10 +23,6 @@ import com.robypomper.josp.jod.executor.JODExecutorMngr;
 import com.robypomper.josp.jod.history.JODHistory;
 import com.robypomper.josp.jod.structure.*;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanState;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
-
-import java.util.Collections;
-import java.util.List;
 
 public class MockJODBooleanState extends JODBooleanState {
 

@@ -22,7 +22,6 @@ package com.robypomper.josp.test.mocks.jod;
 import com.robypomper.josp.jod.executor.JODExecutorMngr;
 import com.robypomper.josp.jod.history.JODHistory;
 import com.robypomper.josp.jod.structure.JODStructure;
-import com.robypomper.josp.jod.structure.pillars.JODBooleanState;
 import com.robypomper.josp.jod.structure.pillars.JODRangeState;
 
 public class MockJODRangeState extends JODRangeState {
