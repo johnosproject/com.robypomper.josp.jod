@@ -51,7 +51,7 @@ plugins {
 apply from: 'gradle/josp_definitions.gradle'
 apply from: 'gradle/josp_project.gradle'
 apply from: 'gradle/josp_versions.gradle'
-ext.set('artifactVersion', ext.get('version.deps.jospJOD'))
+ext.set('artifactVersion', ext.get('version.build.jospJOD'))
 
 
 println "--------------------------"
