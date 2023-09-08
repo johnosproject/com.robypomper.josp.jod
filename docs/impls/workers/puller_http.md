@@ -122,7 +122,7 @@ Then can be extracted part of the response, using the ```formatPathType``` and
 ```formatPath``` configs. Finally, only the extracted string is used as Pillar's
 state.
 
-To avoid any response alteration, you can use the ```TEXT``` value in the ```formatType```
+To avoid any response alteration, you can use the ```TXT``` value in the ```formatType```
 config. That will thread the HTTP Response Body as raw text and, all contents from
 the response body are used as Pillar's state.
 
@@ -130,12 +130,12 @@ Those configs are defined and used by [FormatterInternal](/src/jospJOD/java/com/
 
 ### ```formatType```
 
-HTTP Response's body format. Default 'HTML'.
+HTTP Response's body format. Default 'TXT'.
 
 Please set this FirmwareConfigs according to the expected response type.<br/>
 You can choose one of the following values:
 
-* ```TEXT```: raw text response, this format does not alter the response body.
+* ```TXT```: raw text response, this format does not alter the response body.
 * ```HTML```: for HTML responses that can be queried with XPath expression or with a TagName (Not Yet Implemented).
 * ```XML```: for XML responses (Not Yet Implemented).
 * ```JSON```: for JSON responses that can be queried with JSONPath expression.
@@ -185,7 +185,7 @@ If you are not yet satisfy from the result after the HTTP Response body format,
 you can continue customizing it within a configurable JavaScript script.
 
 For example, if after response format, it still contains unwanted chars; or also
-if you configured the worker for handle a raw response  (```formatType=TEXT```).
+if you configured the worker for handle a raw response  (```formatType=TXT```).
 Then you need to edit the obtained response before passing it as new Pillar's
 state value.
 
@@ -199,6 +199,11 @@ Those configs are defined and used by [EvaluatorInternal](/src/jospJOD/java/com/
 
 JavaScript code to evaluate HTTP Response body after formatting it. Default
 '{httpResult}'.
+
+As an example the following string handle `httpResult` as a string and return
+`TRUE` only if it contains the `Playing` string.
+
+`httpResult.toLowerCase()=='playing'?'TRUE':'FALSE'`
 
 This config accepts any JavaScript script and response the evaluation function
 returns his output.
