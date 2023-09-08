@@ -3,11 +3,22 @@
 Into this repository are contained all sources for the JOD agent from the
 [John O.S. Project](https://www.johnosproject.com)
 
+<table><tr>
+<td>
+<img src="docs/JOSP_JOD_Logo_250.png" width="100">
+</td>
+<td>
+
 **Artifact Name:** jospJOD<br />
 **Artifact Group:** com.robypomper.josp<br />
 **Artifact Version:** 2.2.3
 
-[CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
+</td>
+</tr>
+</table>
+
+
+[README](README.md) | [SPECS](docs/specs.md) | [IMPLS](docs/impls.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
 The JOSP Object Daemon is a simple daemon that provide a JOSP Object. When it
 is running, you can interact with it using a JSL Service or the JSL Shell
@@ -16,7 +27,6 @@ itself.
 **NB:** This repository, by default, executes the JOD with his interactive
 shell as a foreground cmdline application. To change this behaviour, please set
 the property `isDaemon` to `true` into `gradle/artifacts.gradle` file.
-
 
 ## Run
 
@@ -47,35 +57,22 @@ tasks section.
 
 The JOD agent takes only one optional args from the command line: `--configs`.
 This arg allow defines another path for the `configs/jod.yml` config file.
+<br/>More details on [Specs/CmdLine](docs/specs/cmdline.md) page.
 
 ### Configs files
 
 The JOD agent use the following configuration files. All files must be relative
 to the JOD execution dir.
 
-`configs/jod.yml`
+| File                 | Specs                                          | Description                                                                                                                                                                                                                                                                                                                       |
+|----------------------|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `configs/jod.yml`    | [Specs/`jod.yml`](docs/specs/jod_yml.md)       | Main JOD agent config file. It's a YAML file that contains all configuration used by the agent: from the object's id to the workers' types.                                                                                                                                                                                       |
+| `configs/struct.jod` | [Specs/Structure](docs/specs/structure.md)     | A JSON file that contains only the object's structure.                                                                                                                                                                                                                                                                            |
+| `configs/perms.jod`  | [Specs/Permissions](docs/specs/permissions.md) | A `;`-separated file that contains pairs key-values. It defines which permission must be applied to the object. It's not mandatory, and it can be managed entirely by the JOD Agent. By default, the JOD agent create a permissions file with right object's id that allows connections from any service via local communication. |
+| `configs/log4j2.xml` | [Specs/Logs](docs/specs/logs.md)               | XML file containing [Log4J2 configurations](https://logging.apache.org/log4j/2.x/manual/configuration.html).                                                                                                                                                                                                                                                                                 |
 
-Main JOD agent config file. It's a YAML file that contains all configuration
-used by the agent: from the object's id to the workers' types. 
-
-`configs/struct.jod`
-
-A JSON file that contains only the object's structure.
-
-`configs/perms.jod`
-
-A `;`-separated file that contains pairs key-values. It defines which permission
-must be applied to the object.
-It's not mandatory, and it can be managed entirely by the JOD Agent. By default,
-the JOD agent create a permissions file with right object's id that allows
-connections from any service via local communication.
-
-For more info and examples check the [Resources > Configs files](#example-configs-files)
+Checkout the configs file examples on the [Resources > Configs files](#example-configs-files)
 section.
-
-`configs/log4j2.xml`
-
-XML file containing [Log4J2 configurations](https://logging.apache.org/log4j/2.x/manual/configuration.html).
 
 
 ## Develop
@@ -149,7 +146,6 @@ this repo at [Resources > Publication repo](#publication-repository) section.
 * `test`: run all test contained into the `src/test/java` folder using the
   JUnit/Jupiter framework.
 
-
 ## Resources
 
 ### Example configs files
@@ -158,10 +154,17 @@ This repository include several configuration files as examples and for testing
 purposes. Depending on the config file you can find examples into `src/main/configs`.
 dir.
 
-
 ### Dependencies
 
-This repo is part of the 
+This repo as part of the [John OS Project](https://www.johnosproject.com), get
+most of his dependencies from other JOSP packages. Those dependencies are
+defined into the `gradle/artifacts.gradle` file and their versions are defined
+into the `gradle/josp_versions.gradle` file.
+
+* JOSP Commons
+  * JOSP APIs
+
+The other, external, dependencies are also listed in the same files.
 
 ### Publication repository
 
@@ -199,7 +202,6 @@ signing.secretKeyRingFile={file containing the GPG key}
 * [Gradle configs](https://central.sonatype.org/publish/publish-gradle/) (old gradle plugin 'maven')
 * [Confirm release](https://central.sonatype.org/publish/release/)
 
-
 ## Versions
 
 This repository was based on the version `2.2.3`.
@@ -215,12 +217,10 @@ Previous versions are hosted on [com.robypomper.josp]() Git repository.
 * v [2.1.0](https://bitbucket.org/johnosproject_shared/com.robypomper.josp/src/2.1.0/)
 * v [2.0.0](https://bitbucket.org/johnosproject_shared/com.robypomper.josp/src/2.0.0/)
 
-
 ## Licences
 
 The JOD agent contained in the current repository is distributed using the
 [GPLv3](LICENCE.md) licence.
-
 
 ## Collaborate
 
