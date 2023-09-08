@@ -58,11 +58,21 @@ ext {
     set('projectUrl', 'https://www.johnosproject.org')
     set('projectGit', 'bitbucket.org:johnosproject_shared/com.robypomper.josp.git')
     set('projectGitUrl', 'https://bitbucket.org/johnosproject_shared/com.robypomper.josp')
+    set('projectArtifactsRepoUrl.Releases', "https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+    set('projectArtifactsRepoUrl.Snapshots', "https://oss.sonatype.org/content/repositories/snapshots/")
+
+    set('artifactLongName', 'JOSP Object Daemon')
+    set('artifactName', 'jospJOD')
+    set('artifactDescription', 'This is the JOSP JOD executable from John O.S. Project')
+    set('artifactGroupId', 'com.robypomper.josp')
+    set('artifactMainClass', 'com.robypomper.josp.jod.JODDaemon')
+    set('artifactLicence', 'GPLv3')
+    set('artifactLicenceUrl', 'https://www.gnu.org/licenses/gpl-3.0.html')
+
+    set('gradleWrapperVersion', '8.3')
 
     // Preset build modes for JOSP Project
-    //set('jospMode', ext.get('jospModes.DEV'))           // on first build, set jospDependenciesVersion=CURRENT
-    //set('jospMode', ext.get('jospModes.STAGE'))         // on first build, set jospDependenciesVersion=PREV
-    set('jospMode', ext.get('jospModes.RELEASE'))         // on first build, set jospDependenciesVersion=PREV
+    set('jospMode', ext.get('jospModes.RELEASE'))       // valid values: DEV, SNAPSHOT or RELEASE
 
     // Set true to enable private tasks (require $USER_HOME/.gradle/properties.gradle file)
     set('OVERRIDE_enablePrivate', false)
@@ -95,6 +105,16 @@ def enablePrivate = hasProperty('OVERRIDE_enablePrivate')
         ? false
         : true
 )
+String err_tmpl = "Missing publication repository credentials (%s).\nPlease add them to the '\$HOME/.gradle/gradle.properties' file."
+if (enablePrivate) {
+    if (!project.hasProperty('sonatypeUser')
+            || !project.hasProperty('sonatypePassword'))
+        throw new InvalidUserDataException(err_tmpl.format("sonatypeUser and sonatypePassword"))
+    if (!project.hasProperty('signing.keyId')
+            || !project.hasProperty('signing.password')
+            || !project.hasProperty('signing.secretKeyRingFile'))
+        throw new InvalidUserDataException(String.format(err_tmpl, "signing.keyId, signing.password and signing.secretKeyRingFile"))
+}
 ext.set('enablePrivate', enablePrivate)
 
 // disableDocs
