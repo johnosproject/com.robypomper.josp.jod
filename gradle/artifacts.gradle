@@ -50,6 +50,8 @@ dependencies {
     implementation "com.googlecode.clichemaven:cliche:${project.ext.get("version.cliche")}"
     implementation "net.sourceforge.htmlcleaner:htmlcleaner:${project.ext.get("version.htmlcleaner")}"
     implementation "com.jayway.jsonpath:json-path:${project.ext.get("version.json-path")}"
+    implementation "com.github.hypfvieh:dbus-java-core:${project.ext.get("version.dbus-java")}"
+    implementation "com.github.hypfvieh:dbus-java-transport-jnr-unixsocket:${project.ext.get("version.dbus-java")}"
     implementation "org.slf4j:slf4j-nop:${project.ext.get("version.slf4j")}"
 }
 
