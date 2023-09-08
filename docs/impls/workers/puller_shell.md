@@ -4,11 +4,11 @@
 
 Each ```freq``` seconds, this puller executes the ```cmd``` using the
 [JavaExecProcess::execCmd(String cmd)](/src/jospCommons/java/com/robypomper/java/JavaExecProcess.java)
-method , then update the [JOD State](../specs/pillars.md#states).
+method , then update the [JOD State](../../specs/pillars.md#states).
 
 Before execute the command, the ```cmd``` string is updated and all his placeholder
-are replaced with current [Pillar](../specs/workers/placeholders.md#pillar) and
-[State](../specs/workers/placeholders.md#state) properties.<br/>
+are replaced with current [Pillar](../../specs/workers_placeholders.md#pillar) and
+[State](../../specs/workers_placeholders.md#state) properties.<br/>
 Once executed the shell command, it takes his output and pass it as new Pillar's
 state, independently to the Pillar's type.
 
@@ -31,15 +31,15 @@ Following redirects ar not supported:
 * ```cmd &> out.txt```
 * ```cmd > out.txt 2> err.txt```
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
 on pulling state.
 
 ### ```freq```
 
-Pulling frequency in seconds. By default '5'.
+Pulling frequency in seconds. By default, `5`.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ---

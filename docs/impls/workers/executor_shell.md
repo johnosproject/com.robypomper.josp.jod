@@ -2,13 +2,13 @@
 
 [SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
 
-When an [JOD Action](../specs/pillars.md#actions) must be executed, this executor executes
+When an [JOD Action](../../specs/pillars.md#actions) must be executed, this executor executes
 the ```cmd``` using the [JavaExecProcess::execCmdConcat(String cmd)](/src/jospCommons/java/com/robypomper/java/JavaExecProcess.java)
 method.
 
 Before execute the command, the ```cmd``` string is updated and all his placeholder
-are replaced with current [Pillar](../specs/workers/placeholders.md#pillar), [State](../specs/workers/placeholders.md#state)
-and [Action](../specs/workers/placeholders.md#action) properties.<br/>
+are replaced with current [Pillar](../../specs/workers_placeholders.md#pillar), [State](../../specs/workers_placeholders.md#state)
+and [Action](../../specs/workers_placeholders.md#action) properties.<br/>
 After that execute the command.
 
 ---
@@ -27,11 +27,11 @@ The ```cmd``` string can concatenate multiple commands with ```&&```.
 
 The concatenated commands are executed independently, so before executing each
 cmd, this method wait for previous cmd termination.<br/>
-Each cmd must be terminate before {@link #DEF_TIMEOUT}.
+Each cmd must be terminated before {@link #DEF_TIMEOUT}.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
-and [Action Placeholder](../specs/workers/placeholders.md#state) on executing action.
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
+and [Action Placeholder](../../specs/workers_placeholders.md#state) on executing action.
 
 ### ```redirect```
 
@@ -40,9 +40,9 @@ File path where write ```cmd``` output. Default value ''.
 If this firmware Configs is set, it used as file path for write command output
 as logs file.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
-and [Action Placeholder](../specs/workers/placeholders.md#state) on executing action.
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
+and [Action Placeholder](../../specs/workers_placeholders.md#state) on executing action.
 
 ---
 
