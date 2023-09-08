@@ -75,7 +75,7 @@ public class FormatterInternal {
 
         // Parse configs
         Map<String, String> configs = AbsJODWorker.splitConfigsStrings(configsStr);
-        formatType = FormatType.valueOf(worker.parseConfigString(configs, PROP_FORMAT_TYPE, FormatType.HTML.name()));
+        formatType = FormatType.valueOf(worker.parseConfigString(configs, PROP_FORMAT_TYPE, FormatType.TXT.name()));
         formatPath = worker.parseConfigString(configs, PROP_FORMAT_PATH, PROP_FORMAT_PATH_DEF);
         formatPathType = worker.parseConfigString(configs, PROP_FORMAT_PATH_TYPE, "");
     }
