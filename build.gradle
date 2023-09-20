@@ -65,7 +65,7 @@ println "- name:                " + ext.get('artifactLongName')
 println "- version:             " + ext.get('artifactVersion')
 println "JOSP Dependencies"
 println "- JOSP APIs            " + ext.get('version.deps.jospAPIs')
-println "- JOSP Commons         " + ext.get('version.deps.jospAPIs')
+println "- JOSP Commons         " + ext.get('version.deps.jospCommons')
 println "JOSP Build configs"
 println "- enablePrivate:       " + ext.get('enablePrivate')
 println "- disableDocs:         " + ext.get('disableDocs')

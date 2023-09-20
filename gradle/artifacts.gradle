@@ -30,10 +30,10 @@
  * - Utils methods
  */
 
-final String CLASSIFIER_DOC = "javadoc";
-final String CLASSIFIER_SRC = "sources";
-final String CLASSIFIER_DEP = "deps";
-final String CLASSIFIER_FAT = "fat";
+final String CLASSIFIER_DOC = "javadoc"
+final String CLASSIFIER_SRC = "sources"
+final String CLASSIFIER_DEP = "deps"
+final String CLASSIFIER_FAT = "fat"
 
 
 // ----------------

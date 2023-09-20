@@ -56,8 +56,8 @@ ext {
     // PROJECT BUILD CONFIGURATIONS - START
 
     set('projectUrl', 'https://www.johnosproject.org')
-    set('projectGit', 'bitbucket.org:johnosproject_shared/com.robypomper.josp.git')
-    set('projectGitUrl', 'https://bitbucket.org/johnosproject_shared/com.robypomper.josp')
+    set('projectGit', 'git@github.com:johnosproject/com.robypomper.josp.jod.git')
+    set('projectGitUrl', 'https://github.com/johnosproject/com.robypomper.josp.jod')
     set('projectArtifactsRepoUrl.Releases', "https://oss.sonatype.org/service/local/staging/deploy/maven2/")
     set('projectArtifactsRepoUrl.Snapshots', "https://oss.sonatype.org/content/repositories/snapshots/")
 
