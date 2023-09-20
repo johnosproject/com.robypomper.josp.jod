@@ -52,6 +52,8 @@ dependencies {
     implementation "com.jayway.jsonpath:json-path:${project.ext.get("version.json-path")}"
     implementation "com.github.hypfvieh:dbus-java-core:${project.ext.get("version.dbus-java")}"
     implementation "com.github.hypfvieh:dbus-java-transport-jnr-unixsocket:${project.ext.get("version.dbus-java")}"
+    // TDO set following dependencies as runtimeOnly and update the jar-deps generation using the runtimeOnly config and path
+    implementation "org.apache.logging.log4j:log4j-core:${project.ext.get("version.apache.log4j")}"
     implementation "org.slf4j:slf4j-nop:${project.ext.get("version.slf4j")}"
 }
 
