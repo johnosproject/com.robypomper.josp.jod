@@ -23,13 +23,15 @@ package com.robypomper.josp.jod.executor.impls.http;
 import com.robypomper.josp.clients.HTTPClient;
 import com.robypomper.josp.jod.executor.AbsJODExecutor;
 import com.robypomper.josp.jod.executor.Substitutions;
+import com.robypomper.josp.jod.executor.impls.dbus.ExecutorDBus;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.log.Mrk_JOD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.Map;
 
@@ -47,6 +49,7 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
 
     // Internal vars
 
+    private static final Logger log = LoggerFactory.getLogger(ExecutorHTTP.class);
     // Configs
     private final String requestBody;
     private final String requestSuccess;
@@ -67,7 +70,7 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     public ExecutorHTTP(String name, String proto, String configsStr, JODComponent component) throws ParsingPropertyException, MissingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ExecutorHTTP for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
         http = new HTTPInternal(this, name, proto, configsStr, component);
         formatter = new FormatterInternal(this, name, proto, configsStr, component);
@@ -116,7 +119,7 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
             response = http.execRequest(requestUrl, requestBodyStr);
 
         } catch (HTTPClient.RequestException | MalformedURLException | HTTPClient.ResponseException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP '%s' of proto '%s' error on pulling url '%s'", getName(), getProto(), http.getLastUrl()));
+            log.warn(String.format("ExecutorHTTP '%s' of proto '%s' error on pulling url '%s'", getName(), getProto(), http.getLastUrl()));
             return true;
         }
 
@@ -125,14 +128,14 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
             result = formatter.parse(response);
 
         } catch (FormatterInternal.ParsingException | FormatterInternal.PathNotFoundException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP '%s' of proto '%s' error on parsing response '%s'", getName(), getProto(), response), e);
+            log.warn(String.format("ExecutorHTTP '%s' of proto '%s' error on parsing response '%s'", getName(), getProto(), response), e);
             return true;
         }
 
         try {
             result = evaluator.evaluate(result,commandAction);
         } catch (EvaluatorInternal.EvaluationException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP '%s' of proto '%s' error on evaluating result '%s'", getName(), getProto(), result), e);
+            log.warn(String.format("ExecutorHTTP '%s' of proto '%s' error on evaluating result '%s'", getName(), getProto(), result), e);
             return true;
         }
 

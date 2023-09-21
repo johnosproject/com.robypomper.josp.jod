@@ -25,14 +25,13 @@ import com.robypomper.comm.server.ServerClient;
 import com.robypomper.josp.test.mocks.jod.MockJODCommunication;
 import com.robypomper.josp.test.mocks.jod.MockJODObjectInfo;
 import com.robypomper.josp.test.mocks.jod.MockJODPermissions;
-import com.robypomper.log.Mrk_Test;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.InetAddress;
 import java.util.Objects;
@@ -48,7 +47,7 @@ public class JODLocalServerTest {
 
     // Internal vars
 
-    protected static Logger log = LogManager.getLogger();
+    protected static Logger log = LoggerFactory.getLogger(JODLocalServerTest.class);
     protected static int port = 1234;
 
 
@@ -56,8 +55,8 @@ public class JODLocalServerTest {
 
     @BeforeEach
     public void setUp() {
-        log.debug(Mrk_Test.TEST_SPACER, "########## ########## ########## ########## ##########");
-        log.debug(Mrk_Test.TEST_METHODS, "setUp");
+        log.debug("########## ########## ########## ########## ##########");
+        log.debug("setUp");
 
         // Create test dir
         File testDirFiles = new File(TEST_FILES_PREFIX);
@@ -66,7 +65,7 @@ public class JODLocalServerTest {
 
         port += 2;
 
-        log.debug(Mrk_Test.TEST_METHODS, "test");
+        log.debug("test");
     }
 
     @AfterEach

@@ -21,10 +21,9 @@ package com.robypomper.josp.jod.executor;
 
 import com.robypomper.java.JavaTimers;
 import com.robypomper.josp.jod.structure.JODComponent;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Timer;
 
 
@@ -41,7 +40,7 @@ public abstract class AbsJODPuller extends AbsJODWorker implements JODPuller {
 
     // Internal vars
 
-    protected static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(AbsJODPuller.class);
     private Timer timer;
 
 
@@ -82,13 +81,13 @@ public abstract class AbsJODPuller extends AbsJODWorker implements JODPuller {
      */
     @Override
     public void startTimer() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Start '%s' puller", getName()));
+        log.info(String.format("Start '%s' puller", getName()));
         if (isEnabled()) return;
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Starting puller timer");
+        log.debug("Starting puller timer");
         timer = JavaTimers.initAndStart(new PullerTimer(), true,String.format(TH_PULLER_NAME, getProto()),getName(),0,getPollingTime());
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Puller timer started");
+        log.debug("Puller timer started");
     }
 
     /**
@@ -96,13 +95,13 @@ public abstract class AbsJODPuller extends AbsJODWorker implements JODPuller {
      */
     @Override
     public void stopTimer() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Stop '%s' puller timer", getName()));
+        log.info(String.format("Stop '%s' puller timer", getName()));
         if (!isEnabled()) return;
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Stopping puller timer");
+        log.debug("Stopping puller timer");
         JavaTimers.stopTimer(timer);
         timer = null;
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Puller timer stopped");
+        log.debug("Puller timer stopped");
     }
 
     private class PullerTimer implements Runnable {

@@ -28,10 +28,9 @@ import com.robypomper.josp.protocol.HistoryLimits;
 import com.robypomper.josp.protocol.JOSPEvent;
 import com.robypomper.josp.types.josp.AgentType;
 import com.robypomper.josp.types.josp.EventType;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class JODEvents_002 implements JODEvents {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(JODEvents_002.class);
     private final JODSettings_002 locSettings;
     private JCPAPIsClientObj jcpClient;
     private Caller20 apiEventsCaller;
@@ -175,9 +174,9 @@ public class JODEvents_002 implements JODEvents {
         events = tmpEvents;
         stats = tmpStats;
 
-        log.info(Mrk_JOD.JOD_EVENTS, "Initialized JODEvents instance");
-        log.debug(Mrk_JOD.JOD_EVENTS, String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
-        log.debug(Mrk_JOD.JOD_EVENTS, String.format("                                   Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+        log.info("Initialized JODEvents instance");
+        log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+        log.debug(String.format("                                   Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
     }
 
 
@@ -218,8 +217,8 @@ public class JODEvents_002 implements JODEvents {
                             int pre = events.countBuffered();
                             events.flushCache(REDUCE_BUFFER);
                             int post = events.countBuffered();
-                            log.debug(Mrk_JOD.JOD_EVENTS, String.format("Flushed %d events to file", pre - post));
-                            log.debug(Mrk_JOD.JOD_EVENTS, String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+                            log.debug(String.format("Flushed %d events to file", pre - post));
+                            log.debug(String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
                         }
 
                     } catch (IOException ignore) {
@@ -268,19 +267,19 @@ public class JODEvents_002 implements JODEvents {
             }
 
             if (toUpload.size() == 0) {
-                log.debug(Mrk_JOD.JOD_EVENTS, String.format("No events found to uploads (CloudStats values lastUpd: %d; lastStored: %d", stats.lastUploaded, stats.lastStored));
+                log.debug(String.format("No events found to uploads (CloudStats values lastUpd: %d; lastStored: %d", stats.lastUploaded, stats.lastStored));
                 return;
             }
 
-            log.debug(Mrk_JOD.JOD_EVENTS, String.format("Upload from %d to %d (%d events)", toUpload.get(0).getId(), toUpload.get(toUpload.size() - 1).getId(), toUpload.size()));
+            log.debug(String.format("Upload from %d to %d (%d events)", toUpload.get(0).getId(), toUpload.get(toUpload.size() - 1).getId(), toUpload.size()));
             for (JOSPEvent e : toUpload)
-                log.trace(Mrk_JOD.JOD_EVENTS, String.format("- event[%d] %s", e.getId(), e.getPayload()));
+                log.trace(String.format("- event[%d] %s", e.getId(), e.getPayload()));
 
             try {
                 apiEventsCaller.uploadEvents(JOSPEvent.toEvents(toUpload));
 
             } catch (JCPClient2.ConnectionException | JCPClient2.AuthenticationException | JCPClient2.ResponseException | JCPClient2.RequestException e) {
-                log.warn(Mrk_JOD.JOD_HISTORY, String.format("Can't upload events (CloudStats values lastUpd: %d; lastStored: %d) (%s)", stats.lastUploaded, stats.lastStored, e));
+                log.warn(String.format("Can't upload events (CloudStats values lastUpd: %d; lastStored: %d) (%s)", stats.lastUploaded, stats.lastStored, e));
                 return;
             }
 
@@ -296,9 +295,9 @@ public class JODEvents_002 implements JODEvents {
     @Override
     public void startCloudSync() {
         isSyncing = true;
-        log.info(Mrk_JOD.JOD_EVENTS, "Start events sync to cloud");
-        log.debug(Mrk_JOD.JOD_EVENTS, String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
-        log.debug(Mrk_JOD.JOD_EVENTS, String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+        log.info("Start events sync to cloud");
+        log.debug(String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+        log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
         sync();
     }
@@ -311,11 +310,11 @@ public class JODEvents_002 implements JODEvents {
                 int pre = events.countBuffered();
                 events.storeCache();
                 int post = events.countBuffered();
-                log.debug(Mrk_JOD.JOD_EVENTS, String.format("Stored %d events to file", pre - post));
+                log.debug(String.format("Stored %d events to file", pre - post));
 
-                log.info(Mrk_JOD.JOD_EVENTS, "Stop event sync to cloud");
-                log.debug(Mrk_JOD.JOD_EVENTS, String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
-                log.debug(Mrk_JOD.JOD_EVENTS, String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+                log.info("Stop event sync to cloud");
+                log.debug(String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+                log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
             } catch (IOException ignore) {
                 assert false;

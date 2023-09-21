@@ -23,12 +23,11 @@ import com.robypomper.josp.jod.executor.AbsJODListener;
 import com.robypomper.josp.jod.executor.impls.http.EvaluatorInternal;
 import com.robypomper.josp.jod.executor.impls.http.FormatterInternal;
 import com.robypomper.josp.jod.structure.JODComponent;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.types.Variant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 
@@ -49,7 +48,7 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
 
     // Internal vars
 
-    protected static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(ListenerDBus.class);
     private final FormatterInternal formatter;
     private final EvaluatorInternal evaluator;
     protected final DBusInstance dbus_instance;
@@ -72,7 +71,7 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
      */
     public ListenerDBus(String name, String proto, String configsStr, JODComponent component) throws MissingPropertyException, FactoryException, ParsingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ListenerDBus for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
         try {
             dbus_instance = DBusInstance.getInstance();
@@ -88,7 +87,7 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
         dbus_iface = parseConfigString(configs, PROP_DBUS_IFACE);
         dbus_prop = parseConfigString(configs, PROP_DBUS_PROP);
         value = parseConfigString(configs, PROP_INIT_DATA, DEF_PROP_INIT_DATA);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' listen for changes on '%s/%s' bus/property.", getName(), dbus_name, dbus_prop));
+        log.trace(String.format("ListenerDBus for component '%s' listen for changes on '%s/%s' bus/property.", getName(), dbus_name, dbus_prop));
     }
 
 
@@ -104,14 +103,14 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
 
     @Override
     public void listen() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Start '%s' listener", getName()));
+        log.info(String.format("Start '%s' listener", getName()));
         dbus_instance.registerListenerChanged(dbus_obj_path, dbus_iface, dbus_prop, this);
         isListening = true;
     }
 
     @Override
     public void halt() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Stop '%s' listener server", getName()));
+        log.info(String.format("Stop '%s' listener server", getName()));
         dbus_instance.deregisterListenerChanged(dbus_obj_path, dbus_iface, dbus_prop, this);
         isListening = false;
     }
@@ -127,15 +126,15 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
         try {
             result = formatter.parse(newStatus);
         } catch (FormatterInternal.ParsingException | FormatterInternal.PathNotFoundException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' error on parsing received property '%s''s update '%s' because '%s'", getName(), getProto(), dbus_prop, newStatus, e.getMessage()), e);
-            log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' error on parsing received property '%s''s update", getName(), getProto(), dbus_prop));
+            log.warn(String.format("ListenerDBus for component '%s' of proto '%s' error on parsing received property '%s''s update '%s' because '%s'", getName(), getProto(), dbus_prop, newStatus, e.getMessage()), e);
+            log.debug(String.format("ListenerDBus for component '%s' of proto '%s' error on parsing received property '%s''s update", getName(), getProto(), dbus_prop));
             return;
         }
 
-        log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' read state '%s'", getName(), getProto(), result));
+        log.debug(String.format("ListenerDBus for component '%s' of proto '%s' read state '%s'", getName(), getProto(), result));
 
         if (value.compareTo(result) == 0){
-            log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' get same result as last attempt, skip it", getName(), getProto()));
+            log.debug(String.format("ListenerDBus for component '%s' of proto '%s' get same result as last attempt, skip it", getName(), getProto()));
             return;
         }
         value = result;
@@ -144,16 +143,16 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
         try {
             resultEvaluated = evaluator.evaluate(result);
         } catch (EvaluatorInternal.EvaluationException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' error on evaluating property '%s''s value '%s' because '%s'", getName(), getProto(), dbus_prop, result, e.getMessage()), e);
-            log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' error on evaluating value '%s'", getName(), getProto(), result));
+            log.warn(String.format("ListenerDBus for component '%s' of proto '%s' error on evaluating property '%s''s value '%s' because '%s'", getName(), getProto(), dbus_prop, result, e.getMessage()), e);
+            log.debug(String.format("ListenerDBus for component '%s' of proto '%s' error on evaluating value '%s'", getName(), getProto(), result));
             return;
         }
 
-log.info(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' monitored '%s' property and get '%s' value from '%s' result", getName(), getProto(), dbus_prop, resultEvaluated, result));
-        log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' of proto '%s' monitored '%s' property and get '%s' value from '%s' result", getName(), getProto(), dbus_prop, resultEvaluated, result));
+log.info(String.format("ListenerDBus for component '%s' of proto '%s' monitored '%s' property and get '%s' value from '%s' result", getName(), getProto(), dbus_prop, resultEvaluated, result));
+        log.debug(String.format("ListenerDBus for component '%s' of proto '%s' monitored '%s' property and get '%s' value from '%s' result", getName(), getProto(), dbus_prop, resultEvaluated, result));
 
         if (!convertAndSetStatus(resultEvaluated))
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerDBus for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
+            log.warn(String.format("ListenerDBus for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
     }
 
 }

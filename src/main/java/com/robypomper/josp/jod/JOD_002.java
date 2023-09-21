@@ -41,10 +41,8 @@ import com.robypomper.josp.jod.structure.JODStructure_002;
 import com.robypomper.josp.protocol.JOSPProtocol;
 import com.robypomper.josp.states.StateException;
 import com.robypomper.josp.jod.BuildInfoJospJOD;
-import com.robypomper.log.Mrk_JOD;
-import com.robypomper.log.Mrk_JSL;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Random;
@@ -59,7 +57,7 @@ public class JOD_002 extends AbsJOD {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(JOD_002.class);
 
 
     // Constructor
@@ -85,7 +83,7 @@ public class JOD_002 extends AbsJOD {
         Events.setInstance(events);
 
         String instanceId = Integer.toString(new Random().nextInt(MAX_INSTANCE_ID));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("Init JOD instance id '%s'", instanceId));
+        log.info(String.format("Init JOD instance id '%s'", instanceId));
 
         Events.registerJODStart("Start sub-system creation", instanceId);
         JCPAPIsClientObj jcpClient = new JCPAPIsClientObj(
@@ -101,9 +99,9 @@ public class JOD_002 extends AbsJOD {
                 Events.registerJCPConnection("JCP Connected", jcpClient);
 
             } catch (JCPClient2.AuthenticationException e) {
-                log.debug(Mrk_JSL.JSL_MAIN, String.format("Error on user authentication to the JCP %s", e.getMessage()), e);
-                log.warn(Mrk_JSL.JSL_MAIN, "Error on user authentication please check JCP client's id and secret in your object's configurations");
-                //log.warn(Mrk_JSL.JSL_MAIN, String.format("Error on user authentication to the JCP %s, retry", e.getMessage()), e);
+                log.debug(String.format("Error on user authentication to the JCP %s", e.getMessage()), e);
+                log.warn("Error on user authentication please check JCP client's id and secret in your object's configurations");
+                //log.warn(String.format("Error on user authentication to the JCP %s, retry", e.getMessage()), e);
                 //jcpClient.connect();
 
             } catch (StateException e) {

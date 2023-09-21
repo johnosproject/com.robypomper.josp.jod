@@ -29,10 +29,9 @@ import com.robypomper.josp.jod.history.JODHistory;
 import com.robypomper.josp.jod.objinfo.JODObjectInfo;
 import com.robypomper.josp.protocol.JOSPPerm;
 import com.robypomper.josp.protocol.JOSPProtocol_ObjectToService;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 
@@ -43,7 +42,7 @@ public class JODStructure_002 implements JODStructure {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(JODStructure_002.class);
     private final JODObjectInfo objInfo;
     private final JODExecutorMngr executorMngr;
     private final JODHistory history;
@@ -70,7 +69,7 @@ public class JODStructure_002 implements JODStructure {
 
         root = loadStructure(objInfo.readStructureStr());
 
-        log.info(Mrk_JOD.JOD_STRU, String.format("Initialized JODStructure instance for '%s' object from '%s' file", objInfo.getObjName(), objInfo.getStructurePath()));
+        log.info(String.format("Initialized JODStructure instance for '%s' object from '%s' file", objInfo.getObjName(), objInfo.getStructurePath()));
         logStructure(root, 34, 64);
 
         AbsJODAction.loadAllActionClasses();
@@ -82,7 +81,7 @@ public class JODStructure_002 implements JODStructure {
             String indentFormat = "%" + (level + 2) + "s";
             indentStr = String.format(indentFormat, "> ");
         }
-        log.debug(Mrk_JOD.JOD_STRU, String.format("%-" + space + "s (%s)", indentStr + component.getName(), component.getType()));
+        log.debug(String.format("%-" + space + "s (%s)", indentStr + component.getName(), component.getType()));
 
         if (component instanceof JODContainer) {
             for (JODComponent subComp : ((JODContainer) component).getComponents())
@@ -169,7 +168,7 @@ public class JODStructure_002 implements JODStructure {
      */
     @Override
     public void startAutoRefresh() {
-        log.warn(Mrk_JOD.JOD_STRU, "JODStructure AutoRefresh can't started: not implemented");
+        log.warn("JODStructure AutoRefresh can't started: not implemented");
     }
 
     /**
@@ -177,7 +176,7 @@ public class JODStructure_002 implements JODStructure {
      */
     @Override
     public void stopAutoRefresh() {
-        log.warn(Mrk_JOD.JOD_STRU, "JODStructure AutoRefresh can't stopped: not implemented");
+        log.warn("JODStructure AutoRefresh can't stopped: not implemented");
     }
 
     /**
@@ -199,7 +198,7 @@ public class JODStructure_002 implements JODStructure {
      * Load object's structure from data file.
      */
     private JODRoot loadStructure(String structureStr) throws ParsingException {
-        log.debug(Mrk_JOD.JOD_STRU, "Loading object structure");
+        log.debug("Loading object structure");
 
         JODRoot root;
         try {
@@ -211,18 +210,18 @@ public class JODStructure_002 implements JODStructure {
             injectVars.addValue(JODHistory.class, history);
             objMapper.setInjectableValues(injectVars);
 
-            log.trace(Mrk_JOD.JOD_STRU, String.format("Parsing '%s' object structure '%s...'", objInfo.getObjId(), structureStr.substring(0, 100).replace("\n", " ")));
+            log.trace(String.format("Parsing '%s' object structure '%s...'", objInfo.getObjId(), structureStr.substring(0, 100).replace("\n", " ")));
             root = objMapper.readerFor(JODRoot_Jackson.class).readValue(structureStr);
             Events.registerStructLoad(root.getModel(), objInfo.getJODVersion(), root.getComponents().size());
 
         } catch (JsonProcessingException e) {
             String eMessage = e.getMessage().indexOf('\n') == -1 ? e.getMessage() : e.getMessage().substring(0, e.getMessage().indexOf('\n'));
-            log.warn(Mrk_JOD.JOD_STRU, String.format("Error on loading object structure because %s", eMessage), e);
+            log.warn(String.format("Error on loading object structure because %s", eMessage), e);
             Events.registerStructLoad(e);
             throw new ParsingException("Error on parsing JOD Structure", e);
         }
 
-        log.debug(Mrk_JOD.JOD_STRU, "Object structure loaded");
+        log.debug("Object structure loaded");
         lastStructureUpdate = new Date();
         return root;
     }

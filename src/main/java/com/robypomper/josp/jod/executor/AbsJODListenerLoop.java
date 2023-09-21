@@ -20,9 +20,9 @@
 package com.robypomper.josp.jod.executor;
 
 import com.robypomper.josp.jod.structure.JODComponent;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,7 +38,7 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
 
     // Internal vars
 
-    protected static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(AbsJODListenerLoop.class);
     private Thread thread;
     private boolean mustStop = false;
 
@@ -107,31 +107,31 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
      */
     @Override
     public void listen() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Start '%s' listener", getName()));
+        log.info(String.format("Start '%s' listener", getName()));
         if (isEnabled()) return;
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Starting listener server");
+        log.debug("Starting listener server");
         mustStop = false;
         //noinspection Convert2Lambda
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Thread listener server '%s' started", Thread.currentThread().getName()));
+                log.debug(String.format("Thread listener server '%s' started", Thread.currentThread().getName()));
                 while (!mustShoutingDown()) {
                     try {
                         getServerLoop();
                     } catch (Throwable t) {
-                        log.warn(Mrk_JOD.JOD_EXEC_SUB, String.format("Thread listener server '%s' thrown exception: %s", Thread.currentThread().getName(), t.getMessage()), t);
+                        log.warn(String.format("Thread listener server '%s' thrown exception: %s", Thread.currentThread().getName(), t.getMessage()), t);
                     }
                 }
-                log.trace(Mrk_JOD.JOD_EXEC_SUB, String.format("Thread listener server '%s' terminated", Thread.currentThread().getName()));
+                log.trace(String.format("Thread listener server '%s' terminated", Thread.currentThread().getName()));
             }
         });
         thread.setName(String.format(TH_LISTENER_NAME_FORMAT, getName()));
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Starting thread listener server '%s'", thread.getName()));
+        log.debug(String.format("Starting thread listener server '%s'", thread.getName()));
         thread.start();
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Listener server started");
+        log.debug("Listener server started");
     }
 
     /**
@@ -139,11 +139,11 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
      */
     @Override
     public void halt() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Stop '%s' listener server", getName()));
+        log.info(String.format("Stop '%s' listener server", getName()));
         if (!isEnabled()) return;
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Stopping listener server");
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Terminating thread listener server '%s'", thread.getName()));
+        log.debug("Stopping listener server");
+        log.debug(String.format("Terminating thread listener server '%s'", thread.getName()));
         mustStop = true;
         thread.interrupt();
         try {
@@ -151,13 +151,13 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
 
         } catch (InterruptedException e) {
             if (thread.isAlive())
-                log.warn(Mrk_JOD.JOD_EXEC_SUB, String.format("Thread server loop '%s' not terminated", thread.getName()));
+                log.warn(String.format("Thread server loop '%s' not terminated", thread.getName()));
         }
 
         if (!thread.isAlive())
-            log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Thread listener server '%s' stopped", thread.getName()));
+            log.debug(String.format("Thread listener server '%s' stopped", thread.getName()));
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Listener server stopped");
+        log.debug("Listener server stopped");
     }
 
 }

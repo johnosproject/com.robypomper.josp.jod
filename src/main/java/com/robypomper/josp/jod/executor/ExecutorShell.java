@@ -27,9 +27,9 @@ import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.log.Mrk_Commons;
-import com.robypomper.log.Mrk_JOD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 
@@ -54,6 +54,7 @@ public class ExecutorShell extends AbsJODExecutor implements JODBooleanAction.JO
 
     // Internal vars
 
+    private static final Logger log = LoggerFactory.getLogger(ExecutorShell.class);
     private final String cmd;
     private final String redirect;
 
@@ -69,7 +70,7 @@ public class ExecutorShell extends AbsJODExecutor implements JODBooleanAction.JO
      */
     public ExecutorShell(String name, String proto, String configsStr, JODComponent component) throws MissingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorShell for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ExecutorShell for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
         Map<String, String> configs = splitConfigsStrings(configsStr);
         cmd = parseConfigString(configs, PROP_CMD);
@@ -104,7 +105,7 @@ public class ExecutorShell extends AbsJODExecutor implements JODBooleanAction.JO
                         .substituteAction(commandAction)
                         .toString();
 
-        log.trace(Mrk_Commons.DISC_PUB_IMPL, String.format("Exec ExecutorShell cmd '%s'", cmdUpd));
+        log.trace(String.format("Exec ExecutorShell cmd '%s'", cmdUpd));
 
         // Split, redirect*redirectUpd!=null, CmdPartitioning
         try {
@@ -118,11 +119,11 @@ public class ExecutorShell extends AbsJODExecutor implements JODBooleanAction.JO
             }
 
         } catch (JavaExecProcess.ExecConcatException e) {
-            log.warn(Mrk_JOD.JOD_EXEC, String.format("ExecutorShell error on executing partial cmd '%s' for component '%s' because %s", cmdUpd, getName(), e.getMessage()), e);
+            log.warn(String.format("ExecutorShell error on executing partial cmd '%s' for component '%s' because %s", cmdUpd, getName(), e.getMessage()), e);
             return false;
 
         } catch (IOException e) {
-            log.warn(Mrk_JOD.JOD_EXEC, String.format("ExecutorShell error on writing output to '%s' file of partial cmd '%s' for component '%s' because %s", redirectUpd, cmdUpd, getName(), e.getMessage()), e);
+            log.warn(String.format("ExecutorShell error on writing output to '%s' file of partial cmd '%s' for component '%s' because %s", redirectUpd, cmdUpd, getName(), e.getMessage()), e);
             return false;
         }
 
@@ -145,7 +146,7 @@ public class ExecutorShell extends AbsJODExecutor implements JODBooleanAction.JO
                         .substituteAction(commandAction)
                         .toString();
 
-        log.trace(Mrk_Commons.DISC_PUB_IMPL, String.format("Exec ExecutorShell cmd '%s'", cmdUpd));
+        log.trace(String.format("Exec ExecutorShell cmd '%s'", cmdUpd));
 
         // Split, redirect*redirectUpd!=null, CmdPartitioning
         try {
@@ -154,11 +155,11 @@ public class ExecutorShell extends AbsJODExecutor implements JODBooleanAction.JO
                 JavaFiles.writeString(redirectUpd, output);
 
         } catch (JavaExecProcess.ExecConcatException e) {
-            log.warn(Mrk_JOD.JOD_EXEC, String.format("ExecutorShell error on executing partial cmd '%s' for component '%s' because %s", cmdUpd, getName(), e.getMessage()), e);
+            log.warn(String.format("ExecutorShell error on executing partial cmd '%s' for component '%s' because %s", cmdUpd, getName(), e.getMessage()), e);
             return false;
 
         } catch (IOException e) {
-            log.warn(Mrk_JOD.JOD_EXEC, String.format("ExecutorShell error on writing output to '%s' file of partial cmd '%s' for component '%s' because %s", redirectUpd, cmdUpd, getName(), e.getMessage()), e);
+            log.warn(String.format("ExecutorShell error on writing output to '%s' file of partial cmd '%s' for component '%s' because %s", redirectUpd, cmdUpd, getName(), e.getMessage()), e);
             return false;
         }
 

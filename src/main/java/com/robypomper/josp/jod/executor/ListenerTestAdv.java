@@ -23,8 +23,9 @@ import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanState;
 import com.robypomper.josp.jod.structure.pillars.JODRangeState;
-import com.robypomper.log.Mrk_JOD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 
@@ -56,6 +57,7 @@ public class ListenerTestAdv extends AbsJODListenerLoop {
 
     // Internal vars
 
+    private static final Logger log = LoggerFactory.getLogger(ListenerTestAdv.class);
     private int frequency = 1;
     private int sleepTime = 1000;
 
@@ -72,7 +74,7 @@ public class ListenerTestAdv extends AbsJODListenerLoop {
      */
     public ListenerTestAdv(String name, String proto, String configsStr, JODComponent component) throws ParsingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTestAdv for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ListenerTestAdv for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
         Map<String, String> configs = splitConfigsStrings(configsStr);
         frequency = parseConfigInt(configs, PROP_FREQUENCY, Integer.toString(frequency));
@@ -92,13 +94,13 @@ public class ListenerTestAdv extends AbsJODListenerLoop {
      */
     @Override
     protected void getServerLoop() {
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTestAdv for component '%s' with frequency='%d' and sleepTime='%d'ms", getName(), frequency, sleepTime));
+        log.trace(String.format("ListenerTestAdv for component '%s' with frequency='%d' and sleepTime='%d'ms", getName(), frequency, sleepTime));
 
         int count = 0;
         while (!mustShoutingDown()) {
             count++;
             if (count % frequency == 0) {
-                log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTestAdv for component '%s' of proto '%s' listened", getName(), getProto()));
+                log.trace(String.format("ListenerTestAdv for component '%s' of proto '%s' listened", getName(), getProto()));
 
                 // For each JODState supported
                 if (getComponent() instanceof JODBooleanState)
@@ -115,7 +117,7 @@ public class ListenerTestAdv extends AbsJODListenerLoop {
             }
         }
 
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTestAdv for component '%s' terminated", getName()));
+        log.trace(String.format("ListenerTestAdv for component '%s' terminated", getName()));
     }
 
 }

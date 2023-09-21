@@ -29,10 +29,9 @@ import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODStateUpdate;
 import com.robypomper.josp.protocol.HistoryLimits;
 import com.robypomper.josp.protocol.JOSPStatusHistory;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ public class JODHistory_002 implements JODHistory {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(JODHistory_002.class);
     private final JODSettings_002 locSettings;
     private JCPAPIsClientObj jcpClient;
     private Caller20 apiObjsCaller;
@@ -168,9 +167,9 @@ public class JODHistory_002 implements JODHistory {
         statuses = tmpStatuses;
         stats = tmpStats;
 
-        log.info(Mrk_JOD.JOD_HISTORY, "Initialized JODHistory instance");
-        log.debug(Mrk_JOD.JOD_HISTORY, String.format("                                   History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
-        log.debug(Mrk_JOD.JOD_HISTORY, String.format("                                   History stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+        log.info("Initialized JODHistory instance");
+        log.debug(String.format("                                   History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
+        log.debug(String.format("                                   History stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
     }
 
 
@@ -198,8 +197,8 @@ public class JODHistory_002 implements JODHistory {
                             int pre = statuses.countBuffered();
                             statuses.flushCache(REDUCE_BUFFER);
                             int post = statuses.countBuffered();
-                            log.debug(Mrk_JOD.JOD_HISTORY, String.format("Flushed %d statuses to file", pre - post));
-                            log.debug(Mrk_JOD.JOD_HISTORY, String.format("History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
+                            log.debug(String.format("Flushed %d statuses to file", pre - post));
+                            log.debug(String.format("History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
                         }
 
                     } catch (IOException ignore) {
@@ -227,19 +226,19 @@ public class JODHistory_002 implements JODHistory {
             }
 
             if (toUpload.size() == 0) {
-                log.debug(Mrk_JOD.JOD_HISTORY, String.format("No statuses found to uploads (CloudStats values lastUpd: %d; lastStored: %d", stats.lastUploaded, stats.lastStored));
+                log.debug(String.format("No statuses found to uploads (CloudStats values lastUpd: %d; lastStored: %d", stats.lastUploaded, stats.lastStored));
                 return;
             }
 
-            log.debug(Mrk_JOD.JOD_HISTORY, String.format("Upload from %d to %d (%d statuses)", toUpload.get(0).getId(), toUpload.get(toUpload.size() - 1).getId(), toUpload.size()));
+            log.debug(String.format("Upload from %d to %d (%d statuses)", toUpload.get(0).getId(), toUpload.get(toUpload.size() - 1).getId(), toUpload.size()));
             for (JOSPStatusHistory e : toUpload)
-                log.trace(Mrk_JOD.JOD_HISTORY, String.format("- event[%d] %s", e.getId(), e.getPayload()));
+                log.trace(String.format("- event[%d] %s", e.getId(), e.getPayload()));
 
             try {
                 apiObjsCaller.postHistory(JOSPStatusHistory.toHistoryStatuses(toUpload));
 
             } catch (JCPClient2.ConnectionException | JCPClient2.AuthenticationException | JCPClient2.ResponseException | JCPClient2.RequestException e) {
-                log.warn(Mrk_JOD.JOD_HISTORY, String.format("Can't upload statuses history (CloudStats values lastUpd: %d; lastStored: %d) (%s)", stats.lastUploaded, stats.lastStored, e));
+                log.warn(String.format("Can't upload statuses history (CloudStats values lastUpd: %d; lastStored: %d) (%s)", stats.lastUploaded, stats.lastStored, e));
                 return;
             }
 
@@ -307,9 +306,9 @@ public class JODHistory_002 implements JODHistory {
     @Override
     public void startCloudSync() {
         isSyncing = true;
-        log.info(Mrk_JOD.JOD_HISTORY, "Start statuses sync to cloud");
-        log.debug(Mrk_JOD.JOD_HISTORY, String.format("Events buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
-        log.debug(Mrk_JOD.JOD_HISTORY, String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+        log.info("Start statuses sync to cloud");
+        log.debug(String.format("Events buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
+        log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
         sync();
     }
@@ -322,11 +321,11 @@ public class JODHistory_002 implements JODHistory {
                 int pre = statuses.countBuffered();
                 statuses.storeCache();
                 int post = statuses.countBuffered();
-                log.debug(Mrk_JOD.JOD_HISTORY, String.format("Stored %d statuses to file", pre - post));
+                log.debug(String.format("Stored %d statuses to file", pre - post));
 
-                log.info(Mrk_JOD.JOD_HISTORY, "Stop event sync to cloud");
-                log.debug(Mrk_JOD.JOD_HISTORY, String.format("Events buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
-                log.debug(Mrk_JOD.JOD_HISTORY, String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+                log.info("Stop event sync to cloud");
+                log.debug(String.format("Events buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
+                log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
             } catch (IOException ignore) {
                 assert false;

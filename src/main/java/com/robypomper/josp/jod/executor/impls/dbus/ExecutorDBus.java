@@ -26,11 +26,10 @@ import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.freedesktop.dbus.exceptions.DBusException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
 
     // Internal vars
 
-    protected static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(ExecutorDBus.class);
     protected final DBusInstance dbus_instance;
     protected final String dbus_name;
     protected final String dbus_obj_path;
@@ -74,7 +73,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     public ExecutorDBus(String name, String proto, String configsStr, JODComponent component) throws MissingPropertyException, FactoryException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorDBus for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ExecutorDBus for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
         try {
             dbus_instance = DBusInstance.getInstance();
@@ -88,7 +87,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
         dbus_iface = parseConfigString(configs, PROP_DBUS_IFACE);
         dbus_method = parseConfigString(configs, PROP_DBUS_METHOD);
         dbus_method_params = parseConfigString(configs, PROP_DBUS_METHOD_PARAMS, DEF_PROP_DBUS_METHOD_PARAMS);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorDBus for component '%s' listen for changes on '%s/%s' bus/property.", getName(), dbus_name, dbus_method));
+        log.trace(String.format("ExecutorDBus for component '%s' listen for changes on '%s/%s' bus/property.", getName(), dbus_name, dbus_method));
     }
 
 
@@ -103,9 +102,9 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
         System.out.printf("\tnewState %b%n", cmdAction.newState);
         System.out.printf("\toldState %b%n", cmdAction.oldState);
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Executing '%s' executor", getName()));
+        log.debug(String.format("Executing '%s' executor", getName()));
         if (!isEnabled()) {
-            log.warn(Mrk_JOD.JOD_EXEC_SUB, String.format("Error on exec '%s' executor because disabled", getName()));
+            log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
             return false;
         }
 
@@ -124,7 +123,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
         Vector<String> method_args_as_str_generated = new Vector<>();
         for (Object o : method_args)
             method_args_as_str_generated.add(String.format("%s:%s", o.toString(), o.getClass().getSimpleName()));
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Executor '%s' executed method '%s(%s)' => '%s'",
+        log.info(String.format("Executor '%s' executed method '%s(%s)' => '%s'",
                 getName(), dbus_method, String.join(",", method_args_as_str_generated), res));
 
         ((JODState) getComponent()).forceCheckState();
@@ -190,9 +189,9 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
         System.out.printf("\toldState %f%n", cmdAction.oldState);
 
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Executing '%s' executor", getName()));
+        log.debug(String.format("Executing '%s' executor", getName()));
         if (!isEnabled()) {
-            log.warn(Mrk_JOD.JOD_EXEC_SUB, String.format("Error on exec '%s' executor because disabled", getName()));
+            log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
             return false;
         }
 
@@ -209,7 +208,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
                 dbus_method, method_args, null);
 
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Executor '%s' executed method '%s(%s)' => '%s'",
+        log.debug(String.format("Executor '%s' executed method '%s(%s)' => '%s'",
                 getName(), dbus_method, method_args_as_str, res));
 
         ((JODState) getComponent()).forceCheckState();

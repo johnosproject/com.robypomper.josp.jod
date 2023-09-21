@@ -25,10 +25,9 @@ import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanState;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeState;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class AbsJODContainer extends AbsJODComponent
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(AbsJODContainer.class);
     private Map<String, JODComponent> components = null;
     private JODExecutorMngr executorMngr = null;
 
@@ -207,7 +206,7 @@ public class AbsJODContainer extends AbsJODComponent
             }
 
         } catch (JODStructure.ComponentInitException e) {
-            log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error creating state component '%s' for parent container '%s' because %s", compName, parentCompName, e.getMessage()), e);
+            log.warn(String.format("Error creating state component '%s' for parent container '%s' because %s", compName, parentCompName, e.getMessage()), e);
             throw new JODStructure.InstantiationParsedDataException(compType, compName, listener, puller, e);
         }
 
@@ -234,21 +233,21 @@ public class AbsJODContainer extends AbsJODComponent
                     min = Double.parseDouble((String) compSettings.get(StructureDefinitions.PROP_COMPONENT_RANGE_MIN));
                 } catch (Throwable e) {
                     if (!(e instanceof NullPointerException))
-                        log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error parsing param 'min' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
+                        log.warn(String.format("Error parsing param 'min' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
                     min = null;
                 }
                 try {
                     max = Double.parseDouble((String) compSettings.get(StructureDefinitions.PROP_COMPONENT_RANGE_MAX));
                 } catch (Throwable e) {
                     if (!(e instanceof NullPointerException))
-                        log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error parsing param 'max' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
+                        log.warn(String.format("Error parsing param 'max' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
                     max = null;
                 }
                 try {
                     step = Double.parseDouble((String) compSettings.get(StructureDefinitions.PROP_COMPONENT_RANGE_STEP));
                 } catch (Throwable e) {
                     if (!(e instanceof NullPointerException))
-                        log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error parsing param 'step' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
+                        log.warn(String.format("Error parsing param 'step' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
                     step = null;
                 }
                 return new JODRangeState(getStructure(), getExecutorMngr(), getHistory(), compName, descr, listener, puller, min, max, step);
@@ -261,28 +260,28 @@ public class AbsJODContainer extends AbsJODComponent
                     min = Double.parseDouble((String) compSettings.get(StructureDefinitions.PROP_COMPONENT_RANGE_MIN));
                 } catch (Throwable e) {
                     if (!(e instanceof NullPointerException))
-                        log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error parsing param 'min' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
+                        log.warn(String.format("Error parsing param 'min' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
                     min = null;
                 }
                 try {
                     max = Double.parseDouble((String) compSettings.get(StructureDefinitions.PROP_COMPONENT_RANGE_MAX));
                 } catch (Throwable e) {
                     if (!(e instanceof NullPointerException))
-                        log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error parsing param 'max' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
+                        log.warn(String.format("Error parsing param 'max' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
                     max = null;
                 }
                 try {
                     step = Double.parseDouble((String) compSettings.get(StructureDefinitions.PROP_COMPONENT_RANGE_STEP));
                 } catch (Throwable e) {
                     if (!(e instanceof NullPointerException))
-                        log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error parsing param 'step' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
+                        log.warn(String.format("Error parsing param 'step' of range state component '%s' for parent container '%s' because %s, default value will used", compName, parentCompName, e.getMessage()), e);
                     step = null;
                 }
                 return new JODRangeAction(getStructure(), getExecutorMngr(), getHistory(), compName, descr, listener, puller, executor, min, max, step);
             }
 
         } catch (JODStructure.ComponentInitException e) {
-            log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error creating state component '%s' for parent container '%s' because %s", compName, parentCompName, e.getMessage()), e);
+            log.warn(String.format("Error creating state component '%s' for parent container '%s' because %s", compName, parentCompName, e.getMessage()), e);
             throw new JODStructure.InstantiationParsedDataException(compType, compName, listener, puller, e);
         }
 
@@ -299,12 +298,12 @@ public class AbsJODContainer extends AbsJODComponent
     protected JODContainer createContainer(String parentCompName, String compName, Map<String, Object> compSettings) throws JODStructure.ParsingException {
         String descr = (String) compSettings.get(StructureDefinitions.PROP_COMPONENT_DESCR);
 
-        log.debug(Mrk_JOD.JOD_STRU_SUB, String.format("Creating container component '%s' for parent container '%s'", compName, parentCompName));
+        log.debug(String.format("Creating container component '%s' for parent container '%s'", compName, parentCompName));
 
 
         AbsJODContainer cont = new AbsJODContainer(getStructure(), getHistory(), compName, descr);
 
-        log.trace(Mrk_JOD.JOD_STRU_SUB, String.format("Create and set container '%s''s sub components", compName));
+        log.trace(String.format("Create and set container '%s''s sub components", compName));
         @SuppressWarnings("unchecked")
         Map<String, Object> contains = (Map<String, Object>) compSettings.get("contains");
         Map<String, JODComponent> subComps = createFromContains(compName, contains);
@@ -314,7 +313,7 @@ public class AbsJODContainer extends AbsJODComponent
             // container's components not set during container initialization
         }
 
-        log.debug(Mrk_JOD.JOD_STRU_SUB, String.format("Container component '%s' created for parent container '%s'", compName, parentCompName));
+        log.debug(String.format("Container component '%s' created for parent container '%s'", compName, parentCompName));
         return cont;
     }
 
@@ -332,7 +331,7 @@ public class AbsJODContainer extends AbsJODComponent
      * @return a map containing the pairs name/component.
      */
     protected Map<String, JODComponent> createFromContains(String compName, Map<String, Object> subComps) throws JODStructure.ParsingException {
-        log.trace(Mrk_JOD.JOD_STRU_SUB, String.format("Creating sub components '%s' for container '%s'", subComps.keySet(), compName));
+        log.trace(String.format("Creating sub components '%s' for container '%s'", subComps.keySet(), compName));
 
         Map<String, JODComponent> components = new HashMap<>();
         for (Map.Entry<String, Object> compJson : subComps.entrySet()) {

@@ -30,15 +30,16 @@ import com.robypomper.josp.jod.structure.JODStructure;
 import com.robypomper.josp.jod.structure.StructureDefinitions;
 import com.robypomper.josp.jod.structure.executor.JODComponentExecutor;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class JODBooleanAction extends JODBooleanState implements JODAction {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(JODBooleanAction.class);
     private final JODExecutor exec;
 
 
@@ -65,12 +66,12 @@ public class JODBooleanAction extends JODBooleanState implements JODAction {
 
         try {
             if (executor != null) {
-                log.trace(Mrk_JOD.JOD_STRU_SUB, String.format("Setting action component '%s' executor '%s'", getName(), listener));
+                log.trace(String.format("Setting action component '%s' executor '%s'", getName(), listener));
                 JODComponentExecutor compWorker = new JODComponentExecutor(this, name, AbsJODWorker.extractProto(executor), AbsJODWorker.extractConfigsStr(executor));
                 exec = execMngr.initExecutor(compWorker);
 
             } else {
-                log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error on setting action component '%s' executor because no executor given", getName()));
+                log.warn(String.format("Error on setting action component '%s' executor because no executor given", getName()));
                 throw new JODStructure.ComponentInitException(String.format("Error on setting action component '%s' executor because not set", getName()));
             }
 
@@ -104,19 +105,19 @@ public class JODBooleanAction extends JODBooleanState implements JODAction {
 
     @Override
     public boolean execAction(JOSPProtocol.ActionCmd commandAction) {
-        log.debug(Mrk_JOD.JOD_STRU_SUB, String.format("Executing component '%s' action", getName()));
+        log.debug(String.format("Executing component '%s' action", getName()));
         if (commandAction.getCommand() instanceof JOSPBoolean) {
             JOSPBoolean cmdAction = (JOSPBoolean) commandAction.getCommand();
             if (exec instanceof JOSPBoolean.Executor)
                 if (!((JOSPBoolean.Executor) exec).exec(commandAction, cmdAction)) {
-                    log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error on executing component '%s' action", getName()));
+                    log.warn(String.format("Error on executing component '%s' action", getName()));
                     return false;
                 }
         } else {
-            log.warn(Mrk_JOD.JOD_STRU_SUB, String.format("Error on executing component '%s' action because command type '%s' not supported", getName(), commandAction.getCommand().getType()));
+            log.warn(String.format("Error on executing component '%s' action because command type '%s' not supported", getName(), commandAction.getCommand().getType()));
             return false;
         }
-        log.debug(Mrk_JOD.JOD_STRU_SUB, String.format("Component '%s' executed action", getName()));
+        log.debug(String.format("Component '%s' executed action", getName()));
         return true;
     }
 
