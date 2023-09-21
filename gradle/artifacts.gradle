@@ -52,8 +52,8 @@ dependencies {
     implementation "com.jayway.jsonpath:json-path:${project.ext.get("version.json-path")}"
     implementation "com.github.hypfvieh:dbus-java-core:${project.ext.get("version.dbus-java")}"
     implementation "com.github.hypfvieh:dbus-java-transport-jnr-unixsocket:${project.ext.get("version.dbus-java")}"
-    // TDO set following dependencies as runtimeOnly and update the jar-deps generation using the runtimeOnly config and path
-    implementation "org.slf4j:slf4j-nop:${project.ext.get("version.slf4j")}"
+    // TODO set following dependencies as runtimeOnly and update the jar-deps generation using the runtimeOnly config and path
+    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:${project.ext.get("version.apache.log4j")}"
 }
 
 GradleBuildInfo.makeBuildInfoForSourceSet(project, sourceSets.main)
@@ -68,7 +68,10 @@ boolean overrideIfExist = false
 String FileConfigs_JOD = "src/main/configs/jod_default.yml"
 String FileConfigs_Struct = "src/main/configs/struct_default.jod"
 String FileConfigs_Perms = "src/main/configs/perms_default.jod"
-String FileConfigs_Log4j2 = 'src/main/configs/log4j2/log4j2.xml'
+def log4j2_config_variant = ext.get('jospMode') == ext.get('jospModes.RELEASE')
+        ? "release"
+        : "dev"
+String FileConfigs_Log4j2 = "src/main/configs/log4j2/log4j2_${log4j2_config_variant}.xml"
 File WorkingDir = file("envs/runnables/jod")
 String MainClass = !hasProperty('artifactMainClass')
         ? null
@@ -89,6 +92,7 @@ tasks.run {
         setMain(MainClass)
 
     jvmArgs = [
+            '-Dlog4j.configurationFile=' + "" + WorkingDir + "/configs/log4j2.xml",
             //'-Dlog4j.configurationFile=' + project.file(FileConfigs_Log4j2).absolutePath,
             //'-Djavax.net.debug=ssl'],
     ]

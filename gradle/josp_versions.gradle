@@ -104,7 +104,6 @@ ext {
     set('version.json-path'         , '2.8.0')
     set('version.dbus-java'         , '4.3.0')
     set('version.apache.log4j'        , '2.20.0')
-    set('version.slf4j'             , '2.0.9')
     set('version.junit-jupiter'     , '5.10.0')
 }
 //@formatter:on
