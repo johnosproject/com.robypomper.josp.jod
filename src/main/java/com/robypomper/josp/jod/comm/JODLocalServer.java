@@ -253,16 +253,24 @@ public class JODLocalServer extends ServerAbsSSL {
      * @param client the disconnected client's info.
      */
     private void onClientDisconnection(ServerClient client) {
+        log.debug(String.format("Removing client connection '%s:%s'", client.getSocket().getInetAddress(), client.getSocket().getPort()));
+
+        JODLocalClientInfo closedConn = new DefaultJODLocalClientInfo(client);
         JODLocalClientInfo locConn;
         synchronized (localClients) {
-            locConn = getLocalConnectionByServiceId(client.getLocalId());
-            if (locConn == null)
+            locConn = getLocalConnectionByServiceId(closedConn.getFullSrvId());
+            if (locConn == null) {
+                assert false : "locConn can't be null";
                 return;
+            }
+            if (locConn.getClientId().compareTo(closedConn.getClientId()) != 0) {
+                log.info(String.format("Removed unused connection '%s' for service '%s'", locConn.getClientFullAddress(), locConn.getFullSrvId()));
+                return;
+            }
             localClients.remove(locConn);
         }
-
         Events.registerLocalDisc("Local JSL disconnected", locConn, client);
-        log.info(String.format("JOD Local Server remove JSL '%s' connection '%s' because disconnected", locConn.getClientId(), locConn.getClientFullAddress()));
+        log.info(String.format("Removed JSL '%s' service because closed his connection '%s'", locConn.getFullSrvId(), locConn.getClientFullAddress()));
     }
 
     private void onClientFail(Server server, ServerClient client, String failMsg, Throwable exception) {
