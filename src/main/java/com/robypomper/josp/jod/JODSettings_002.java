@@ -24,6 +24,7 @@ import com.robypomper.settings.DefaultSettings;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
@@ -51,6 +52,12 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public static final String JODOBJ_IDCLOUD_DEF       = "";
     public static final String JODOBJ_IDHW              = "jod.obj.id_hw";
     public static final String JODOBJ_IDHW_DEF          = "";
+    /**
+     * Path to use as main dir for all relative paths, like the `jod.comm.local.ks.path`.
+     * By default, it's an empty string that means to use the working directory as base path.
+     */
+    public static final String JODOBJ_BASE_DIR          = "jod.obj.baseDir";
+    public static final String JODOBJ_BASE_DIR_DEF      = "";
 
     public static final String JODPULLER_IMPLS          = "jod.executor_mngr.pullers";
     public static final String JODPULLER_IMPLS_DEF      = "";
@@ -73,6 +80,39 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     public static final String JODCOMM_LOCAL_ENABLED    = "jod.comm.local.enabled";
     public static final String JODCOMM_LOCAL_ENABLED_DEF = "true";
+    
+    /**
+     * Path for the service's local keystore. It can be absolute or relative to `jod.obj.baseDir`.
+     * By default, it's an empty string, that means it will generate his own certificate at first
+     * object's connection and save it into `jod.comm.local.ks.defPath`.
+     */
+    public static final String JODCOMM_LOCAL_KS_PATH    = "jod.comm.local.ks.path";
+    public static final String JODCOMM_LOCAL_KS_PATH_DEF = "";
+
+    /**
+     * Password for the service's local keystore. 
+     * By default, it's an empty string that means no password.
+     */
+    public static final String JODCOMM_LOCAL_KS_PASS    = "jod.comm.local.ks.pass";
+    public static final String JODCOMM_LOCAL_KS_PASS_DEF = "";
+
+    /**
+     * Alias of the certificate stored into the service's local keystore. 
+     * By default, it's an empty string that means `$SRV_ID-LocalCert`.
+     */
+    public static final String JODCOMM_LOCAL_KS_ALIAS    = "jod.comm.local.ks.alias";
+    public static final String JODCOMM_LOCAL_KS_ALIAS_DEF = "";
+
+    /**
+     * Default path for the service's local keystore, used when no path is specified
+     * into `` property and a new keystore is generated.
+     * By default, it's `{@value #JODCOMM_LOCAL_KS_DEF_PATH_DEF}`.
+     * It can be also an empty string, then the `{@value com.robypomper.josp.jod.comm.JODLocalServer#KS_DEF_PATH}`
+     * value will be used.
+     */
+    public static final String JODCOMM_LOCAL_KS_DEF_PATH = "jod.comm.local.ks.defPath";
+    public static final String JODCOMM_LOCAL_KS_DEF_PATH_DEF = "./configs/local_ks.jks";
+
     public static final String JODCOMM_LOCAL_DISCOVERY  = "jod.comm.local.discovery";
     public static final String JODCOMM_LOCAL_DISCOVERY_DEF = "Auto";
     public static final String JODCOMM_LOCAL_PORT       = "jod.comm.local.port";
@@ -172,6 +212,11 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
         store(JODOBJ_IDHW, objIdHw, true);
     }
 
+    public String getObjBaseDir() {
+        return getString(JODOBJ_BASE_DIR, JODOBJ_BASE_DIR_DEF);
+    }
+
+
 
     // Executor Manager
 
@@ -254,6 +299,29 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public boolean getLocalEnabled() {
         return getBoolean(JODCOMM_LOCAL_ENABLED, JODCOMM_LOCAL_ENABLED_DEF);
     }
+
+    public String getLocalKeyStorePath() {
+        String path = getString(JODCOMM_LOCAL_KS_PATH, JODCOMM_LOCAL_KS_PATH_DEF);
+        if (!Paths.get(path).isAbsolute())
+            path = Paths.get(getObjBaseDir(), path).toString();
+        return path;
+    }
+
+    public String getLocalKeyStorePass() {
+        return getString(JODCOMM_LOCAL_KS_PASS, JODCOMM_LOCAL_KS_PASS_DEF);
+    }
+
+    public String getLocalKeyStoreAlias() {
+        return getString(JODCOMM_LOCAL_KS_ALIAS, JODCOMM_LOCAL_KS_ALIAS_DEF);
+    }
+
+    public String getLocalKeyStoreDefaultPath() {
+        String path = getString(JODCOMM_LOCAL_KS_DEF_PATH, JODCOMM_LOCAL_KS_DEF_PATH_DEF);
+        if (!Paths.get(path).isAbsolute())
+            path = Paths.get(getObjBaseDir(), path).toString();
+        return path;
+    }
+
 
     //@Override
     public String getLocalDiscovery() {

@@ -40,6 +40,7 @@ import com.robypomper.josp.protocol.JOSPProtocol_ObjectToService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
+import java.io.File;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -58,6 +59,7 @@ public class JODLocalServer extends ServerAbsSSL {
     // Class constants
 
     public static final String KS_PASS = "123456";
+    public static final String KS_DEF_PATH = "./configs/local_ks.jks";
 
 
     // Internal vars
@@ -72,21 +74,41 @@ public class JODLocalServer extends ServerAbsSSL {
     // Constructor
 
     public static JODLocalServer instantiate(JODCommunication communication, JODObjectInfo objInfo,
-                                             JODPermissions permissions, int port) {
-
-        String localId = objInfo.getObjId();
-
+                                             JODPermissions permissions, int port,
+                                             String ksPath, String ksPass, String ksAlias, String defKsPath) throws JavaJKS.LoadingException, JavaJKS.GenerationException, JavaSSL.GenerationException {
         AbsCustomTrustManager trustManager = new DynAddTrustManager();
         Certificate localCertificate = null;
         SSLContext sslCtx = null;
-        try {
-            KeyStore clientKeyStore = JavaJKS.generateKeyStore(localId, KS_PASS, localId + "-LocalCert");
-            localCertificate = JavaJKS.extractCertificate(clientKeyStore, localId + "-LocalCert");
-            sslCtx = JavaSSL.generateSSLContext(clientKeyStore, KS_PASS, trustManager);
 
-        } catch (JavaJKS.GenerationException | JavaSSL.GenerationException e) {
-            assert false : String.format("JKS and SSL generation are standard and should not throw exception [%s] %s", e.getClass().getSimpleName(), e.getMessage());
+        String objHWId = objInfo.getObjId().substring(0,objInfo.getObjId().indexOf('-'));
+
+        if (ksPath == null || ksPath.isEmpty()) {
+            ksPath = defKsPath != null && !defKsPath.isEmpty() ? defKsPath : KS_DEF_PATH;   // name - the system-dependent filename
+            ksPass = KS_PASS;
         }
+
+        if (ksAlias == null || ksAlias.isEmpty()) {
+            ksAlias = objHWId + "-LocalCert";
+            //ksAlias = objInfo.getObjId() + "-LocalCert";
+        }
+
+        KeyStore clientKeyStore;
+        if (new File(ksPath).exists()) {
+            log.debug(String.format("Load keystore from '%s' path.", ksPath));
+            clientKeyStore = JavaJKS.loadKeyStore(ksPath, ksPass);
+        }
+        else {
+            // certificateId = objInfo.getObjId(), ksPass = KS_PASS, certAlias = objHwId + "-LocalCert"
+            log.debug(String.format("Generate keystore and store to '%s' path.", ksPath));
+            clientKeyStore = JavaJKS.generateKeyStore(objInfo.getObjId(), KS_PASS, ksAlias);
+            JavaJKS.storeKeyStore(clientKeyStore, ksPath, KS_PASS);
+        }
+
+        log.debug(String.format("Extract local certificate with '%s' alias.", ksAlias));
+        localCertificate = JavaJKS.extractCertificate(clientKeyStore, ksAlias);
+        if (localCertificate == null)
+            throw new JavaJKS.GenerationException(String.format("Certificate alias '%s' not found in '%s' keystore.", ksAlias, ksPath));
+        sslCtx = JavaSSL.generateSSLContext(clientKeyStore, KS_PASS, trustManager);
 
         return new JODLocalServer(communication, objInfo, permissions, port, sslCtx, trustManager, localCertificate);
     }
@@ -278,6 +300,7 @@ public class JODLocalServer extends ServerAbsSSL {
             if (exception instanceof PeerConnectionException) {
                 Socket exClient = ((PeerConnectionException) exception).getSocket();
                 log.debug(String.format("Error occurred during client '%s:%d' connection, client discharged", exClient.getInetAddress(), exClient.getPort()));
+                log.debug(String.format("Error occurred during client '%s:%d' connection, details: [%s] %s", exClient.getInetAddress(), exClient.getPort(), exception.getClass().getSimpleName(), exception));
             }
         } else
             log.warn(String.format("Error local client '%s' connection (%s) [%s] %s", client, failMsg, exception.getClass().getSimpleName(), exception));

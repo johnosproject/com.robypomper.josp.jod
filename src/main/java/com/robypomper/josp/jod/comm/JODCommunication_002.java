@@ -23,6 +23,8 @@ import com.robypomper.comm.peer.Peer;
 import com.robypomper.comm.peer.PeerConnectionListener;
 import com.robypomper.discovery.DiscoverySystemFactory;
 import com.robypomper.discovery.Publisher;
+import com.robypomper.java.JavaJKS;
+import com.robypomper.java.JavaSSL;
 import com.robypomper.java.JavaJSONArrayToFile;
 import com.robypomper.josp.clients.JCPAPIsClientObj;
 import com.robypomper.josp.clients.JCPClient2;
@@ -112,11 +114,13 @@ public class JODCommunication_002 implements JODCommunication {
         }
     }
 
-    private JODLocalServer initLocalServer() {
+    private JODLocalServer initLocalServer() throws JavaJKS.GenerationException, JavaSSL.GenerationException, JavaJKS.LoadingException {
         int localPort = locSettings.getLocalServerPort();
         log.trace(String.format("Local object's server use '%s' server id", objInfo.getObjId()));
         log.trace(String.format("Local object's server use '%d' port", localPort));
-        return JODLocalServer.instantiate(this, objInfo, permissions, localPort);
+        return JODLocalServer.instantiate(this, objInfo, permissions, localPort,
+                locSettings.getLocalKeyStorePath(), locSettings.getLocalKeyStorePass(),
+                locSettings.getLocalKeyStoreAlias(), locSettings.getLocalKeyStoreDefaultPath());
     }
 
 
@@ -564,15 +568,22 @@ public class JODCommunication_002 implements JODCommunication {
             log.debug("Local object's server published");
             Events.registerLocalStart("Comm Local Published", localServer);
 
-        } catch (ServerStartupException e) {
-            log.warn(String.format("Error on initializing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
+        } catch (Throwable e) {
+            if (e instanceof JavaJKS.GenerationException)
+                log.warn("Error generating local certificates for local communication object's server", e);
+            else if (e instanceof JavaSSL.GenerationException)
+                log.warn("Error generating SSL context for local communication object's server", e);
+            else if (e instanceof JavaJKS.LoadingException)
+                log.warn("Error loading local certificates for local communication object's server", e);
+            else if (e instanceof ServerStartupException)
+                log.warn(String.format("Error on initializing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
+            else if (e instanceof Publisher.PublishException)
+                log.warn(String.format("Error on publishing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
+            else
+                log.warn(String.format("Unknown error on initializing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
+
             Events.registerLocalStart("Comm Local Started", localServer, e);
             throw new LocalCommunicationException(String.format("Error on starting local communication object's server '%s'", objInfo.getObjId()), e);
-
-        } catch (Publisher.PublishException e) {
-            log.warn(String.format("Error on publishing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
-            Events.registerLocalStart("Comm Local Published", localServer, e);
-            throw new LocalCommunicationException(String.format("Error on publishing local communication object's server '%s'", objInfo.getObjId()), e);
         }
     }
 
