@@ -19,6 +19,7 @@
 
 package com.robypomper.josp.jod.comm;
 
+import com.robypomper.comm.exception.PeerConnectionException;
 import com.robypomper.comm.server.Server;
 import com.robypomper.comm.server.ServerAbsSSL;
 import com.robypomper.comm.server.ServerClient;
@@ -39,6 +40,7 @@ import com.robypomper.josp.protocol.JOSPProtocol_ObjectToService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
+import java.net.Socket;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -112,9 +114,8 @@ public class JODLocalServer extends ServerAbsSSL {
 
             @Override
             public void onFail(Server server, ServerClient client, String failMsg, Throwable exception) {
-                log.warn(String.format("Error on JODLocalServer's client '%s' connection (%s)%n", client, failMsg));
+                onClientFail(server, client, failMsg, exception);
             }
-
         });
     }
 
@@ -264,4 +265,13 @@ public class JODLocalServer extends ServerAbsSSL {
         log.info(String.format("JOD Local Server remove JSL '%s' connection '%s' because disconnected", locConn.getClientId(), locConn.getClientFullAddress()));
     }
 
+    private void onClientFail(Server server, ServerClient client, String failMsg, Throwable exception) {
+        if (client == null) {
+            if (exception instanceof PeerConnectionException) {
+                Socket exClient = ((PeerConnectionException) exception).getSocket();
+                log.debug(String.format("Error occurred during client '%s:%d' connection, client discharged", exClient.getInetAddress(), exClient.getPort()));
+            }
+        } else
+            log.warn(String.format("Error local client '%s' connection (%s) [%s] %s", client, failMsg, exception.getClass().getSimpleName(), exception));
+    }
 }
