@@ -152,7 +152,7 @@ public class JODLocalServer extends ServerAbsSSL {
      */
     public JODLocalClientInfo getLocalConnectionByServiceId(String serviceId) {
         for (JODLocalClientInfo conn : localClients)
-            if (conn.getClientId().equals(serviceId))
+            if (conn.getFullSrvId().equals(serviceId))
                 return conn;
 
         return null;
