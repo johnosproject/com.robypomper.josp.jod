@@ -647,12 +647,15 @@ public class JODCommunication_002 implements JODCommunication {
 
         @Override
         public void onConnectionFailed(JCPClient2 jcpClient, Throwable t) {
-            if (connFailedPrinted) {
-                log.debug("Error on JCP APIs connection attempt");
-            } else {
-                log.warn("Error on JCP APIs connection attempt", t);
-                connFailedPrinted = true;
-            }
+            if (JCPClient2.JCPNotReachableException.class.isInstance(t)) {
+                if (connFailedPrinted) {
+                    log.debug(String.format("JCP APIs at '%s' still unreachable", jcpClient.getAPIsUrl()));
+                } else {
+                    log.warn(String.format("Can't connect to JCP APIs at '%s', retry later", jcpClient.getAPIsUrl()));
+                    connFailedPrinted = true;
+                }
+            } else
+                log.warn(String.format("Error on JCP APIs connection attempt at '%s'", jcpClient.getAPIsUrl()), t);
             Events.registerJCPConnection("JCP Connection failed", jcpClient, getFlowName(jcpClient), t);
         }
 

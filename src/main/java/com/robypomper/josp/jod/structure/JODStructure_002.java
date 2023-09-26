@@ -198,7 +198,7 @@ public class JODStructure_002 implements JODStructure {
      * Load object's structure from data file.
      */
     private JODRoot loadStructure(String structureStr) throws ParsingException {
-        log.debug("Loading object structure");
+        log.debug("                                   Loading object structure");
 
         JODRoot root;
         try {

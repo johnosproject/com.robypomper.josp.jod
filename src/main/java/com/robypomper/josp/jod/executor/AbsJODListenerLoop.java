@@ -107,16 +107,16 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
      */
     @Override
     public void listen() {
-        log.info(String.format("Start '%s' listener", getName()));
+        log.debug(String.format("                                   Start '%s' listener", getName()));
         if (isEnabled()) return;
 
-        log.debug("Starting listener server");
+        log.debug("                                   Starting listener server");
         mustStop = false;
         //noinspection Convert2Lambda
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                log.debug(String.format("Thread listener server '%s' started", Thread.currentThread().getName()));
+                log.debug(String.format("                                   Thread listener server '%s' started", Thread.currentThread().getName()));
                 while (!mustShoutingDown()) {
                     try {
                         getServerLoop();
@@ -124,14 +124,14 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
                         log.warn(String.format("Thread listener server '%s' thrown exception: %s", Thread.currentThread().getName(), t.getMessage()), t);
                     }
                 }
-                log.trace(String.format("Thread listener server '%s' terminated", Thread.currentThread().getName()));
+                log.debug(String.format("                                   Thread listener server '%s' terminated", Thread.currentThread().getName()));
             }
         });
         thread.setName(String.format(TH_LISTENER_NAME_FORMAT, getName()));
         log.debug(String.format("Starting thread listener server '%s'", thread.getName()));
         thread.start();
 
-        log.debug("Listener server started");
+        log.debug("                                   Listener server started");
     }
 
     /**
@@ -139,11 +139,10 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
      */
     @Override
     public void halt() {
-        log.info(String.format("Stop '%s' listener server", getName()));
+        log.debug(String.format("                                   Stop '%s' listener server", getName()));
         if (!isEnabled()) return;
 
-        log.debug("Stopping listener server");
-        log.debug(String.format("Terminating thread listener server '%s'", thread.getName()));
+        log.debug(String.format("                                   Terminating thread listener server '%s'", thread.getName()));
         mustStop = true;
         thread.interrupt();
         try {
@@ -151,13 +150,13 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
 
         } catch (InterruptedException e) {
             if (thread.isAlive())
-                log.warn(String.format("Thread server loop '%s' not terminated", thread.getName()));
+                log.warn(String.format("                                   Thread server loop '%s' not terminated", thread.getName()));
         }
 
         if (!thread.isAlive())
-            log.debug(String.format("Thread listener server '%s' stopped", thread.getName()));
+            log.debug(String.format("                                   Thread listener server '%s' stopped", thread.getName()));
 
-        log.debug("Listener server stopped");
+        log.debug("                                   Listener server stopped");
     }
 
 }

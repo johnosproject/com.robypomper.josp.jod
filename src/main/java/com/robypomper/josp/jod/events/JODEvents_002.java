@@ -217,8 +217,8 @@ public class JODEvents_002 implements JODEvents {
                             int pre = events.countBuffered();
                             events.flushCache(REDUCE_BUFFER);
                             int post = events.countBuffered();
-                            log.debug(String.format("Flushed %d events to file", pre - post));
-                            log.debug(String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+                            log.debug(String.format("                                   Flushed %d events to file", pre - post));
+                            log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
                         }
 
                     } catch (IOException ignore) {
@@ -273,7 +273,7 @@ public class JODEvents_002 implements JODEvents {
 
             log.debug(String.format("Upload from %d to %d (%d events)", toUpload.get(0).getId(), toUpload.get(toUpload.size() - 1).getId(), toUpload.size()));
             for (JOSPEvent e : toUpload)
-                log.trace(String.format("- event[%d] %s", e.getId(), e.getPayload()));
+                log.trace(String.format("                                   - event[%d] %s", e.getId(), e.getPayload()));
 
             try {
                 apiEventsCaller.uploadEvents(JOSPEvent.toEvents(toUpload));
@@ -296,8 +296,8 @@ public class JODEvents_002 implements JODEvents {
     public void startCloudSync() {
         isSyncing = true;
         log.info("Start events sync to cloud");
-        log.debug(String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
-        log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+        log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+        log.debug(String.format("                                   Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
         sync();
     }
@@ -313,8 +313,8 @@ public class JODEvents_002 implements JODEvents {
                 log.debug(String.format("Stored %d events to file", pre - post));
 
                 log.info("Stop event sync to cloud");
-                log.debug(String.format("Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
-                log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
+                log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
+                log.debug(String.format("                                   Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
             } catch (IOException ignore) {
                 assert false;

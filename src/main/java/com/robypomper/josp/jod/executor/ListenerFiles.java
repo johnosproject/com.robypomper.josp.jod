@@ -97,7 +97,7 @@ public class ListenerFiles extends AbsJODListener {
      */
     @Override
     public void listen() {
-        log.info(String.format("Start '%s' listener", getName()));
+        log.debug(String.format("                                   Start '%s' listener", getName()));
         if (isEnabled()) return;
 
         try {
@@ -114,7 +114,7 @@ public class ListenerFiles extends AbsJODListener {
      */
     @Override
     public void halt() {
-        log.info(String.format("Stop '%s' listener server", getName()));
+        log.debug(String.format("                                   Stop '%s' listener server", getName()));
         if (!isEnabled()) return;
 
         try {

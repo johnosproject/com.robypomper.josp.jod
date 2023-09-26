@@ -86,13 +86,10 @@ public abstract class AbsJODExecutor extends AbsJODWorker implements JODExecutor
      */
     @Override
     public void enable() {
-        log.info(String.format("Enable '%s' executor", getName()));
+        log.debug(String.format("                                   Enable '%s' executor", getName()));
         if (isEnabled()) return;
 
-        log.debug("Enabling executor");
         enabled = true;
-
-        log.debug("Executor enabled");
     }
 
     /**
@@ -100,12 +97,10 @@ public abstract class AbsJODExecutor extends AbsJODWorker implements JODExecutor
      */
     @Override
     public void disable() {
-        log.info(String.format("Disable '%s' executor", getName()));
+        log.debug(String.format("                                   Disable '%s' executor", getName()));
         if (!isEnabled()) return;
 
-        log.debug("Disabling executor");
         enabled = false;
-        log.debug("Executor disabled");
     }
 
 }

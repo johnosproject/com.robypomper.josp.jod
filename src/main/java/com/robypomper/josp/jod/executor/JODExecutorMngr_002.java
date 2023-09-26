@@ -126,11 +126,11 @@ public class JODExecutorMngr_002 implements JODExecutorMngr {
         protocolsCount += FactoryJODExecutor.instance().getProtocols().size();
         log.info(String.format("Initialized JODExecutorMngr instance with '%d' protocols", protocolsCount));
         for (Map.Entry<String, Class<? extends AbsJODPuller>> proto : FactoryJODPuller.instance().getProtocols().entrySet())
-            log.debug(String.format("                                     Puller   '%s'\t (%s)", proto.getKey(), proto.getValue().getName()));
+            log.debug(String.format("                                   Puller   '%s'\t (%s)", proto.getKey(), proto.getValue().getName()));
         for (Map.Entry<String, Class<? extends AbsJODListener>> proto : FactoryJODListener.instance().getProtocols().entrySet())
-            log.debug(String.format("                                     Listener '%s'\t (%s)", proto.getKey(), proto.getValue().getName()));
+            log.debug(String.format("                                   Listener '%s'\t (%s)", proto.getKey(), proto.getValue().getName()));
         for (Map.Entry<String, Class<? extends AbsJODExecutor>> proto : FactoryJODExecutor.instance().getProtocols().entrySet())
-            log.debug(String.format("                                     Executor '%s'\t (%s)", proto.getKey(), proto.getValue().getName()));
+            log.debug(String.format("                                   Executor '%s'\t (%s)", proto.getKey(), proto.getValue().getName()));
     }
 
 
@@ -230,7 +230,7 @@ public class JODExecutorMngr_002 implements JODExecutorMngr {
         if (pullerClass == null)
             throw new JODListener.FactoryException(String.format("Can't init puller because '%s' protocol not registered", component.getProto()));
 
-        log.info(String.format("Load '%s' component's puller with protocol and configs '%s://%s' and class '%s'", component.getName(), component.getProto(), component.getConfigsStr(), pullerClass.getName()));
+        log.debug(String.format("                                   Load '%s' component's puller with protocol and configs '%s://%s' and class '%s'", component.getName(), component.getProto(), component.getConfigsStr(), pullerClass.getName()));
         JODPuller puller = FactoryJODPuller.instance().create(component);
         pullers.put(component.getComponent(), puller);
         return puller;
@@ -245,7 +245,7 @@ public class JODExecutorMngr_002 implements JODExecutorMngr {
         if (listenerClass == null)
             throw new JODListener.FactoryException(String.format("Can't init listener because '%s' protocol not registered", component.getProto()));
 
-        log.info(String.format("Load '%s' component's listener with protocol and configs '%s://%s' and class '%s'", component.getName(), component.getProto(), component.getConfigsStr(), listenerClass.getName()));
+        log.debug(String.format("                                   Load '%s' component's listener with protocol and configs '%s://%s' and class '%s'", component.getName(), component.getProto(), component.getConfigsStr(), listenerClass.getName()));
         JODListener listener = FactoryJODListener.instance().create(component);
         listeners.put(component.getComponent(), listener);
         return listener;
@@ -260,7 +260,7 @@ public class JODExecutorMngr_002 implements JODExecutorMngr {
         if (executorClass == null)
             throw new JODListener.FactoryException(String.format("Can't init executor because '%s' protocol not registered", component.getProto()));
 
-        log.info(String.format("Load '%s' component's executor with protocol and configs '%s://%s' and class '%s'", component.getName(), component.getProto(), component.getConfigsStr(), executorClass.getName()));
+        log.debug(String.format("                                   Load '%s' component's executor with protocol and configs '%s://%s' and class '%s'", component.getName(), component.getProto(), component.getConfigsStr(), executorClass.getName()));
         JODExecutor executor = FactoryJODExecutor.instance().create(component);
         executors.put(component.getComponent(), executor);
         return executor;

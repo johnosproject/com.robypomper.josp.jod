@@ -81,7 +81,7 @@ public abstract class AbsJODPuller extends AbsJODWorker implements JODPuller {
      */
     @Override
     public void startTimer() {
-        log.info(String.format("Start '%s' puller", getName()));
+        log.debug(String.format("                                   Start '%s' puller", getName()));
         if (isEnabled()) return;
 
         log.debug("Starting puller timer");

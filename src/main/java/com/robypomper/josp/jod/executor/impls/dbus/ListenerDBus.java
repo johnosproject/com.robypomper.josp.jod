@@ -103,7 +103,7 @@ public class ListenerDBus extends AbsJODListener implements DBusInstance.Listene
 
     @Override
     public void listen() {
-        log.info(String.format("Start '%s' listener", getName()));
+        log.debug(String.format("                                   Start '%s' listener", getName()));
         dbus_instance.registerListenerChanged(dbus_obj_path, dbus_iface, dbus_prop, this);
         isListening = true;
     }

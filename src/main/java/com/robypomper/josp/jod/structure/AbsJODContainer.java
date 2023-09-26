@@ -298,7 +298,7 @@ public class AbsJODContainer extends AbsJODComponent
     protected JODContainer createContainer(String parentCompName, String compName, Map<String, Object> compSettings) throws JODStructure.ParsingException {
         String descr = (String) compSettings.get(StructureDefinitions.PROP_COMPONENT_DESCR);
 
-        log.debug(String.format("Creating container component '%s' for parent container '%s'", compName, parentCompName));
+        log.debug(String.format("                                   Creating container component '%s' for parent container '%s'", compName, parentCompName));
 
 
         AbsJODContainer cont = new AbsJODContainer(getStructure(), getHistory(), compName, descr);
@@ -313,7 +313,7 @@ public class AbsJODContainer extends AbsJODComponent
             // container's components not set during container initialization
         }
 
-        log.debug(String.format("Container component '%s' created for parent container '%s'", compName, parentCompName));
+        log.debug(String.format("                                   Container component '%s' created for parent container '%s'", compName, parentCompName));
         return cont;
     }
 

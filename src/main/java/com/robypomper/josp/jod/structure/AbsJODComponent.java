@@ -66,7 +66,7 @@ public abstract class AbsJODComponent implements JODComponent {
         this.name = name;
         this.descr = descr != null ? descr : "";
 
-        log.info(String.format("Initialized JODComponent/%s instance for '%s' component", this.getClass().getSimpleName(), name));
+        log.debug(String.format("                                   Initialized JODComponent/%s instance for '%s' component", this.getClass().getSimpleName(), name));
     }
 
 
