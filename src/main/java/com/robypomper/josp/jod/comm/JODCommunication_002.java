@@ -128,7 +128,7 @@ public class JODCommunication_002 implements JODCommunication {
 
     @Override
     public boolean sendToServices(String msg, JOSPPerm.Type minReqPerm) {
-        log.info(String.format("JOD Communication send '%s' message to local services and cloud", msg.substring(0, msg.indexOf('\n'))));
+        log.debug(String.format("JOD Communication send '%s' message to local services and cloud", msg.substring(0, msg.indexOf('\n'))));
 
         // Send via local communication
         if (isLocalRunning()) {
@@ -160,7 +160,7 @@ public class JODCommunication_002 implements JODCommunication {
 
     @Override
     public boolean sendToCloud(String msg) throws CloudNotConnected {
-        log.info(String.format("JOD Communication send '%s' message to cloud only", msg.substring(0, msg.indexOf('\n'))));
+        log.debug(String.format("JOD Communication send '%s' message to cloud only", msg.substring(0, msg.indexOf('\n'))));
 
         try {
             gwClient.sendData(msg);
@@ -173,7 +173,7 @@ public class JODCommunication_002 implements JODCommunication {
 
     @Override
     public boolean sendToSingleLocalService(JODLocalClientInfo locConn, String msg, JOSPPerm.Type minReqPerm) throws ServiceNotConnected {
-        log.info(String.format("JOD Communication send '%s' message to JSL service '%s' only", msg.substring(0, msg.indexOf('\n')), locConn.getClientId()));
+        log.debug(String.format("JOD Communication send '%s' message to JSL service '%s' only", msg.substring(0, msg.indexOf('\n')), locConn.getClientId()));
 
         if (!permissions.checkPermission(locConn.getSrvId(), locConn.getUsrId(), minReqPerm, JOSPPerm.Connection.OnlyLocal))
             return false;
@@ -341,6 +341,11 @@ public class JODCommunication_002 implements JODCommunication {
 
         // send response
         JODLocalClientInfo locConn = findLocalClientsInfo(fullSrvId);
+        if (locConn == null) {
+            log.warn(String.format("Error on sending message %s because can't find service '%s'", JOSPProtocol_ObjectToService.HISTORY_STATUS_REQ_NAME, fullSrvId));
+            return true; // it processed the message successfully but can't send the response
+        }
+
         try {
             sendToSingleLocalService(locConn, response, JOSPPerm.Type.Status);
         } catch (ServiceNotConnected e) {
