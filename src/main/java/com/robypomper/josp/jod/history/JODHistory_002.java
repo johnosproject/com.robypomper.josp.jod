@@ -77,8 +77,8 @@ public class JODHistory_002 implements JODHistory {
             historiesFile.getParentFile().mkdirs();
         else if (historiesFile.exists())
             try {
-                tmpStatuses = new StatusHistoryArray(historiesFile);
-            } catch (IOException ignore) {
+                tmpStatuses = new StatusHistoryArray(historiesFile, locSettings.getHistoryKeepInMemory());
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
 
@@ -110,8 +110,8 @@ public class JODHistory_002 implements JODHistory {
             // generate statuses
             historiesFile.delete();
             try {
-                tmpStatuses = new StatusHistoryArray(historiesFile);
-            } catch (IOException ignore) {
+                tmpStatuses = new StatusHistoryArray(historiesFile, locSettings.getHistoryKeepInMemory());
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
 
@@ -138,8 +138,8 @@ public class JODHistory_002 implements JODHistory {
             //      generate statuses _from stats
             historiesFile.delete();
             try {
-                tmpStatuses = new StatusHistoryArray(historiesFile);
-            } catch (IOException ignore) {
+                tmpStatuses = new StatusHistoryArray(historiesFile, locSettings.getHistoryKeepInMemory());
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
             //          statuses non può essere generato
@@ -188,7 +188,7 @@ public class JODHistory_002 implements JODHistory {
                             log.debug(String.format("History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
                         }
 
-                    } catch (IOException ignore) {
+                    } catch (JavaJSONArrayToFile.FileException ignore) {
                         assert false;
                     }
                 }
@@ -206,7 +206,7 @@ public class JODHistory_002 implements JODHistory {
                 toUpload = statuses.getById(stats.lastUploaded != -1 ? stats.lastUploaded : null, stats.lastStored);
                 if (stats.lastUploaded != -1 && toUpload.size() > 1) toUpload.remove(0);
 
-            } catch (IOException e) {
+            } catch (JavaJSONArrayToFile.FileException e) {
                 e.printStackTrace();
                 assert false;
                 return;
@@ -275,7 +275,7 @@ public class JODHistory_002 implements JODHistory {
                     posEnd = all.size()-1;
                 return all.subList(posStart,posEnd+1);
 
-            } catch (IOException e) {
+            } catch (JavaJSONArrayToFile.FileException e) {
                 return new ArrayList<>();
             }
         }
@@ -283,7 +283,7 @@ public class JODHistory_002 implements JODHistory {
         try {
             return statuses.filterAll(filter);
 
-        } catch (IOException e) {
+        } catch (JavaJSONArrayToFile.FileException e) {
             return new ArrayList<>();
         }
     }
@@ -315,7 +315,7 @@ public class JODHistory_002 implements JODHistory {
                 log.debug(String.format("Events buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
                 log.debug(String.format("Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
-            } catch (IOException ignore) {
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 assert false;
             }
         }

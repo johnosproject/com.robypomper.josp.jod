@@ -23,13 +23,12 @@ import com.robypomper.java.JavaJSONArrayToFile;
 import com.robypomper.josp.protocol.JOSPStatusHistory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
 public class StatusHistoryArray extends JavaJSONArrayToFile<JOSPStatusHistory, Long> {
 
-    public StatusHistoryArray(File jsonFile) throws IOException {
-        super(jsonFile, JOSPStatusHistory.class);
+    public StatusHistoryArray(File jsonFile, boolean keepInMemory) throws FileException {
+        super(jsonFile, JOSPStatusHistory.class, keepInMemory);
     }
 
     @Override
