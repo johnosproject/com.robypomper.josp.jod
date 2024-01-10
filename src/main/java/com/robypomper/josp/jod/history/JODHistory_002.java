@@ -52,12 +52,10 @@ public class JODHistory_002 implements JODHistory {
     private Caller20 apiObjsCaller;
     private final StatusHistoryArray statuses; //statuses;
     private final CloudStats stats;
-    private final File statusesFile;    //statusesFile
+    private final File historiesFile;
     private final File statsFile;
     private boolean isSyncing = false;
-    private int MAX_BUFFERED = 5;
-    private final int REDUCE_BUFFER = 3;
-    private final int MAX_FILE = 50;
+
 
     // Constructor
 
@@ -72,25 +70,21 @@ public class JODHistory_002 implements JODHistory {
         this.jcpClient = jcpClient;
         this.jcpClient.addConnectionListener(jcpConnectListener);
         this.apiObjsCaller = new Caller20(jcpClient);
-        boolean statusesFileLoaded = false;
-        boolean statsFileLoaded = false;
 
-
-        //this.eventFile = locSettings.getEventPath();
         StatusHistoryArray tmpStatuses = null;
-        this.statusesFile = new File(HISTORY_FILE);
-        if (!statusesFile.getParentFile().exists())
-            statusesFile.getParentFile().mkdirs();
-        else if (statusesFile.exists())
+        this.historiesFile = locSettings.getHistoryFileArrayPath();
+        if (!historiesFile.getParentFile().exists())
+            historiesFile.getParentFile().mkdirs();
+        else if (historiesFile.exists())
             try {
-                tmpStatuses = new StatusHistoryArray(statusesFile);
+                tmpStatuses = new StatusHistoryArray(historiesFile);
             } catch (IOException ignore) {
                 ignore.printStackTrace();
             }
 
         //this.eventStatsFile = locSettings.getEventStatsPath();
         CloudStats tmpStats = null;
-        this.statsFile = new File(STATS_FILE);
+        this.statsFile = locSettings.getHistoryFileStatsPath();
         if (!statsFile.getParentFile().exists())
             statsFile.getParentFile().mkdirs();
         else if (statsFile.exists()) {
@@ -112,20 +106,18 @@ public class JODHistory_002 implements JODHistory {
             } catch (IOException ignore) {
                 ignore.printStackTrace();
             }
-            statsFileLoaded = false;
+
             // generate statuses
-            statusesFile.delete();
+            historiesFile.delete();
             try {
-                tmpStatuses = new StatusHistoryArray(statusesFile);
+                tmpStatuses = new StatusHistoryArray(historiesFile);
             } catch (IOException ignore) {
                 ignore.printStackTrace();
             }
-            statusesFileLoaded = false;
 
             //  else if  stats NOT readable  and  statuses readable
         } else if (tmpStats == null && tmpStatuses != null) {
             // statuses already loaded
-            statusesFileLoaded = true;
             // generate stats from statuses
             JOSPStatusHistory firstEvent = tmpStatuses.getFirst();
             JOSPStatusHistory lastEvent = tmpStatuses.getFirst();
@@ -139,29 +131,24 @@ public class JODHistory_002 implements JODHistory {
             }
             tmpStats.lastUploaded = 0;
             //      ...
-            statsFileLoaded = false;
 
             //  else if  stats readable  and  statuses NOT readable
         } else if (tmpStats != null && tmpStatuses == null) {
             // stats already loaded
-            statsFileLoaded = true;
             //      generate statuses _from stats
-            statusesFile.delete();
+            historiesFile.delete();
             try {
-                tmpStatuses = new StatusHistoryArray(statusesFile);
+                tmpStatuses = new StatusHistoryArray(historiesFile);
             } catch (IOException ignore) {
                 ignore.printStackTrace();
             }
             //          statuses non può essere generato
             //          aggiornare stats a: buffered statuses cancellati
-            statusesFileLoaded = false;
 
-            //  else if  stats readable  and  statuses readable
-        } else if (tmpStats != null && tmpStatuses != null) {
+        //  else if  stats readable  and  statuses readable
+        // } else if (tmpStats != null && tmpStatuses != null) {
             // stats already loaded
-            statsFileLoaded = true;
             // statuses already loaded
-            statusesFileLoaded = true;
         }
 
         statuses = tmpStatuses;
@@ -188,14 +175,14 @@ public class JODHistory_002 implements JODHistory {
         if (isSyncing)
             sync();
 
-        if (statuses.countBuffered() >= MAX_BUFFERED) {
+        if (statuses.countBuffered() >= locSettings.getHistoryBufferSize()) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         synchronized (statuses) {
                             int pre = statuses.countBuffered();
-                            statuses.flushCache(REDUCE_BUFFER);
+                            statuses.flushCache(locSettings.getHistoryBufferReleaseSize());
                             int post = statuses.countBuffered();
                             log.debug(String.format("Flushed %d statuses to file", pre - post));
                             log.debug(String.format("History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
@@ -260,6 +247,7 @@ public class JODHistory_002 implements JODHistory {
             }
         };
 
+        System.out.printf("History buffered %d statuses on file %d%n", statuses.countBuffered(), statuses.countFile());
         if (HistoryLimits.isLatestCount(limits))
             return statuses.tryLatest(filter, limits.getLatestCount());
 
@@ -361,10 +349,5 @@ public class JODHistory_002 implements JODHistory {
         }
 
     };
-
-
-    // update JODHistory_002(...) to use file paths from jod settings
-    private static final String HISTORY_FILE = "cache/history.jbs";
-    private static final String STATS_FILE = "cache/history.jst";
 
 }

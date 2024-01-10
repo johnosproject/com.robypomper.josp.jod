@@ -122,6 +122,46 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public static final String JODCOMM_CLOUD_ENABLED_DEF = "true";
 
     /**
+     * If 'true' the history file will be retained in memory and any access to
+     * the underling file will be done using the same instance. Otherwise, the
+     * file is completely read every access.
+     *
+     * Default `false`.
+     */
+    public static final String JODHISTORY_KEEP_IN_MEMORY = "jod.history.keep_in_memory";
+    public static final String JODHISTORY_KEEP_IN_MEMORY_DEF = "false";
+    /**
+     * Size of the history buffer.
+     * <p>
+     * When the buffer is full, then 'jod.history.buffer_release_size' items
+     * are written to the file and removed from the buffer.
+     * <p>
+     * Default `250`.
+     */
+    public static final String JODHISTORY_BUFFER_SIZE = "jod.history.buffer_size";
+    public static final String JODHISTORY_BUFFER_SIZE_DEF = "250";
+    /**
+     * Number of history's items to flush on the file when the buffer is full.
+     * <p>
+     * It must be a value lower than `jod.history.buffer_size`, otherwise it will
+     * flush all history to the file.
+     * <p>
+     * Default `200`.
+     */
+    public static final String JODHISTORY_BUFFER_RELEASE_SIZE = "jod.history.buffer_release_size";
+    public static final String JODHISTORY_BUFFER_RELEASE_SIZE_DEF = "200";
+    /**
+     * File path for history's items.
+     */
+    public static final String JODHISTORY_FILE_ARRAY_PATH = "jod.history.file_array";
+    public static final String JODHISTORY_FILE_ARRAY_PATH_DEF = "cache/history.jbs";
+    /**
+     * File path for history's stats.
+     */
+    public static final String JODHISTORY_FILE_STATS_PATH = "jod.history.file_stats";
+    public static final String JODHISTORY_FILE_STATS_PATH_DEF = "cache/history.jst";
+
+    /**
      * If 'true' the events file will be retained in memory and any access to
      * the underling file will be done using the same instance. Otherwise, the
      * file is completely read every access.
@@ -380,6 +420,27 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
         return getBoolean(JODCOMM_CLOUD_ENABLED, JODCOMM_CLOUD_ENABLED_DEF);
     }
 
+    // History
+
+    public boolean getHistoryKeepInMemory() {
+        return getBoolean(JODHISTORY_KEEP_IN_MEMORY, JODHISTORY_KEEP_IN_MEMORY_DEF);
+    }
+
+    public int getHistoryBufferSize() {
+        return getInt(JODHISTORY_BUFFER_SIZE, JODHISTORY_BUFFER_SIZE_DEF);
+    }
+
+    public int getHistoryBufferReleaseSize() {
+        return getInt(JODHISTORY_BUFFER_RELEASE_SIZE, JODHISTORY_BUFFER_RELEASE_SIZE_DEF);
+    }
+
+    public File getHistoryFileArrayPath() {
+        return getFile(JODHISTORY_FILE_ARRAY_PATH, JODHISTORY_FILE_ARRAY_PATH_DEF);
+    }
+
+    public File getHistoryFileStatsPath() {
+        return getFile(JODHISTORY_FILE_STATS_PATH, JODHISTORY_FILE_STATS_PATH_DEF);
+    }
 
     // Events
 
