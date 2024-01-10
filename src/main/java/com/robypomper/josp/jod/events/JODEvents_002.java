@@ -84,7 +84,10 @@ public class JODEvents_002 implements JODEvents {
             eventsFile.getParentFile().mkdirs();
         else if (eventsFile.exists())
             try {
-                tmpEvents = new EventsArray(eventsFile, locSettings.getEventsKeepInMemory());
+                tmpEvents = new EventsArray(eventsFile,
+                        locSettings.getEventsKeepInMemory(),
+                        locSettings.getEventsBufferSize(),
+                        locSettings.getEventsBufferReleaseSize());
             } catch (JavaJSONArrayToFile.FileException e) {
                 log.warn("Error on loading Events file.", e);
             }
@@ -116,7 +119,10 @@ public class JODEvents_002 implements JODEvents {
             // generate events
             eventsFile.delete();
             try {
-                tmpEvents = new EventsArray(eventsFile, locSettings.getEventsKeepInMemory());
+                tmpEvents = new EventsArray(eventsFile,
+                        locSettings.getEventsKeepInMemory(),
+                        locSettings.getEventsBufferSize(),
+                        locSettings.getEventsBufferReleaseSize());
             } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
@@ -148,7 +154,10 @@ public class JODEvents_002 implements JODEvents {
             //      generate events _from stats
             eventsFile.delete();
             try {
-                tmpEvents = new EventsArray(eventsFile, locSettings.getEventsKeepInMemory());
+                tmpEvents = new EventsArray(eventsFile,
+                        locSettings.getEventsKeepInMemory(),
+                        locSettings.getEventsBufferSize(),
+                        locSettings.getEventsBufferReleaseSize());
             } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
@@ -196,26 +205,6 @@ public class JODEvents_002 implements JODEvents {
 
         if (isSyncing)
             sync();
-
-        if (events.countBuffered() >= locSettings.getEventsBufferSize()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        synchronized (events) {
-                            int pre = events.countBuffered();
-                            events.flushCache(locSettings.getEventsBufferReleaseSize());
-                            int post = events.countBuffered();
-                            log.debug(String.format("                                   Flushed %d events to file", pre - post));
-                            log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
-                        }
-
-                    } catch (JavaJSONArrayToFile.FileException ignore) {
-                        assert false;
-                    }
-                }
-            }).start();
-        }
     }
 
     private final JCPClient2.ConnectionListener jcpConnectListener = new JCPClient2.ConnectionListener() {
