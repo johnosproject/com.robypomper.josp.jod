@@ -46,6 +46,7 @@ import java.util.List;
  *
  * TODO make JODEvents non singleton but accessible from JOD.getEvents()
  */
+@SuppressWarnings("Convert2Lambda")
 public class JODEvents_002 implements JODEvents {
 
     // Internal vars
@@ -56,8 +57,6 @@ public class JODEvents_002 implements JODEvents {
     private Caller20 apiEventsCaller;
     private final EventsArray events;
     private final CloudStats stats;
-    private final File eventsFile;
-    private final File statsFile;
     private boolean isSyncing = false;
 
 
@@ -75,14 +74,15 @@ public class JODEvents_002 implements JODEvents {
     public JODEvents_002(JODSettings_002 settings, JCPAPIsClientObj jcpClient) {
         this.locSettings = settings;
         setJCPClient(jcpClient);
-        boolean eventFileLoaded = false;
-        boolean statsFileLoaded = false;
+
+        File eventsFile = locSettings.getEventsFileArrayPath();
+        File statsFile = locSettings.getEventsFileStatsPath();
 
         EventsArray tmpEvents = null;
-        this.eventsFile = locSettings.getEventsFileArrayPath();
-        if (!eventsFile.getParentFile().exists())
-            eventsFile.getParentFile().mkdirs();
-        else if (eventsFile.exists())
+        if (!eventsFile.getParentFile().exists()) {
+            if (!eventsFile.getParentFile().mkdirs())
+                log.warn("Error on creating Events file's dir.");
+        } else if (eventsFile.exists())
             try {
                 tmpEvents = new EventsArray(eventsFile,
                         locSettings.getEventsKeepInMemory(),
@@ -93,14 +93,14 @@ public class JODEvents_002 implements JODEvents {
             }
 
         CloudStats tmpStats = null;
-        this.statsFile = locSettings.getEventsFileStatsPath();
         if (!statsFile.getParentFile().exists())
-            statsFile.getParentFile().mkdirs();
+            if (!statsFile.getParentFile().mkdirs())
+                log.warn("Error on creating Events stats file's dir.");
         else if (statsFile.exists()) {
             try {
                 tmpStats = new CloudStats(statsFile);
-            } catch (IOException ignore) {
-                ignore.printStackTrace();
+            } catch (IOException e) {
+                log.warn("Error on creating Events stats file.", e);
             }
         }
 
@@ -109,72 +109,69 @@ public class JODEvents_002 implements JODEvents {
             // generate stats
             try {
                 if (statsFile.exists())
-                    statsFile.delete();
+                    if (!statsFile.delete())
+                        log.warn("Error on deleting Events stats file.");
                 tmpStats = new CloudStats(statsFile);
                 tmpStats.store();
-            } catch (IOException ignore) {
-                ignore.printStackTrace();
+            } catch (IOException e) {
+                log.warn("Error on creating Events stats file.", e);
             }
-            statsFileLoaded = false;
             // generate events
-            eventsFile.delete();
+            if (!eventsFile.delete())
+                log.warn("Error on deleting Events file.");
             try {
                 tmpEvents = new EventsArray(eventsFile,
                         locSettings.getEventsKeepInMemory(),
                         locSettings.getEventsBufferSize(),
                         locSettings.getEventsBufferReleaseSize());
-            } catch (JavaJSONArrayToFile.FileException ignore) {
-                ignore.printStackTrace();
+            } catch (JavaJSONArrayToFile.FileException e) {
+                log.warn("Error on creating Events file.", e);
             }
-            eventFileLoaded = false;
 
-            //  else if  stats NOT readable  and  events readable
-        } else if (tmpStats == null && tmpEvents != null) {
+        //  else if  stats NOT readable  and  events readable
+        } else if (tmpStats == null) {      // tmpEvents != null ALWAYS true
             // events already loaded
-            eventFileLoaded = true;
             // generate stats from events
-            JOSPEvent firstEvent = tmpEvents.getFirst();
-            JOSPEvent lastEvent = tmpEvents.getFirst();
             try {
                 if (statsFile.exists())
-                    statsFile.delete();
+                    if (!statsFile.delete())
+                        log.warn("Error on deleting Events stats file.");
                 tmpStats = new CloudStats(statsFile);
                 tmpStats.store();
-            } catch (IOException ignore) {
-                ignore.printStackTrace();
+                tmpStats.lastUploaded = 0;
+            } catch (IOException e) {
+                log.warn("Error on creating Events stats file.", e);
             }
-            tmpStats.lastUploaded = 0;
             //      ...
-            statsFileLoaded = false;
 
-            //  else if  stats readable  and  events NOT readable
-        } else if (tmpStats != null && tmpEvents == null) {
+        //  else if  stats readable  and  events NOT readable
+        } else if (tmpEvents == null) {      // tmpStats != null ALWAYS true
             // stats already loaded
-            statsFileLoaded = true;
             //      generate events _from stats
-            eventsFile.delete();
+            if (!eventsFile.delete())
+                log.warn("Error on deleting Events file.");
             try {
                 tmpEvents = new EventsArray(eventsFile,
                         locSettings.getEventsKeepInMemory(),
                         locSettings.getEventsBufferSize(),
                         locSettings.getEventsBufferReleaseSize());
-            } catch (JavaJSONArrayToFile.FileException ignore) {
-                ignore.printStackTrace();
+            } catch (JavaJSONArrayToFile.FileException e) {
+                log.warn("Error on creating Events file.", e);
             }
             //          events non può essere generato
             //          aggiornare stats a: buffered events cancellati
-            eventFileLoaded = false;
 
             //  else if  stats readable  and  events readable
-        } else if (tmpStats != null && tmpEvents != null) {
-            // stats already loaded
-            statsFileLoaded = true;
-            // events already loaded
-            eventFileLoaded = true;
+        // } else if (tmpStats != null && tmpEvents != null) {
+        //     stats already loaded
+        //     events already loaded
         }
 
         events = tmpEvents;
         stats = tmpStats;
+
+        assert events != null: "EventsArray can't be null";
+        assert stats != null: "CloudStats can't be null";
 
         log.info("Initialized JODEvents instance");
         log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
@@ -207,27 +204,6 @@ public class JODEvents_002 implements JODEvents {
             sync();
     }
 
-    private final JCPClient2.ConnectionListener jcpConnectListener = new JCPClient2.ConnectionListener() {
-
-        @Override
-        public void onConnected(JCPClient2 jcpClient) {
-            sync();
-        }
-
-        @Override
-        public void onConnectionFailed(JCPClient2 jcpClient, Throwable t) {
-        }
-
-        @Override
-        public void onAuthenticationFailed(JCPClient2 jcpClient, Throwable t) {
-        }
-
-        @Override
-        public void onDisconnected(JCPClient2 jcpClient) {
-        }
-
-    };
-
     private void sync() {
         if (stats.lastUploaded == stats.lastStored) return;
         if (jcpClient == null || !jcpClient.isConnected()) return;
@@ -239,12 +215,11 @@ public class JODEvents_002 implements JODEvents {
                 if (stats.lastUploaded != -1 && toUpload.size() > 1) toUpload.remove(0);
 
             } catch (JavaJSONArrayToFile.FileException e) {
-                e.printStackTrace();
-                assert false;
+                log.warn(String.format("Can't read events from file (CloudStats values lastUpd: %d; lastStored: %d) (%s)", stats.lastUploaded, stats.lastStored, e));
                 return;
             }
 
-            if (toUpload.size() == 0) {
+            if (toUpload.isEmpty()) {
                 log.debug(String.format("No events found to uploads (CloudStats values lastUpd: %d; lastStored: %d", stats.lastUploaded, stats.lastStored));
                 return;
             }
@@ -266,9 +241,6 @@ public class JODEvents_002 implements JODEvents {
             stats.storeIgnoreExceptions();
         }
     }
-
-
-    // Mngm methods
 
     @Override
     public void startCloudSync() {
@@ -300,20 +272,8 @@ public class JODEvents_002 implements JODEvents {
         }
     }
 
-    @Override
-    public void storeCache() throws IOException {
-        events.storeCache();
-    }
 
-
-    @Override
-    public void setJCPClient(JCPAPIsClientObj jcpClient) {
-        if (jcpClient == null) return;
-
-        this.jcpClient = jcpClient;
-        this.jcpClient.addConnectionListener(jcpConnectListener);
-        this.apiEventsCaller = new Caller20(jcpClient);
-    }
+    // Getters and setters
 
     @Override
     public List<JOSPEvent> getHistoryEvents(HistoryLimits limits) {
@@ -369,5 +329,46 @@ public class JODEvents_002 implements JODEvents {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public void setJCPClient(JCPAPIsClientObj jcpClient) {
+        if (jcpClient == null) return;
+
+        this.jcpClient = jcpClient;
+        this.jcpClient.addConnectionListener(jcpConnectListener);
+        this.apiEventsCaller = new Caller20(jcpClient);
+    }
+
+
+    // Mngm methods
+
+    @Override
+    public void storeCache() throws IOException {
+        events.storeCache();
+    }
+
+
+    // JCP Client listeners
+
+    private final JCPClient2.ConnectionListener jcpConnectListener = new JCPClient2.ConnectionListener() {
+
+        @Override
+        public void onConnected(JCPClient2 jcpClient) {
+            sync();
+        }
+
+        @Override
+        public void onConnectionFailed(JCPClient2 jcpClient, Throwable t) {
+        }
+
+        @Override
+        public void onAuthenticationFailed(JCPClient2 jcpClient, Throwable t) {
+        }
+
+        @Override
+        public void onDisconnected(JCPClient2 jcpClient) {
+        }
+
+    };
 
 }
