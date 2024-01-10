@@ -80,7 +80,7 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     public static final String JODCOMM_LOCAL_ENABLED    = "jod.comm.local.enabled";
     public static final String JODCOMM_LOCAL_ENABLED_DEF = "true";
-    
+
     /**
      * Path for the service's local keystore. It can be absolute or relative to `jod.obj.baseDir`.
      * By default, it's an empty string, that means it will generate his own certificate at first
@@ -120,6 +120,48 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     public static final String JODCOMM_CLOUD_ENABLED = "jod.comm.cloud.enabled";
     public static final String JODCOMM_CLOUD_ENABLED_DEF = "true";
+
+    /**
+     * If 'true' the events file will be retained in memory and any access to
+     * the underling file will be done using the same instance. Otherwise, the
+     * file is completely read every access.
+     *
+     * Default `false`.
+     */
+    public static final String JODEVENTS_KEEP_IN_MEMORY = "jod.events.keep_in_memory";
+    public static final String JODEVENTS_KEEP_IN_MEMORY_DEF = "false";
+    /**
+     * Size of the events buffer.
+     * <p>
+     * When the buffer is full, then 'jod.events.buffer_release_size' items
+     * are written to the file and removed from the buffer.
+     * <p>
+     * Default `250`.
+     */
+    public static final String JODEVENTS_BUFFER_SIZE = "jod.events.buffer_size";
+    public static final String JODEVENTS_BUFFER_SIZE_DEF = "250";
+    /**
+     * Number of event's items to flush on the file when the buffer is full.
+     * <p>
+     * It must be a value lower than `jod.events.buffer_size`, otherwise it will
+     * flush all events to the file.
+     * <p>
+     * Default `200`.
+     */
+    public static final String JODEVENTS_BUFFER_RELEASE_SIZE = "jod.events.buffer_release_size";
+    public static final String JODEVENTS_BUFFER_RELEASE_SIZE_DEF = "200";
+    /**
+     * File path for events' items.
+     */
+    public static final String JODEVENTS_FILE_ARRAY_PATH = "jod.events.file_array";
+    public static final String JODEVENTS_FILE_ARRAY_PATH_DEF = "cache/events.jbe";
+    /**
+     * File path for events' stats.
+     */
+    public static final String JODEVENTS_FILE_STATS_PATH = "jod.events.file_stats";
+    public static final String JODEVENTS_FILE_STATS_PATH_DEF = "cache/events.jst";
+
+
     //@formatter:on
 
 
@@ -336,6 +378,29 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     //@Override
     public boolean getCloudEnabled() {
         return getBoolean(JODCOMM_CLOUD_ENABLED, JODCOMM_CLOUD_ENABLED_DEF);
+    }
+
+
+    // Events
+
+    public boolean getEventsKeepInMemory() {
+        return getBoolean(JODEVENTS_KEEP_IN_MEMORY, JODEVENTS_KEEP_IN_MEMORY_DEF);
+    }
+
+    public int getEventsBufferSize() {
+        return getInt(JODEVENTS_BUFFER_SIZE, JODEVENTS_BUFFER_SIZE_DEF);
+    }
+
+    public int getEventsBufferReleaseSize() {
+        return getInt(JODEVENTS_BUFFER_RELEASE_SIZE, JODEVENTS_BUFFER_RELEASE_SIZE_DEF);
+    }
+
+    public File getEventsFileArrayPath() {
+        return getFile(JODEVENTS_FILE_ARRAY_PATH, JODEVENTS_FILE_ARRAY_PATH_DEF);
+    }
+
+    public File getEventsFileStatsPath() {
+        return getFile(JODEVENTS_FILE_STATS_PATH, JODEVENTS_FILE_STATS_PATH_DEF);
     }
 
 }

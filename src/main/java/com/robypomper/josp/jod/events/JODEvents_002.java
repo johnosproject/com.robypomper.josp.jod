@@ -43,6 +43,8 @@ import java.util.List;
  * This is the JOD Events implementation.
  * <p>
  * ...
+ *
+ * TODO make JODEvents non singleton but accessible from JOD.getEvents()
  */
 public class JODEvents_002 implements JODEvents {
 
@@ -57,12 +59,6 @@ public class JODEvents_002 implements JODEvents {
     private final File eventsFile;
     private final File statsFile;
     private boolean isSyncing = false;
-    // update JODEvents_002(...) to use file paths from jod settings
-    // make JODEvents non singleton but accessible from JOD.getEvents()
-    private static final String EVNTS_FILE = "cache/events.jbe";
-    private static final String STATS_FILE = "cache/events.jst";
-    private final int MAX_BUFFERED = 5;
-    private final int REDUCE_BUFFER = 3;
 
 
     // Constructor
@@ -82,10 +78,8 @@ public class JODEvents_002 implements JODEvents {
         boolean eventFileLoaded = false;
         boolean statsFileLoaded = false;
 
-
-        //this.eventFile = locSettings.getEventPath();
         EventsArray tmpEvents = null;
-        this.eventsFile = new File(EVNTS_FILE);
+        this.eventsFile = locSettings.getEventsFileArrayPath();
         if (!eventsFile.getParentFile().exists())
             eventsFile.getParentFile().mkdirs();
         else if (eventsFile.exists())
@@ -95,9 +89,8 @@ public class JODEvents_002 implements JODEvents {
                 ignore.printStackTrace();
             }
 
-        //this.eventStatsFile = locSettings.getEventStatsPath();
         CloudStats tmpStats = null;
-        this.statsFile = new File(STATS_FILE);
+        this.statsFile = locSettings.getEventsFileStatsPath();
         if (!statsFile.getParentFile().exists())
             statsFile.getParentFile().mkdirs();
         else if (statsFile.exists()) {
@@ -180,10 +173,6 @@ public class JODEvents_002 implements JODEvents {
     }
 
 
-    // Object's systems
-    private final int MAX_FILE = 50;
-
-
     // Register new event
 
     @Override
@@ -208,14 +197,14 @@ public class JODEvents_002 implements JODEvents {
         if (isSyncing)
             sync();
 
-        if (events.countBuffered() >= MAX_BUFFERED) {
+        if (events.countBuffered() >= locSettings.getEventsBufferSize()) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         synchronized (events) {
                             int pre = events.countBuffered();
-                            events.flushCache(REDUCE_BUFFER);
+                            events.flushCache(locSettings.getEventsBufferReleaseSize());
                             int post = events.countBuffered();
                             log.debug(String.format("                                   Flushed %d events to file", pre - post));
                             log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
