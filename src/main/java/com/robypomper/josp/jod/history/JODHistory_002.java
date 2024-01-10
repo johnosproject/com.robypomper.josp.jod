@@ -77,7 +77,10 @@ public class JODHistory_002 implements JODHistory {
             historiesFile.getParentFile().mkdirs();
         else if (historiesFile.exists())
             try {
-                tmpStatuses = new StatusHistoryArray(historiesFile, locSettings.getHistoryKeepInMemory());
+                tmpStatuses = new StatusHistoryArray(historiesFile,
+                        locSettings.getHistoryKeepInMemory(),
+                        locSettings.getHistoryBufferSize(),
+                        locSettings.getHistoryBufferReleaseSize());
             } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
@@ -110,7 +113,10 @@ public class JODHistory_002 implements JODHistory {
             // generate statuses
             historiesFile.delete();
             try {
-                tmpStatuses = new StatusHistoryArray(historiesFile, locSettings.getHistoryKeepInMemory());
+                tmpStatuses = new StatusHistoryArray(historiesFile,
+                        locSettings.getHistoryKeepInMemory(),
+                        locSettings.getHistoryBufferSize(),
+                        locSettings.getHistoryBufferReleaseSize());
             } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
@@ -138,7 +144,10 @@ public class JODHistory_002 implements JODHistory {
             //      generate statuses _from stats
             historiesFile.delete();
             try {
-                tmpStatuses = new StatusHistoryArray(historiesFile, locSettings.getHistoryKeepInMemory());
+                tmpStatuses = new StatusHistoryArray(historiesFile,
+                        locSettings.getHistoryKeepInMemory(),
+                        locSettings.getHistoryBufferSize(),
+                        locSettings.getHistoryBufferReleaseSize());
             } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
@@ -174,26 +183,6 @@ public class JODHistory_002 implements JODHistory {
 
         if (isSyncing)
             sync();
-
-        if (statuses.countBuffered() >= locSettings.getHistoryBufferSize()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        synchronized (statuses) {
-                            int pre = statuses.countBuffered();
-                            statuses.flushCache(locSettings.getHistoryBufferReleaseSize());
-                            int post = statuses.countBuffered();
-                            log.debug(String.format("Flushed %d statuses to file", pre - post));
-                            log.debug(String.format("History buffered %d statuses on file %d", statuses.countBuffered(), statuses.countFile()));
-                        }
-
-                    } catch (JavaJSONArrayToFile.FileException ignore) {
-                        assert false;
-                    }
-                }
-            }).start();
-        }
     }
 
     private void sync() {

@@ -20,6 +20,7 @@
 package com.robypomper.josp.jod.history;
 
 import com.robypomper.java.JavaJSONArrayToFile;
+import com.robypomper.josp.protocol.JOSPEvent;
 import com.robypomper.josp.protocol.JOSPStatusHistory;
 
 import java.io.File;
@@ -27,8 +28,8 @@ import java.util.Date;
 
 public class StatusHistoryArray extends JavaJSONArrayToFile<JOSPStatusHistory, Long> {
 
-    public StatusHistoryArray(File jsonFile, boolean keepInMemory) throws FileException {
-        super(jsonFile, JOSPStatusHistory.class, keepInMemory);
+    public StatusHistoryArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize) throws FileException {
+        super(jsonFile, JOSPStatusHistory.class, keepInMemory, maxBufferSize, releaseBufferSize);
     }
 
     @Override
