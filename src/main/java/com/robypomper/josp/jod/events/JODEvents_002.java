@@ -84,9 +84,9 @@ public class JODEvents_002 implements JODEvents {
             eventsFile.getParentFile().mkdirs();
         else if (eventsFile.exists())
             try {
-                tmpEvents = new EventsArray(eventsFile);
-            } catch (IOException ignore) {
-                ignore.printStackTrace();
+                tmpEvents = new EventsArray(eventsFile, locSettings.getEventsKeepInMemory());
+            } catch (JavaJSONArrayToFile.FileException e) {
+                log.warn("Error on loading Events file.", e);
             }
 
         CloudStats tmpStats = null;
@@ -116,8 +116,8 @@ public class JODEvents_002 implements JODEvents {
             // generate events
             eventsFile.delete();
             try {
-                tmpEvents = new EventsArray(eventsFile);
-            } catch (IOException ignore) {
+                tmpEvents = new EventsArray(eventsFile, locSettings.getEventsKeepInMemory());
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
             eventFileLoaded = false;
@@ -148,8 +148,8 @@ public class JODEvents_002 implements JODEvents {
             //      generate events _from stats
             eventsFile.delete();
             try {
-                tmpEvents = new EventsArray(eventsFile);
-            } catch (IOException ignore) {
+                tmpEvents = new EventsArray(eventsFile, locSettings.getEventsKeepInMemory());
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 ignore.printStackTrace();
             }
             //          events non può essere generato
@@ -210,7 +210,7 @@ public class JODEvents_002 implements JODEvents {
                             log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
                         }
 
-                    } catch (IOException ignore) {
+                    } catch (JavaJSONArrayToFile.FileException ignore) {
                         assert false;
                     }
                 }
@@ -249,7 +249,7 @@ public class JODEvents_002 implements JODEvents {
                 toUpload = events.getById(stats.lastUploaded != -1 ? stats.lastUploaded : null, stats.lastStored);
                 if (stats.lastUploaded != -1 && toUpload.size() > 1) toUpload.remove(0);
 
-            } catch (IOException e) {
+            } catch (JavaJSONArrayToFile.FileException e) {
                 e.printStackTrace();
                 assert false;
                 return;
@@ -305,7 +305,7 @@ public class JODEvents_002 implements JODEvents {
                 log.debug(String.format("                                   Events buffered %d events on file %d", events.countBuffered(), events.countFile()));
                 log.debug(String.format("                                   Events stats lastStored: %d lastUploaded: %d", stats.lastStored, stats.lastUploaded));
 
-            } catch (IOException ignore) {
+            } catch (JavaJSONArrayToFile.FileException ignore) {
                 assert false;
             }
         }
@@ -369,14 +369,14 @@ public class JODEvents_002 implements JODEvents {
                     posEnd = all.size()-1;
                 return all.subList(posStart,posEnd+1);
 
-            } catch (IOException e) {
+            } catch (JavaJSONArrayToFile.FileException e) {
                 return new ArrayList<>();
             }
 
         try {
             return events.filterAll(filter);
 
-        } catch (IOException e) {
+        } catch (JavaJSONArrayToFile.FileException e) {
             return new ArrayList<>();
         }
     }
