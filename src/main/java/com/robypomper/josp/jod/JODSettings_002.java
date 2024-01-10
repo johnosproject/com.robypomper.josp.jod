@@ -56,6 +56,7 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
      * Path to use as main dir for all relative paths, like the `jod.comm.local.ks.path`.
      * By default, it's an empty string that means to use the working directory as base path.
      */
+    // TODO rename to JODOBJ_BASE_PATH
     public static final String JODOBJ_BASE_DIR          = "jod.obj.baseDir";
     public static final String JODOBJ_BASE_DIR_DEF      = "";
 
@@ -80,7 +81,6 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     public static final String JODCOMM_LOCAL_ENABLED    = "jod.comm.local.enabled";
     public static final String JODCOMM_LOCAL_ENABLED_DEF = "true";
-
     /**
      * Path for the service's local keystore. It can be absolute or relative to `jod.obj.baseDir`.
      * By default, it's an empty string, that means it will generate his own certificate at first
@@ -88,21 +88,18 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
      */
     public static final String JODCOMM_LOCAL_KS_PATH    = "jod.comm.local.ks.path";
     public static final String JODCOMM_LOCAL_KS_PATH_DEF = "";
-
     /**
      * Password for the service's local keystore. 
      * By default, it's an empty string that means no password.
      */
     public static final String JODCOMM_LOCAL_KS_PASS    = "jod.comm.local.ks.pass";
     public static final String JODCOMM_LOCAL_KS_PASS_DEF = "";
-
     /**
      * Alias of the certificate stored into the service's local keystore. 
      * By default, it's an empty string that means `$SRV_ID-LocalCert`.
      */
     public static final String JODCOMM_LOCAL_KS_ALIAS    = "jod.comm.local.ks.alias";
     public static final String JODCOMM_LOCAL_KS_ALIAS_DEF = "";
-
     /**
      * Default path for the service's local keystore, used when no path is specified
      * into `` property and a new keystore is generated.
@@ -112,7 +109,6 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
      */
     public static final String JODCOMM_LOCAL_KS_DEF_PATH = "jod.comm.local.ks.defPath";
     public static final String JODCOMM_LOCAL_KS_DEF_PATH_DEF = "./configs/local_ks.jks";
-
     public static final String JODCOMM_LOCAL_DISCOVERY  = "jod.comm.local.discovery";
     public static final String JODCOMM_LOCAL_DISCOVERY_DEF = "Auto";
     public static final String JODCOMM_LOCAL_PORT       = "jod.comm.local.port";
@@ -226,37 +222,30 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // JCP Client
 
-    //@Override
     public boolean getJCPConnect() {
         return getBoolean(JCP_CONNECT, JCP_CONNECT_DEF);
     }
 
-    //@Override
     public int getJCPRefreshTime() {
         return getInt(JCP_REFRESH_TIME, JCP_REFRESH_TIME_DEF);
     }
 
-    //@Override
     public boolean getJCPUseSSL() {
         return getBoolean(JCP_SSL, JCP_SSL_DEF);
     }
 
-    //@Override
     public String getJCPUrlAPIs() {
         return getString(JCP_URL_APIS, JCP_URL_DEF_APIS);
     }
 
-    //@Override
     public String getJCPUrlAuth() {
         return getString(JCP_URL_AUTH, JCP_URL_DEF_AUTH);
     }
 
-    //@Override
     public String getJCPId() {
         return getString(JCP_CLIENT_ID, JCP_CLIENT_ID_DEF);
     }
 
-    //@Override
     public String getJCPSecret() {
         return getString(JCP_CLIENT_SECRET, JCP_CLIENT_SECRET_DEF);
     }
@@ -264,55 +253,46 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // Object info
 
-    //@Override
     public String getObjName() {
         return getString(JODOBJ_NAME, JODOBJ_NAME_DEF);
     }
 
-    //@Override
     public void setObjName(String objName) {
         store(JODOBJ_NAME, objName, true);
     }
 
-    //@Override
     public String getObjIdCloud() {
         return getString(JODOBJ_IDCLOUD, JODOBJ_IDCLOUD_DEF);
     }
 
-    //@Override
     public void setObjIdCloud(String objId) {
         store(JODOBJ_IDCLOUD, objId, true);
     }
 
-    //@Override
     public String getObjIdHw() {
         return getString(JODOBJ_IDHW, JODOBJ_IDHW_DEF);
     }
 
-    //@Override
     public void setObjIdHw(String objIdHw) {
         store(JODOBJ_IDHW, objIdHw, true);
     }
 
+    // TODO make getObjBaseDir() method return a File instance
     public String getObjBaseDir() {
         return getString(JODOBJ_BASE_DIR, JODOBJ_BASE_DIR_DEF);
     }
 
 
-
     // Executor Manager
 
-    //@Override
     public String getJODPullerImpls() {
         return getString(JODPULLER_IMPLS, JODPULLER_IMPLS_DEF);
     }
 
-    //@Override
     public String getJODListenerImpls() {
         return getString(JODLISTENER_IMPLS, JODLISTENER_IMPLS_DEF);
     }
 
-    //@Override
     public String getJODExecutorImpls() {
         return getString(JODEXECUTOR_IMPLS, JODEXECUTOR_IMPLS_DEF);
     }
@@ -320,7 +300,6 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // Structure
 
-    //@Override
     public File getStructurePath() {
         return getFile(JODSTRUCT_PATH, JODSTRUCT_PATH_DEF);
     }
@@ -328,17 +307,14 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // Permissions
 
-    //@Override
     public File getPermissionsPath() {
         return getFile(JODPERM_PATH, JODPERM_PATH_DEF);
     }
 
-    //@Override
     public int getPermissionsRefreshTime() {
         return getInt(JODPERM_REFRESH, JODPERM_REFRESH_DEF);
     }
 
-    //@Override
     public JOSPPerm.GenerateStrategy getPermissionsGenerationStrategy() {
         String val = getString(JODPERM_GENSTARTEGY, JODPERM_GENSTARTEGY_DEF);
         return JOSPPerm.GenerateStrategy.valueOf(val.toUpperCase());
@@ -364,24 +340,22 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
      * - store on local configs
      * - set owner on cloud
      */
-    //@Override
     public String getOwnerId() {
         return getString(JODPERM_OWNER, JODPERM_OWNER_DEF);
     }
 
-    //@Override
     public void setOwnerId(String ownerId) {
         store(JODPERM_OWNER, ownerId, true);
     }
 
 
-    // Communication local
+    // Communication
 
-    //@Override
     public boolean getLocalEnabled() {
         return getBoolean(JODCOMM_LOCAL_ENABLED, JODCOMM_LOCAL_ENABLED_DEF);
     }
 
+    // TODO make getLocalKeyStorePath() method return a File instance
     public String getLocalKeyStorePath() {
         String path = getString(JODCOMM_LOCAL_KS_PATH, JODCOMM_LOCAL_KS_PATH_DEF);
         if (!Paths.get(path).isAbsolute())
@@ -397,6 +371,7 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
         return getString(JODCOMM_LOCAL_KS_ALIAS, JODCOMM_LOCAL_KS_ALIAS_DEF);
     }
 
+    // TODO make getLocalKeyStorePath() method return a File instance
     public String getLocalKeyStoreDefaultPath() {
         String path = getString(JODCOMM_LOCAL_KS_DEF_PATH, JODCOMM_LOCAL_KS_DEF_PATH_DEF);
         if (!Paths.get(path).isAbsolute())
@@ -404,21 +379,18 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
         return path;
     }
 
-
-    //@Override
     public String getLocalDiscovery() {
         return getString(JODCOMM_LOCAL_DISCOVERY, JODCOMM_LOCAL_DISCOVERY_DEF);
     }
 
-    //@Override
     public int getLocalServerPort() {
         return getInt(JODCOMM_LOCAL_PORT, JODCOMM_LOCAL_PORT_DEF);
     }
 
-    //@Override
     public boolean getCloudEnabled() {
         return getBoolean(JODCOMM_CLOUD_ENABLED, JODCOMM_CLOUD_ENABLED_DEF);
     }
+
 
     // History
 
@@ -441,6 +413,7 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public File getHistoryFileStatsPath() {
         return getFile(JODHISTORY_FILE_STATS_PATH, JODHISTORY_FILE_STATS_PATH_DEF);
     }
+
 
     // Events
 
