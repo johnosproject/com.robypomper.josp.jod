@@ -19,6 +19,7 @@
 
 package com.robypomper.josp.jod.executor;
 
+import com.robypomper.java.JavaThreads;
 import com.robypomper.josp.jod.structure.JODComponent;
 
 import org.slf4j.Logger;
@@ -112,8 +113,7 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
 
         log.debug("                                   Starting listener server");
         mustStop = false;
-        //noinspection Convert2Lambda
-        thread = new Thread(new Runnable() {
+        thread = JavaThreads.initAndStart(new Runnable() {
             @Override
             public void run() {
                 log.debug(String.format("                                   Thread listener server '%s' started", Thread.currentThread().getName()));
@@ -126,10 +126,8 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
                 }
                 log.debug(String.format("                                   Thread listener server '%s' terminated", Thread.currentThread().getName()));
             }
-        });
-        thread.setName(String.format(TH_LISTENER_NAME_FORMAT, getName()));
+        },String.format(TH_LISTENER_NAME_FORMAT, getName()),this.toString());
         log.debug(String.format("Starting thread listener server '%s'", thread.getName()));
-        thread.start();
 
         log.debug("                                   Listener server started");
     }
