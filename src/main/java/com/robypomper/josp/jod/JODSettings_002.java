@@ -147,6 +147,27 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public static final String JODHISTORY_BUFFER_RELEASE_SIZE = "jod.history.buffer_release_size";
     public static final String JODHISTORY_BUFFER_RELEASE_SIZE_DEF = "200";
     /**
+     * Size of the history file.
+     * <p>
+     * When the file is full, then 'jod.history.file_release_size' items
+     * are deleted permanently and removed from the file.
+     * <p>
+     * Default `10000`.
+     */
+    public static final String JODHISTORY_FILE_SIZE = "jod.history.file_size";
+    public static final String JODHISTORY_FILE_SIZE_DEF = "10000";
+
+    /**
+     * Number of history's items to delete from the file when it is full.
+     * <p>
+     * It must be a value lower than `jod.history.buffer_size`, otherwise it will
+     * delete all items from the file.
+     * <p>
+     * Default `2000`.
+     */
+    public static final String JODHISTORY_FILE_RELEASE_SIZE = "jod.history.file_release_size";
+    public static final String JODHISTORY_FILE_RELEASE_SIZE_DEF = "2000";
+    /**
      * File path for history's items.
      */
     public static final String JODHISTORY_FILE_ARRAY_PATH = "jod.history.file_array";
@@ -424,6 +445,14 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     public int getHistoryBufferReleaseSize() {
         return getInt(JODHISTORY_BUFFER_RELEASE_SIZE, JODHISTORY_BUFFER_RELEASE_SIZE_DEF);
+    }
+
+    public int getHistoryFileSize() {
+        return getInt(JODHISTORY_FILE_SIZE, JODHISTORY_FILE_SIZE_DEF);
+    }
+
+    public int getHistoryFileReleaseSize() {
+        return getInt(JODHISTORY_FILE_RELEASE_SIZE, JODHISTORY_FILE_RELEASE_SIZE_DEF);
     }
 
     public File getHistoryFileArrayPath() {

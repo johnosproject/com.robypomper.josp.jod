@@ -28,8 +28,8 @@ import java.util.Date;
 
 public class StatusHistoryArray extends JavaJSONArrayToFile<JOSPStatusHistory, Long> {
 
-    public StatusHistoryArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize) throws FileException {
-        super(jsonFile, JOSPStatusHistory.class, keepInMemory, maxBufferSize, releaseBufferSize);
+    public StatusHistoryArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize, int maxFileSize, int releaseFileSize) throws FileException {
+        super(jsonFile, JOSPStatusHistory.class, keepInMemory, maxBufferSize, releaseBufferSize, maxFileSize, releaseFileSize);
     }
 
     @Override
