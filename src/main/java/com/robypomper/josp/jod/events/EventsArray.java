@@ -28,8 +28,8 @@ import java.util.Date;
 
 public class EventsArray extends JavaJSONArrayToFile<JOSPEvent, Long> {
 
-    public EventsArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize) throws FileException {
-        super(jsonFile, JOSPEvent.class, keepInMemory, maxBufferSize, releaseBufferSize);
+    public EventsArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize, int maxFileSize, int releaseFileSize) throws FileException {
+        super(jsonFile, JOSPEvent.class, keepInMemory, maxBufferSize, releaseBufferSize, maxFileSize, releaseFileSize);
     }
 
     @Override

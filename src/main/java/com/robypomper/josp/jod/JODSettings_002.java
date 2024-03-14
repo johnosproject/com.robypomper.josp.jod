@@ -187,6 +187,26 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public static final String JODEVENTS_BUFFER_RELEASE_SIZE = "jod.events.buffer_release_size";
     public static final String JODEVENTS_BUFFER_RELEASE_SIZE_DEF = "200";
     /**
+     * Size of the events file.
+     * <p>
+     * When the file is full, then 'jod.events.file_release_size' items
+     * are deleted permanently and removed from the file.
+     * <p>
+     * Default `10000`.
+     */
+    public static final String JODEVENTS_FILE_SIZE = "jod.events.file_size";
+    public static final String JODEVENTS_FILE_SIZE_DEF = "10000";
+    /**
+     * Number of event's items to delete from the file when it is full.
+     * <p>
+     * It must be a value lower than `jod.events.file_size`, otherwise it will
+     * delete all items from the file.
+     * <p>
+     * Default `2000`.
+     */
+    public static final String JODEVENTS_FILE_RELEASE_SIZE = "jod.events.file_release_size";
+    public static final String JODEVENTS_FILE_RELEASE_SIZE_DEF = "2000";
+    /**
      * File path for events' items.
      */
     public static final String JODEVENTS_FILE_ARRAY_PATH = "jod.events.file_array";
@@ -427,6 +447,14 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     public int getEventsBufferReleaseSize() {
         return getInt(JODEVENTS_BUFFER_RELEASE_SIZE, JODEVENTS_BUFFER_RELEASE_SIZE_DEF);
+    }
+
+    public int getEventsFileSize() {
+        return getInt(JODEVENTS_FILE_SIZE, JODEVENTS_FILE_SIZE_DEF);
+    }
+
+    public int getEventsFileReleaseSize() {
+        return getInt(JODEVENTS_FILE_RELEASE_SIZE, JODEVENTS_FILE_RELEASE_SIZE_DEF);
     }
 
     public File getEventsFileArrayPath() {
