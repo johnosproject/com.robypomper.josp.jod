@@ -168,7 +168,7 @@ public abstract class AbsJOD implements JOD {
             startupInstance();
 
         else if (state.enumEquals(JODState.SHOUTING)) {
-            throw new StateException("Can't startup JOD daemon instance because is shuting down, try again later");
+            throw new StateException("Can't startup JOD daemon instance because is shutting down, try again later");
         }
 
         log.trace(String.format("JOD state is %s", getState()));
@@ -189,7 +189,7 @@ public abstract class AbsJOD implements JOD {
      */
     @Override
     public void shutdown() throws StateException {
-        log.info(String.format("Shuting down JOD instance for '%s' object", objInfo.getObjId()));
+        log.info(String.format("Shutting down JOD instance for '%s' object", objInfo.getObjId()));
         log.trace(String.format("JOD state is %s", getState()));
 
         if (state.enumEquals(JODState.RUN))
@@ -221,7 +221,7 @@ public abstract class AbsJOD implements JOD {
      */
     @Override
     public boolean restart() throws StateException {
-        log.info(String.format("Shuting down JOD instance for '%s' object", objInfo.getObjId()));
+        log.info(String.format("Shutting down JOD instance for '%s' object", objInfo.getObjId()));
         log.trace(String.format("JOD state is %s", getState()));
 
         if (state.enumEquals(JODState.RUN))
@@ -237,7 +237,7 @@ public abstract class AbsJOD implements JOD {
             restartInstance();
 
         else if (state.enumEquals(JODState.SHOUTING))
-            throw new StateException("Can't restart JOD daemon instance because is shuting down, try again later");
+            throw new StateException("Can't restart JOD daemon instance because is shutting down, try again later");
 
         log.trace(String.format("JOD state is %s", getState()));
         return state.enumEquals(JODState.STARTING);
@@ -296,8 +296,8 @@ public abstract class AbsJOD implements JOD {
             log.debug(String.format("                                   +             ClientsCount      = %s", comm.getAllLocalClientsInfo().size()));
             //log.debug(String.format("                                   +             ClientsConn       = %d", comm.getLocalConnections().getConnectedCount()));
             //log.debug(String.format("                                   +             ClientsDisconn    = %d", comm.getLocalConnections().getDisconnectedCount()));
-            InetAddress localAddr = comm.getLocalServer().getServerPeerInfo().getAddr();
-            Integer localPort = comm.getLocalServer().getServerPeerInfo().getPort();
+            InetAddress localAddr = comm.getLocalServer().getAddr();
+            Integer localPort = comm.getLocalServer().getPort();
             log.debug(String.format("                                   +             HostName          = %s", (localAddr != null ? localAddr.getHostName() : "N/A")));
             log.debug(String.format("                                   +             IPAddr            = %s", (localAddr != null ? localAddr.getHostAddress() : "N/A")));
             log.debug(String.format("                                   +             Port              = %s", (localPort != null ? localPort : "N/A")));
