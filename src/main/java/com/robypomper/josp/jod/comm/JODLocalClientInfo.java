@@ -20,12 +20,13 @@
 package com.robypomper.josp.jod.comm;
 
 import com.robypomper.comm.server.ServerClient;
+import com.robypomper.josp.protocol.JOSPSecurityLevel;
 
 import java.net.InetAddress;
 
 
 /**
- * Interface that represent and provide local client (JSL) info.
+ * Interface that represent a JOSP Service connected to the local server.
  */
 public interface JODLocalClientInfo {
 
@@ -53,7 +54,7 @@ public interface JODLocalClientInfo {
     String getUsrId();
 
     /**
-     * Th unique ID per instance.
+     * The unique ID per instance.
      * <p>
      * This id must be unique across all other srv/usr instances. That means
      * if two differents clients from same service and user are connected, they
@@ -63,6 +64,13 @@ public interface JODLocalClientInfo {
      * @return the represented client's instance id.
      */
     String getInstanceId();
+
+    /**
+     * The security level used by the current local client.
+     *
+     * @return the represented client's security level.
+     */
+    JOSPSecurityLevel getSecurityLevel();
 
 
     // Connection info
