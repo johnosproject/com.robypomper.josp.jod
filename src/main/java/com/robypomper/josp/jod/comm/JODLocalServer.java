@@ -195,7 +195,15 @@ public class JODLocalServer extends ServerAbsSSL {
         JavaThreads.initAndStart(new OnClientConnectionRunnable(client), "LOCAL_JSL_CONNECTED", client.toString());
     }
 
-    private class OnClientConnectionRunnable implements Runnable {
+    /**
+     * Check if the remote (client) certificate is full.
+     *
+     * @param fullSrvId the full JOSP Service id to check.
+     * @return true if the given string is a valid full JOSP Service's ID.
+     */
+    public boolean isRemoteCertificateFull(String fullSrvId) {
+        return JOSPProtocol.isFullSrvId(fullSrvId);
+    }
 
         private final ServerClient client;
 
