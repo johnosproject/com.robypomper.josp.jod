@@ -23,8 +23,6 @@ import com.robypomper.comm.peer.Peer;
 import com.robypomper.comm.peer.PeerConnectionListener;
 import com.robypomper.discovery.DiscoverySystemFactory;
 import com.robypomper.discovery.Publisher;
-import com.robypomper.java.JavaJKS;
-import com.robypomper.java.JavaSSL;
 import com.robypomper.java.JavaJSONArrayToFile;
 import com.robypomper.josp.clients.JCPAPIsClientObj;
 import com.robypomper.josp.clients.JCPClient2;
@@ -62,7 +60,7 @@ public class JODCommunication_002 implements JODCommunication {
     // Comms
     private final JCPAPIsClientObj jcpClient;
     private final JODGwO2SClient gwClient;
-    private JODLocalServer localServer = null;
+    private JODLocalServer localServer;
     private Publisher localServerPublisher = null;
 
 
@@ -88,7 +86,14 @@ public class JODCommunication_002 implements JODCommunication {
         jcpClient.addConnectionListener(jcpConnectionListener);
         this.events = events;
 
-        // Publish local object server
+        // Init local server
+        int localPort = locSettings.getLocalServerPort();
+        log.trace(String.format("Local object's server use '%s' server id", objInfo.getObjId()));
+        log.trace(String.format("Local object's server use '%d' port", localPort));
+        localServer = new JODLocalServer(this, objInfo, permissions, locSettings);
+        log.trace(String.format("Local object's server use '%d' port", localServer.getPort()));
+
+        // Publish local object server, if server's port is already known
         if (locSettings.getLocalServerPort() != 0)
             initializeLocalServerPublisher(locSettings.getLocalServerPort());
 
@@ -114,18 +119,12 @@ public class JODCommunication_002 implements JODCommunication {
         }
     }
 
-    private JODLocalServer initLocalServer() throws JavaJKS.GenerationException, JavaSSL.GenerationException, JavaJKS.LoadingException {
-        int localPort = locSettings.getLocalServerPort();
-        log.trace(String.format("Local object's server use '%s' server id", objInfo.getObjId()));
-        log.trace(String.format("Local object's server use '%d' port", localPort));
-        return JODLocalServer.instantiate(this, objInfo, permissions, localPort,
-                locSettings.getLocalKeyStorePath(), locSettings.getLocalKeyStorePass(),
-                locSettings.getLocalKeyStoreAlias(), locSettings.getLocalKeyStoreDefaultPath());
-    }
-
 
     // To Service Msg
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean sendToServices(String msg, JOSPPerm.Type minReqPerm) {
         log.debug(String.format("JOD Communication send '%s' message to local services and cloud", msg.substring(0, msg.indexOf('\n'))));
@@ -158,6 +157,9 @@ public class JODCommunication_002 implements JODCommunication {
         return isLocalRunning() || gwClient.getState().isConnected();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean sendToCloud(String msg) throws CloudNotConnected {
         log.debug(String.format("JOD Communication send '%s' message to cloud only", msg.substring(0, msg.indexOf('\n'))));
@@ -171,9 +173,12 @@ public class JODCommunication_002 implements JODCommunication {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean sendToSingleLocalService(JODLocalClientInfo locConn, String msg, JOSPPerm.Type minReqPerm) throws ServiceNotConnected {
-        log.debug(String.format("JOD Communication send '%s' message to JSL service '%s' only", msg.substring(0, msg.indexOf('\n')), locConn.getClientId()));
+        log.debug(String.format("JOD Communication send '%s' message to JSL service '%s' only", msg.substring(0, msg.indexOf('\n')), locConn.getFullSrvId()));
 
         if (!permissions.checkPermission(locConn.getSrvId(), locConn.getUsrId(), minReqPerm, JOSPPerm.Connection.OnlyLocal))
             return false;
@@ -192,8 +197,7 @@ public class JODCommunication_002 implements JODCommunication {
      */
     @Override
     public void sendObjectUpdMsg(JODState component, JODStateUpdate update) {
-        String msg = JOSPProtocol_ObjectToService.createObjectStateUpdMsg(objInfo.getObjId(), component.getPath().getString(), update);
-        sendToServices(msg, JOSPPerm.Type.Status);
+        sendToServices(JOSPProtocol_ObjectToService.createObjectStateUpdMsg(objInfo.getObjId(), component.getPath().getString(), update), JOSPPerm.Type.Status);
     }
 
     /**
@@ -489,6 +493,7 @@ public class JODCommunication_002 implements JODCommunication {
         return true;
     }
 
+
     // Connections access
 
     /**
@@ -531,11 +536,7 @@ public class JODCommunication_002 implements JODCommunication {
         if (localServer == null)
             return null;
 
-        for (JODLocalClientInfo cl : localServer.getLocalClientsInfo())
-            if (cl.getFullSrvId().equalsIgnoreCase(fullSrvId))
-                return cl;
-
-        return null;
+        return localServer.getLocalClientInfo(fullSrvId);
     }
 
 
@@ -561,26 +562,19 @@ public class JODCommunication_002 implements JODCommunication {
 
         try {
             log.debug("Starting local object's server");
-            localServer = initLocalServer();
             localServer.startup();
             log.debug("Local object's server started");
             Events.registerLocalStart("Comm Local Started", localServer);
 
             log.debug("Publishing local object's server");
             if (localServerPublisher == null)
-                initializeLocalServerPublisher(localServer.getServerPeerInfo().getPort());
+                initializeLocalServerPublisher(localServer.getPort());
             localServerPublisher.publish(true);
             log.debug("Local object's server published");
             Events.registerLocalStart("Comm Local Published", localServer);
 
         } catch (Throwable e) {
-            if (e instanceof JavaJKS.GenerationException)
-                log.warn("Error generating local certificates for local communication object's server", e);
-            else if (e instanceof JavaSSL.GenerationException)
-                log.warn("Error generating SSL context for local communication object's server", e);
-            else if (e instanceof JavaJKS.LoadingException)
-                log.warn("Error loading local certificates for local communication object's server", e);
-            else if (e instanceof ServerStartupException)
+            if (e instanceof ServerStartupException)
                 log.warn(String.format("Error on initializing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
             else if (e instanceof Publisher.PublishException)
                 log.warn(String.format("Error on publishing local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
@@ -600,7 +594,7 @@ public class JODCommunication_002 implements JODCommunication {
         if (!isLocalRunning())
             return;
 
-        log.info(String.format("Stop and hide local object's server '%s' on port '%d'", objInfo.getObjId(), localServer.getServerPeerInfo().getPort()));
+        log.info(String.format("Stop and hide local object's server '%s' on port '%d'", objInfo.getObjId(), localServer.getPort()));
 
         try {
             log.debug("Stopping local object's server");
@@ -610,7 +604,7 @@ public class JODCommunication_002 implements JODCommunication {
 
             log.debug("Hiding local object's server");
             if (localServerPublisher == null)
-                initializeLocalServerPublisher(localServer.getServerPeerInfo().getPort());
+                initializeLocalServerPublisher(localServer.getPort());
             localServerPublisher.hide(true);
             log.debug("Local object's server hided");
             Events.registerLocalStop("Comm Local Hided", localServer);
@@ -663,7 +657,7 @@ public class JODCommunication_002 implements JODCommunication {
 
         @Override
         public void onConnectionFailed(JCPClient2 jcpClient, Throwable t) {
-            if (JCPClient2.JCPNotReachableException.class.isInstance(t)) {
+            if (t instanceof JCPClient2.JCPNotReachableException) {
                 if (connFailedPrinted) {
                     log.debug(String.format("JCP APIs at '%s' still unreachable", jcpClient.getAPIsUrl()));
                 } else {
