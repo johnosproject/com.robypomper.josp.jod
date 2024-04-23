@@ -100,6 +100,7 @@ import org.junit.jupiter.api.Test;
  *
  *
  */
+@ExtendWith(MockitoExtension.class)
 public class SubstitutionsTest {
 
     private static class MockActionCmd extends JOSPProtocol.ActionCmd {

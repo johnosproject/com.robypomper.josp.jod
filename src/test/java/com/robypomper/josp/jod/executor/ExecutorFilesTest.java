@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ExecutorFilesTest {
@@ -43,8 +44,9 @@ public class ExecutorFilesTest {
     public void executorTest() throws InterruptedException, IOException, JODWorker.MissingPropertyException {
         String name = "executorTest";
         String proto = "files";
-        String filePath = "listenerFilesTest.txt";
-        String configs = "path=" + filePath;
+        String filePathStr = "listenerFilesTest.txt";
+        Path filePath = Paths.get(filePathStr);
+        String configs = "path=" + filePathStr;
 
         System.out.println("\nCREATE AND START EXECUTOR FOR FILES");
         JODState state = null;
@@ -66,23 +68,26 @@ public class ExecutorFilesTest {
         ExecutorFiles e = new ExecutorFiles(name, proto, configs, state);
         JOSPProtocol.ActionCmd commandAction = new MockActionCmd();
 
-        System.out.println("\nEXECUTE RANGE ACTION");
+        System.out.println("\nEXECUTE BOOLEAN ACTION");
         String updStr = ExecutorShellTest.formatUpdStr(true, false);
         JODBooleanAction.JOSPBoolean cmdActionBoolean = new JODBooleanAction.JOSPBoolean(updStr);
+        when(commandAction.getCommand()).thenReturn(cmdActionBoolean);
         e.exec(commandAction, cmdActionBoolean);
         Thread.sleep(1000);
-        String readFile = JavaFiles.readString(Paths.get(filePath));
-        Assertions.assertTrue(JavaFormatter.strToBoolean(readFile));
+        String fileContent = JavaFiles.readString(filePath);
+        Assertions.assertEquals("TRUE", fileContent.toUpperCase());
 
         System.out.println("\nEXECUTE RANGE ACTION");
         updStr = ExecutorShellTest.formatUpdStr(5.33, 0.0);
         JODRangeAction.JOSPRange cmdActionRange = new JODRangeAction.JOSPRange(updStr);
+        when(commandAction.getCommand()).thenReturn(cmdActionRange);
         e.exec(commandAction, cmdActionRange);
         Thread.sleep(1000);
-        String readFile2 = JavaFiles.readString(Paths.get(filePath));
+        String readFile2 = JavaFiles.readString(filePath);
         Assertions.assertEquals(new Double(5.33), JavaFormatter.strToDouble(readFile2));
 
-        Paths.get(filePath).toFile().delete();
+        if (!filePath.toFile().delete())
+            throw new IOException(String.format("Can't delete `%s` file", filePath));
     }
 
 }
