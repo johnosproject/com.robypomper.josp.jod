@@ -28,7 +28,7 @@ import com.robypomper.josp.jod.events.CloudStats;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODStateUpdate;
 import com.robypomper.josp.protocol.HistoryLimits;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
+import com.robypomper.josp.protocol.JOSPHistory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,7 +189,7 @@ public class JODHistory_002 implements JODHistory {
     public void register(JODComponent comp, JODStateUpdate update) {
         synchronized (histories) {
             long newId = stats.getRegisteredCount() + 1;
-            JOSPStatusHistory s = new JOSPStatusHistory(newId, comp.getPath().getString(), comp.getType(), new Date(), update.encode());
+            JOSPHistory s = new JOSPHistory(newId, comp.getPath().getString(), comp.getType(), new Date(), update.encode());
             histories.append(s);
 
             // Update stats
@@ -205,7 +205,7 @@ public class JODHistory_002 implements JODHistory {
         if (stats.getLastUploaded() == stats.getLastStored()) return;
         if (jcpClient == null || !jcpClient.isConnected()) return;
 
-        List<JOSPStatusHistory> toUpload;
+        List<JOSPHistory> toUpload;
         synchronized (histories) {
             try {
                 toUpload = histories.getById(stats.getLastUploaded() != -1 ? stats.getLastUploaded() : null, stats.getLastStored());
@@ -223,11 +223,11 @@ public class JODHistory_002 implements JODHistory {
             }
 
             log.debug(String.format("Upload from %d to %d (%d statuses)", toUpload.get(0).getId(), toUpload.get(toUpload.size() - 1).getId(), toUpload.size()));
-            for (JOSPStatusHistory e : toUpload)
+            for (JOSPHistory e : toUpload)
                 log.trace(String.format("- event[%d] %s", e.getId(), e.getPayload()));
 
             try {
-                apiObjsCaller.postHistory(JOSPStatusHistory.toHistoryStatuses(toUpload));
+                apiObjsCaller.postHistory(JOSPHistory.toHistoryMessagees(toUpload));
 
             } catch (JCPClient2.ConnectionException |
                      JCPClient2.AuthenticationException |
@@ -273,10 +273,10 @@ public class JODHistory_002 implements JODHistory {
     // Getters and setters
 
     @Override
-    public List<JOSPStatusHistory> getHistoryStatus(JODComponent comp, HistoryLimits limits) {
-        JavaJSONArrayToFile.Filter<JOSPStatusHistory> filter = new JavaJSONArrayToFile.Filter<JOSPStatusHistory>() {
+    public List<JOSPHistory> getHistoryStatus(JODComponent comp, HistoryLimits limits) {
+        JavaJSONArrayToFile.Filter<JOSPHistory> filter = new JavaJSONArrayToFile.Filter<JOSPHistory>() {
             @Override
-            public boolean accepted(JOSPStatusHistory o) {
+            public boolean accepted(JOSPHistory o) {
                 return o.getCompPath().equalsIgnoreCase(comp.getPath().getString());
             }
         };
@@ -296,7 +296,7 @@ public class JODHistory_002 implements JODHistory {
 
         if (HistoryLimits.isPageRange(limits)) {
             try {
-                List<JOSPStatusHistory> all = histories.filterAll(filter);
+                List<JOSPHistory> all = histories.filterAll(filter);
                 int page = limits.getPageNumOrDefault();
                 int size = limits.getPageSizeOrDefault();
 
@@ -362,25 +362,25 @@ public class JODHistory_002 implements JODHistory {
 
     };
 
-    private final JavaJSONArrayToFile.Observer<JOSPStatusHistory> storageObserver = new JavaJSONArrayToFile.Observer<JOSPStatusHistory>() {
+    private final JavaJSONArrayToFile.Observer<JOSPHistory> storageObserver = new JavaJSONArrayToFile.Observer<JOSPHistory>() {
         @Override
-        public void onAdded(List<JOSPStatusHistory> items) {
+        public void onAdded(List<JOSPHistory> items) {
             // Nothing to do, already done in register method
         }
 
         @Override
-        public void onFlushed(List<JOSPStatusHistory> items, boolean auto) {
+        public void onFlushed(List<JOSPHistory> items, boolean auto) {
             // Update stats
             stats.setLastStored(items.get(items.size() - 1).getId(), items.size());
             stats.writeIgnoreExceptions();
         }
 
         @Override
-        public void onRemoved(List<JOSPStatusHistory> items, boolean auto) {
+        public void onRemoved(List<JOSPHistory> items, boolean auto) {
             int countLost = 0;
             if (stats.getLastUploaded() == -1) countLost = items.size();
             else {
-                for (JOSPStatusHistory e : items)
+                for (JOSPHistory e : items)
                     if (e.getId() > stats.getLastUploaded())
                         countLost++;
             }

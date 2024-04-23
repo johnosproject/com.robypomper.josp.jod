@@ -674,8 +674,8 @@ public class JODLocalServer {
 
     private void sendObjectPresentation(JODLocalClientInfo locConn) throws JODCommunication.ServiceNotConnected, JODStructure.ParsingException {
         log.debug(String.format("%s Send object presentation to JSL service %s", LUID(locConn.getClient()), locConn.getFullSrvId()));
-        communication.sendToSingleLocalService(locConn, JOSPProtocol_ObjectToService.createObjectInfoMsg(objInfo.getObjId(), objInfo.getObjName(), objInfo.getJODVersion(), objInfo.getOwnerId(), objInfo.getModel(), objInfo.getBrand(), objInfo.getLongDescr(), communication.getCloudConnection().getState().isConnected()), JOSPPerm.Type.Status);
-        communication.sendToSingleLocalService(locConn, JOSPProtocol_ObjectToService.createObjectStructMsg(objInfo.getObjId(), objInfo.getStructForJSL()), JOSPPerm.Type.Status);
+        communication.sendToSingleLocalService(locConn, JOSPProtocol_ObjectToService.createObjectInfoMsg(objInfo.getObjId(), objInfo.getObjName(), objInfo.getJODVersion(), objInfo.getOwnerId(), objInfo.getModel(), objInfo.getBrand(), objInfo.getLongDescr(), communication.getCloudConnection().getState().isConnected()), JOSPPerm.Type.State);
+        communication.sendToSingleLocalService(locConn, JOSPProtocol_ObjectToService.createObjectStructMsg(objInfo.getObjId(), objInfo.getStructForJSL()), JOSPPerm.Type.State);
         communication.sendToSingleLocalService(locConn, JOSPProtocol_ObjectToService.createObjectPermsMsg(objInfo.getObjId(), permissions.getPermsForJSL()), JOSPPerm.Type.CoOwner);
 
         JOSPPerm.Type permType = permissions.getServicePermission(locConn.getSrvId(), locConn.getUsrId(), JOSPPerm.Connection.OnlyLocal);

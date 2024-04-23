@@ -185,10 +185,8 @@ public class JODStructure_002 implements JODStructure {
     @Override
     public void syncObjStruct() {
         try {
-            comm.sendToServices(JOSPProtocol_ObjectToService.createObjectStructMsg(objInfo.getObjId(), objInfo.getStructForJSL()), JOSPPerm.Type.Status);
-        } catch (ParsingException e) {
-            return;
-        }
+            comm.sendToServices(JOSPProtocol_ObjectToService.createObjectStructMsg(objInfo.getObjId(), objInfo.getStructForJSL()), JOSPPerm.Type.State);
+        } catch (ParsingException ignore) {}
     }
 
 

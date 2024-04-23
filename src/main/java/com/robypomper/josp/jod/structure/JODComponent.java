@@ -22,7 +22,7 @@ package com.robypomper.josp.jod.structure;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.robypomper.josp.protocol.HistoryLimits;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
+import com.robypomper.josp.protocol.JOSPHistory;
 
 import java.util.List;
 
@@ -69,6 +69,6 @@ public interface JODComponent {
     /**
      * @return the component status history.
      */
-    List<JOSPStatusHistory> getHistoryStatus(HistoryLimits limits);
+    List<JOSPHistory> getHistoryStatus(HistoryLimits limits);
 
 }

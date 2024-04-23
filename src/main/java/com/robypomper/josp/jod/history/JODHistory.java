@@ -22,7 +22,7 @@ package com.robypomper.josp.jod.history;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODStateUpdate;
 import com.robypomper.josp.protocol.HistoryLimits;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
+import com.robypomper.josp.protocol.JOSPHistory;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,7 +37,7 @@ public interface JODHistory {
 
     // Get statuses
 
-    List<JOSPStatusHistory> getHistoryStatus(JODComponent comp, HistoryLimits limits);
+    List<JOSPHistory> getHistoryStatus(JODComponent comp, HistoryLimits limits);
 
 
     // Mngm methods

@@ -21,7 +21,7 @@ package com.robypomper.josp.jod.structure;
 
 import com.robypomper.josp.jod.history.JODHistory;
 import com.robypomper.josp.protocol.HistoryLimits;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
+import com.robypomper.josp.protocol.JOSPHistory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public abstract class AbsJODComponent implements JODComponent {
      * {@inheritDoc}
      */
     @Override
-    public List<JOSPStatusHistory> getHistoryStatus(HistoryLimits limits) {
+    public List<JOSPHistory> getHistoryStatus(HistoryLimits limits) {
         return getHistory().getHistoryStatus(this,limits);
     }
 

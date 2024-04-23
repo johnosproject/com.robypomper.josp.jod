@@ -134,7 +134,7 @@ public class CmdsJODPermissions {
                 || typeStr.compareToIgnoreCase("States") == 0
                 || typeStr.compareToIgnoreCase("Status") == 0
                 || typeStr.compareToIgnoreCase("Statuses") == 0)
-            return JOSPPerm.Type.Status;
+            return JOSPPerm.Type.State;
 
         if (typeStr.compareToIgnoreCase("None") == 0
                 || typeStr.compareToIgnoreCase("No") == 0)

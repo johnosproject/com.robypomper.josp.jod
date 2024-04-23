@@ -317,7 +317,7 @@ public class JODObjectInfo_002 implements JODObjectInfo {
                 structure.getRoot().getBrand(),
                 structure.getRoot().getDescr(),
                 comm.getCloudConnection().getState().isConnected());
-        comm.sendToServices(objInfoMsg, JOSPPerm.Type.Status);
+        comm.sendToServices(objInfoMsg, JOSPPerm.Type.State);
     }
 
 
