@@ -55,9 +55,7 @@ public class ExecutorShellTest {
                     return "JODStateMock";
                 }
             };
-        } catch (JODStructure.ComponentInitException e) {
-            e.printStackTrace();
-        }
+        } catch (JODStructure.ComponentInitException ignore) {}
         ExecutorShell e = new ExecutorShell(name, proto, configs, state);
         JOSPProtocol.ActionCmd commandAction = new MockActionCmd();
 

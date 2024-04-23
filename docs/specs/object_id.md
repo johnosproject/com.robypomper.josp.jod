@@ -2,8 +2,7 @@
 
 [SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
 
-**The Object ID is the unique code that identify a [JOSP Object](/docs/features/objects_integration.md)
-in a [JOSP EcoSystem](/docs/features/ecosystem.md)**.
+**The Object ID is the unique code that identify a JOSP Object in a JOSP EcoSystem**.
 
 This code is generated on first object's startup, and it's updated only when a user
 change his owner.

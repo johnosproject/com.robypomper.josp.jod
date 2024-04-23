@@ -43,5 +43,5 @@ JOD Agent's files._
 | jod.executor_mngr.executors<br/>(JODEXECUTOR_IMPLS)           | ""                     | List of JOD Agent [Executor](workers.md#executors)'s declarations. Each Executor config must be expressed in the following format ```{FirmwareProto}://{FirmwareConfigs}```.                                                                                                                                                                                                                                                                                                                                                                                      |
 
 
-In the [JOD source directory](/src/jospJOD/configs/jod_default.yml)
+In the [JOD source directory](/src/main/configs/jod_default.yml)
 you can find some ```jod.yml``` example file used in the JOD development.

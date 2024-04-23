@@ -3,7 +3,7 @@
 [SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
 
 With Worker Configs Placeholder, **Makers can setups dynamic configs for their
-[Pillar's](../pillars) firmware**.
+[Pillar's](pillars.md) firmware**.
 
 For example, using the worker's placeholders, you can set up a File Listener worker
 that use the Pillar's name (```%COMP_NAME%```) in the monitored file path.
@@ -11,9 +11,9 @@ Or even you can configure an HTTP Puller to use the pillar's path (```%COMP_PATH
 
 Worker **Placeholders are substituted to Firmware Configs on worker initialization**.
 When worker parses the Firmware Configs String, from the pillar's definition in
-the [JOD Agent's structure](../structure).
+the [JOD Agent's structure](structure.md).
 This string is defined by Maker in the object's configuration.<br/>
-Firmware Configs are parsed using the [AbsJODWorker::parseConfig{TYPE}(Map,String)](/src/jospJOD/java/com/robypomper/josp/jod/executor/AbsJODWorker.java)
+Firmware Configs are parsed using the [AbsJODWorker::parseConfig{TYPE}(Map,String)](/src/main/java/com/robypomper/josp/jod/executor/AbsJODWorker.java)
 methods. Those methods substitute string config's value placeholders with
 [Pillar](#pillar) properties, then convert resulting value to required ```{TYPE}```. <br/>
 So any Firmware Configs is updated with Component properties.
@@ -57,19 +57,19 @@ Check the worker's Firmware Configs details for placeholder replacement info.
 
 Only for **Pillar of Boolean** type:
 
-| Placeholder        | Replaced with                                                                                                                                                                          |
-|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ```%S_VAL%```      | Pillar value that correspond to 'TRUE' or 'FALSE' strings, see the [JavaFormatter.booleanToString(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.    |
-| ```%S_VAL_BOOL%``` | Pillar value that correspond to 'TRUE' or 'FALSE' strings, see the [JavaFormatter.booleanToString(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.    |
-| ```%S_VAL_BIN%```  | Pillar value that correspond to '1' (true) or '0' (false), see the [JavaFormatter.booleanToStringBin(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function. |
+| Placeholder        | Replaced with                                                                                                            |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------|
+| ```%S_VAL%```      | Pillar value that correspond to 'TRUE' or 'FALSE' strings, see the `JavaFormatter.booleanToString(boolean)` function.    |
+| ```%S_VAL_BOOL%``` | Pillar value that correspond to 'TRUE' or 'FALSE' strings, see the `JavaFormatter.booleanToString(boolean)` function.    |
+| ```%S_VAL_BIN%```  | Pillar value that correspond to '1' (true) or '0' (false), see the `JavaFormatter.booleanToStringBin(boolean)` function. |
 
 Only for **Pillar of Range** type:
 
-| Placeholder         | Replaced with                                                                                                                                                                      |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ```%S_VAL%```       | Pillar value that correspond to a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.       |
-| ```%S_VAL_COMMA%``` | Pillar value that correspond to a valid number rendered with the [JavaFormatter.doubleToStr_Point(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function. |
-| ```%S_VAL_POINT%``` | Pillar value that correspond to a valid number rendered with the [JavaFormatter.doubleToStr_Comma(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function. |
+| Placeholder         | Replaced with                                                                                                        |
+|---------------------|----------------------------------------------------------------------------------------------------------------------|
+| ```%S_VAL%```       | Pillar value that correspond to a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.       |
+| ```%S_VAL_COMMA%``` | Pillar value that correspond to a valid number rendered with the `JavaFormatter.doubleToStr_Point(double)` function. |
+| ```%S_VAL_POINT%``` | Pillar value that correspond to a valid number rendered with the `JavaFormatter.doubleToStr_Comma(double)` function. |
 
 ## Action
 
@@ -93,24 +93,24 @@ For **all Actions Requests**:
 
 Only for **Actions Requests on Pillar of Boolean Action** type:
 
-| Placeholder            | Replaced with                                                                                                                                                                                                                                  |
-|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ```%A_VAL%```          | Value to set, requested by Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the [JavaFormatter.booleanToString(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.              |
-| ```%A_VAL_BOOL%```     | Value to set, requested by Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the [JavaFormatter.booleanToString(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.              |
-| ```%A_VAL_BIN%```      | Value to set, requested by Action Execution. This value can be one of the two '1' (true) or '0' (false) strings, see the [JavaFormatter.booleanToStringBin(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.   |
-| ```%A_VAL_OLD%```      | Current pillar value, before Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the [JavaFormatter.booleanToString(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.            |
-| ```%A_VAL_OLD_BOOL%``` | Current pillar value, before Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the [JavaFormatter.booleanToString(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.            |
-| ```%A_VAL_OLD_BIN%```  | Current pillar value, before Action Execution. This value can be one of the two '1' (true) or '0' (false) strings, see the [JavaFormatter.booleanToStringBin(boolean)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function. |
+| Placeholder            | Replaced with                                                                                                                                                                    |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ```%A_VAL%```          | Value to set, requested by Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the `JavaFormatter.booleanToString(boolean)` function.              |
+| ```%A_VAL_BOOL%```     | Value to set, requested by Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the `JavaFormatter.booleanToString(boolean)` function.              |
+| ```%A_VAL_BIN%```      | Value to set, requested by Action Execution. This value can be one of the two '1' (true) or '0' (false) strings, see the `JavaFormatter.booleanToStringBin(boolean)` function.   |
+| ```%A_VAL_OLD%```      | Current pillar value, before Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the `JavaFormatter.booleanToString(boolean)` function.            |
+| ```%A_VAL_OLD_BOOL%``` | Current pillar value, before Action Execution. This value can be one of the two 'TRUE' or 'FALSE' strings, see the `JavaFormatter.booleanToString(boolean)` function.            |
+| ```%A_VAL_OLD_BIN%```  | Current pillar value, before Action Execution. This value can be one of the two '1' (true) or '0' (false) strings, see the `JavaFormatter.booleanToStringBin(boolean)` function. |
 
 For **Actions Requests on Pillar of Range Action** type:
 
-| Placeholder             | Replaced with                                                                                                                                                                                                           |
-|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ```%A_VAL%```           | Value to set, requested by Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.             |
-| ```%A_VAL_POINT%```     | Value to set, requested by Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.             |
-| ```%A_VAL_COMMA%```     | Value to set, requested by Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.             |
-| ```%A_VAL_INT%```       | Value to set, requested by Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr_Truncated(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.   |
-| ```%A_VAL_OLD%```       | Current pillar value, before Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.           |
-| ```%A_VAL_OLD_POINT%``` | Current pillar value, before Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.           |
-| ```%A_VAL_OLD_COMMA%``` | Current pillar value, before  Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function.          |
-| ```%A_VAL_OLD_INT%```   | Current pillar value, before Action Execution. This value can be a valid number rendered with the [JavaFormatter.doubleToStr_Truncated(double)](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) function. |
+| Placeholder             | Replaced with                                                                                                                                             |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ```%A_VAL%```           | Value to set, requested by Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.             |
+| ```%A_VAL_POINT%```     | Value to set, requested by Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.             |
+| ```%A_VAL_COMMA%```     | Value to set, requested by Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.             |
+| ```%A_VAL_INT%```       | Value to set, requested by Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr_Truncated(double)` function.   |
+| ```%A_VAL_OLD%```       | Current pillar value, before Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.           |
+| ```%A_VAL_OLD_POINT%``` | Current pillar value, before Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.           |
+| ```%A_VAL_OLD_COMMA%``` | Current pillar value, before  Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr(double)` function.          |
+| ```%A_VAL_OLD_INT%```   | Current pillar value, before Action Execution. This value can be a valid number rendered with the `JavaFormatter.doubleToStr_Truncated(double)` function. |

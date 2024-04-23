@@ -56,20 +56,14 @@ public class JOSPStructIntegration {
 
         JODRoot_Jackson jodRoot;
         // From: JODRoot JODStructure_002::loadStructure(String)
-        try {
-            ObjectMapper objMapper = new ObjectMapper();
-            InjectableValues.Std injectVars = new InjectableValues.Std();
-            injectVars.addValue(JODStructure.class, structure);
-            injectVars.addValue(JODExecutorMngr.class, executorMngr);
-            injectVars.addValue(JODHistory.class, history);
-            objMapper.setInjectableValues(injectVars);
+        ObjectMapper objMapper = new ObjectMapper();
+        InjectableValues.Std injectVars = new InjectableValues.Std();
+        injectVars.addValue(JODStructure.class, jodStructure);
+        injectVars.addValue(JODExecutorMngr.class, jodExecutorMngr);
+        injectVars.addValue(JODHistory.class, jodHistory);
+        objMapper.setInjectableValues(injectVars);
 
-            jodRoot = objMapper.readerFor(JODRoot_Jackson.class).readValue(file);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        jodRoot = objMapper.readerFor(JODRoot_Jackson.class).readValue(file);
         System.out.println("JOD struct");
         printJODRoot(jodRoot);
         System.out.println("JOD paths");
@@ -79,14 +73,8 @@ public class JOSPStructIntegration {
         System.out.println("\nSERIALIZE STRUCT.JSL");
         String jodStructureStr;
         // From: String JODStructure_002::getStructForJSL()
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            jodStructureStr = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jodRoot);
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        jodStructureStr = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jodRoot);
 
         System.out.println(jodStructureStr);
 
@@ -94,8 +82,8 @@ public class JOSPStructIntegration {
         // Support objects
         JSLRemoteObject remoteObject = new MockJSLRemoteObject();
 
-        ObjectMapper mapper = new ObjectMapper();
-        InjectableValues.Std injectVars = new InjectableValues.Std();
+        mapper = new ObjectMapper();
+        injectVars = new InjectableValues.Std();
         injectVars.addValue(JSLRemoteObject.class, remoteObject);
         mapper.setInjectableValues(injectVars);
         JSLRoot jslRoot = mapper.readValue(jodStructureStr, JSLRoot_Jackson.class);

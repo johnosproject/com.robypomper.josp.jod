@@ -129,8 +129,7 @@ public class FormatterInternal {
         if (formatPathType.compareToIgnoreCase(PROP_FORMAT_PATH_TYPE_HTML_XPATH) == 0) {
             try {
                 TagNode tagNode = new HtmlCleaner().clean(str);
-                org.w3c.dom.Document doc = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
-                return doc;
+                return new DomSerializer(new CleanerProperties()).createDOM(tagNode);  // org.w3c.dom.Document object
 
             } catch (ParserConfigurationException e) {
                 throw new ParsingException(e);

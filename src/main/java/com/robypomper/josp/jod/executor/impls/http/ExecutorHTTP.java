@@ -23,7 +23,6 @@ package com.robypomper.josp.jod.executor.impls.http;
 import com.robypomper.josp.clients.HTTPClient;
 import com.robypomper.josp.jod.executor.AbsJODExecutor;
 import com.robypomper.josp.jod.executor.Substitutions;
-import com.robypomper.josp.jod.executor.impls.dbus.ExecutorDBus;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;

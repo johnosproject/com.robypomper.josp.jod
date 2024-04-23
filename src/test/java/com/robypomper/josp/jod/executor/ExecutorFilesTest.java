@@ -62,9 +62,7 @@ public class ExecutorFilesTest {
                     return "JODStateMock";
                 }
             };
-        } catch (JODStructure.ComponentInitException e) {
-            e.printStackTrace();
-        }
+        } catch (JODStructure.ComponentInitException ignore) {}
         ExecutorFiles e = new ExecutorFiles(name, proto, configs, state);
         JOSPProtocol.ActionCmd commandAction = new MockActionCmd();
 

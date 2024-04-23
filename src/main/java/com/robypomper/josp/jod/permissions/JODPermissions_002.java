@@ -75,7 +75,7 @@ public class JODPermissions_002 implements JODPermissions {
         if (locSettings.getPermissionsPath().exists())
             loadFromFile();
 
-        if (permissions.size() == 0) {
+        if (permissions.isEmpty()) {
             generatePermissions();
             saveToFile();
         }

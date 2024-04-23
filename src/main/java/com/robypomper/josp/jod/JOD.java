@@ -72,13 +72,13 @@ public interface JOD {
 
 
     /**
-     * @return the list of supported JOSP Protocol versions.
+     * @return the array of supported JOSP Protocol versions.
      */
     String[] versionsJOSPProtocol();
 
 
     /**
-     * @return the list of supported JCP APIs versions.
+     * @return the array of supported JCP APIs versions.
      */
     String[] versionsJCPAPIs();
 

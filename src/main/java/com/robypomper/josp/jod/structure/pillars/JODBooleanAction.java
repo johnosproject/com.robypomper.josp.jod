@@ -54,7 +54,7 @@ public class JODBooleanAction extends JODBooleanState implements JODAction {
      * <p>
      *  @param structure the JOD Structure system.
      * @param execMngr  the JOD Executor Mngr system.
-     * @param history
+     * @param history   the JOD History system.
      * @param name      the name of the component.
      * @param descr     the description of the component.
      * @param listener  the listener full configs string.

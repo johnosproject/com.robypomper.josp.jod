@@ -59,7 +59,9 @@ public class ListenerFilesTest {
         System.out.println("\nSTOP LISTENER FOR FILES");
         l.halt();
 
-        Paths.get(filePath).toFile().delete();
+        if (!Paths.get(filePath).toFile().delete())
+            throw new IOException(String.format("Can't delete `%s` file", filePath));
+
     }
 
 }

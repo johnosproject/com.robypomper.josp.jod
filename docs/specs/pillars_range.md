@@ -8,7 +8,7 @@ number (with floating point)
 Range state value can be any number like integer or floating.
 State Range's value is stored by JOD instance as ```double``` variable (a
 double-precision 64-bit IEEE 754 floating point) and encoded to JOSP messages
-with the [JavaFormatter::doubleToStr()](/src/jospCommons/java/com/robypomper/java/JavaFormatter.java) method.
+with the `JavaFormatter::doubleToStr()` method.
 
 An example for a **Pillar Range State** can be a temperature sensor that provide
 values between ```-20``` and ```100``` (°C). This pillar sends a status update
@@ -23,16 +23,16 @@ You can use this Pillar to expose hundreds of different features representing
 them as Range states and actions like temperatures, speaker volumes, resource
 usage...
 
-**Range State can be configured to use any kind of Workers as [listener](../workers.md#listeners)
-or [puller](../workers.md#pullers).** Because all Listeners and Pullers use the
+**Range State can be configured to use any kind of Workers as [listener](workers.md#listeners)
+or [puller](workers.md#pullers).** Because all Listeners and Pullers use the
 AbsJODWorker::convertAndSetStatus(String) method to parse and update current
 pillar status (independently to the pillar type).
 
 On the other side, the **Range Actions can be configured to use as executor only
 Workers that implements the ```JODRangeAction.JOSPRange.Executor``` interface**:
-* [Shell](../../workers/executor_shell.md): on action request received, execute configured bash or powershell command
-* [File](../../workers/executor_file.md): on action request received, write configured value to a file
-* [Http](../../workers/executor_http.md): on action request received, query configured url
+* [Shell](../impls/workers/executor_shell.md): on action request received, execute configured bash or powershell command
+* [File](../impls/workers/executor_file.md): on action request received, write configured value to a file
+* [Http](../impls/workers/executor_http.md): on action request received, query configured url
 
 ---
 

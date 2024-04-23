@@ -315,7 +315,7 @@ public class Events {
         String payload;
         payload = "{";
         payload += String.format("\"count\": \"%s\"", permissions.size());
-        if (permissions.size() > 0)
+        if (!permissions.isEmpty())
             payload += String.format(", \"objId\": \"%s\"", permissions.get(0).getObjId());
         payload += "}";
         register(EventType.JOD_PERMS_LOAD, phase, payload);

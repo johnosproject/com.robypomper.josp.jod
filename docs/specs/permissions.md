@@ -14,10 +14,10 @@ connected service.
 same permission as the lower levels.<br/>
 Here the permission levels list ordered from lower to higher:
 
-* [NONE](/docs/features/permissions.md#none): list object but can't get object's info or structure
-* [STATUS](/docs/features/permissions.md#state): read object's structure and contained [Pillar's states](pillars.md#states)
-* [ACTION](/docs/features/permissions.md#action): require [Pillar's actions](pillars.md#actions) executions
-* [OWNER](/docs/features/permissions.md#owner): edit object's name, owner or permissions
+* [NONE](/docs/specs/permissions.md): list object but can't get object's info or structure
+* [STATE](/docs/specs/permissions.md): read object's structure and contained [Pillar's states](pillars.md#states)
+* [ACTION](/docs/specs/permissions.md): require [Pillar's actions](pillars.md#actions) executions
+* [OWNER](/docs/specs/permissions.md): edit object's name, owner or permissions
 
 **JOD Agent assigns a permission level to JOSP Services** using an internal
 permission table. This table includes a **service id, a user id and a level permission**.
@@ -117,5 +117,5 @@ object is offline.
 
 Because object's permission can be updated when object was not connected to JCP,
 it requires a sync system between object and cloud.<br/>
-JOSP Services can edit object's permissions also via [Direct Communication](/docs/features/communication.md#direct-communication).
+JOSP Services can edit object's permissions also via [Direct Communication](/docs/specs/communication_local.md).
 So when an object connects again to JCP, it must synchronize the cloud permissions table.

@@ -22,7 +22,6 @@ package com.robypomper.josp.jod.executor.impls.http;
 import com.robypomper.java.JavaDate;
 import com.robypomper.josp.clients.HTTPClient;
 import com.robypomper.josp.jod.executor.AbsJODPuller;
-import com.robypomper.josp.jod.executor.impls.dbus.ExecutorDBus;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
 
@@ -38,7 +37,7 @@ import java.util.Map;
  * JOD Puller test.
  */
 public class PullerHTTP extends AbsJODPuller {
-    class CachedResponse {
+    static class CachedResponse {
         Date date;
         String response;
     }
@@ -58,7 +57,7 @@ public class PullerHTTP extends AbsJODPuller {
     private final int cache_timeout_ms;
     private String lastResponse = "";
     private String lastResult = "";
-    private static Map<String, CachedResponse> cache = new HashMap();
+    private final static Map<String, CachedResponse> cache = new HashMap();
 
 
     // Constructor

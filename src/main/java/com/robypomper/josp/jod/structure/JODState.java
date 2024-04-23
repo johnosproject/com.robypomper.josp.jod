@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <p>
  * State component must propagate monitored status changes to connected services.
  */
-@SuppressWarnings("JavadocReference")
 public interface JODState extends JODComponent {
 
     // Status's properties

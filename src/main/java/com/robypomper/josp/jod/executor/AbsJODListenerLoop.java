@@ -85,7 +85,6 @@ public abstract class AbsJODListenerLoop extends AbsJODListener {
      * on listener stop. On stop, the server's thread receive an interrupt and
      * the method {@link #mustShoutingDown()} return <code>true</code>.
      */
-    @SuppressWarnings("JavadocReference")
     protected abstract void getServerLoop();
 
     /**

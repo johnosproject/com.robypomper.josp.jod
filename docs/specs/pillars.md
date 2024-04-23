@@ -27,12 +27,12 @@ Because of that, Pillars configs can be split in 2 groups:
 For detailed Pillar's configuration please check the Pillar Type documentation
 and the [state](#states)/[action](#actions) specific configs.
 
-* [Container](pillars/pillars_container.md):<br/>
+* [Container](pillars_container.md):<br/>
   special pillar that can contains other pillars
-* [Boolean](pillars/pillars_boolean.md):<br/>
+* [Boolean](pillars_boolean.md):<br/>
   expose status like Open/Closed, Empty/Full, Enable/Disabled;<br/>
   or actions like On/Off, Fill/Empty, Mute/Unmute...
-* [Range](pillars/pillars_range.md):<br/>
+* [Range](pillars_range.md):<br/>
   expose status like Temperature, Absorbed power;<br/>
   or actions Control volume, Light dimming...
 * Pillar #3:<br/>

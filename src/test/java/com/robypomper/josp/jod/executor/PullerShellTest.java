@@ -64,7 +64,8 @@ public class PullerShellTest {
         System.out.println("\nSTOP PULLER FOR UNIX SHELL");
         l.stopTimer();
 
-        Paths.get(filePath).toFile().delete();
+        if (!Paths.get(filePath).toFile().delete())
+            throw new IOException(String.format("Can't delete `%s` file", filePath));
     }
 
 

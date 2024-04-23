@@ -3,7 +3,7 @@
 [SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
 
 When an [JOD Action](../../specs/pillars.md#actions) must be executed, this executor executes
-the ```cmd``` using the [JavaExecProcess::execCmdConcat(String cmd)](/src/jospCommons/java/com/robypomper/java/JavaExecProcess.java)
+the ```cmd``` using the `JavaExecProcess::execCmdConcat(String cmd)`
 method.
 
 Before execute the command, the ```cmd``` string is updated and all his placeholder
@@ -17,7 +17,7 @@ After that execute the command.
 
 ### ```cmd```
 
-String containing the shell command to execute via [JavaExecProcess::execCmdConcat(String cmd)](/src/jospCommons/java/com/robypomper/java/JavaExecProcess.java)
+String containing the shell command to execute via `JavaExecProcess::execCmdConcat(String cmd)`
 method with 5 seconds as timeout. **It's mandatory.**
 
 The ```cmd``` string can contain any available command on running machine and
