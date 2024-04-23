@@ -40,7 +40,14 @@
 // SourceSes configs
 // -----------------
 
-sourceSets {}
+sourceSets {
+    intTest {}
+}
+
+configurations {
+    intTestImplementation.extendsFrom implementation
+    intTestRuntimeOnly.extendsFrom runtimeOnly
+}
 
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:${project.ext.get("version.junit-jupiter")}"
@@ -48,6 +55,14 @@ dependencies {
     testImplementation "com.robypomper.josp:jospJSL:${project.ext.get("version.deps.jospJSL")}"
     testImplementation sourceSets.main.output
     testImplementation sourceSets.main.runtimeClasspath
+
+    intTestImplementation "org.junit.jupiter:junit-jupiter:${project.ext.get("version.junit-jupiter")}"
+    intTestImplementation "org.mockito:mockito-core:${project.ext.get("version.junit-jupiter")}"
+    intTestImplementation "org.mockito:mockito-junit-jupiter:${project.ext.get("version.junit-jupiter")}"
+    intTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    intTestImplementation "com.robypomper.josp:jospJSL:${project.ext.get("version.deps.jospJSL")}"
+    intTestImplementation sourceSets.main.output
+    intTestImplementation sourceSets.main.runtimeClasspath
 }
 
 
@@ -58,3 +73,24 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.intTest.output.classesDirs
+    classpath = sourceSets.intTest.runtimeClasspath
+    shouldRunAfter test
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed"
+    }
+
+    enableAssertions = false
+
+}
+
+check.dependsOn integrationTest
