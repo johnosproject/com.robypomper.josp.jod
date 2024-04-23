@@ -27,6 +27,7 @@ import com.robypomper.josp.jod.structure.pillars.JODRangeState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
+import java.util.Random;
 
 
 /**
@@ -60,6 +61,7 @@ public class ListenerTestAdv extends AbsJODListenerLoop {
     private static final Logger log = LoggerFactory.getLogger(ListenerTestAdv.class);
     private int frequency = 1;
     private int sleepTime = 1000;
+    private final Random r = new Random();
 
 
     // Constructor
@@ -104,9 +106,9 @@ public class ListenerTestAdv extends AbsJODListenerLoop {
 
                 // For each JODState supported
                 if (getComponent() instanceof JODBooleanState)
-                    ((JODBooleanState) getComponent()).setUpdate(true);
+                    ((JODBooleanState) getComponent()).setUpdate(r.nextBoolean());
                 else if (getComponent() instanceof JODRangeState)
-                    ((JODRangeState) getComponent()).setUpdate(5);
+                    ((JODRangeState) getComponent()).setUpdate(r.nextInt(50));
 
             }
             try {
