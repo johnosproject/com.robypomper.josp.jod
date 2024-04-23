@@ -11,7 +11,7 @@ Into this repository are contained all sources for the JOD agent from the
 
 **Artifact Name:** jospJOD<br />
 **Artifact Group:** com.robypomper.josp<br />
-**Artifact Version:** 2.2.3
+**Artifact Version:** 2.2.4
 
 </td>
 </tr>
