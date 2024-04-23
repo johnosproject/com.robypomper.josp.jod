@@ -101,7 +101,7 @@ ext {
     set('version.cli'               , '1.5.0')
     set('version.cliche'            , '110413')
     set('version.htmlcleaner'       , '2.29')
-    set('version.json-path'         , '2.8.0')
+    set('version.json-path'         , '2.9.0')
     set('version.dbus-java'         , '4.3.0')
     set('version.apache.log4j'        , '2.20.0')
     set('version.junit-jupiter'     , '5.10.0')
