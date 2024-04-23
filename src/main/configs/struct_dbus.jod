@@ -42,7 +42,7 @@
             "contains": {
                 "Play/Pause" : {
                     "type": "BooleanAction",
-                    "listener" : "dbus://dbus_name=org.mpris.MediaPlayer2.vlc;dbus_obj_path=/org/mpris/MediaPlayer2;dbus_iface=org.mpris.MediaPlayer2.Player;dbus_prop=PlaybackStatus;init_data=1;",
+                    "listener" : "dbus://dbus_name=org.mpris.MediaPlayer2.vlc;dbus_obj_path=/org/mpris/MediaPlayer2;dbus_iface=org.mpris.MediaPlayer2.Player;dbus_prop=PlaybackStatus;init_data=1;eval=httpResult.toLowerCase()=='playing'?'TRUE':'FALSE'",
                     "executor" : "dbus://dbus_name=org.mpris.MediaPlayer2.vlc;dbus_obj_path=/org/mpris/MediaPlayer2;dbus_iface=org.mpris.MediaPlayer2.Player;dbus_method=PlayPause;dbus_method_params=%A_VAL%:Boolean, %A_VAL%:String, %A_VAL_BIN%:Float;"
                 }
             }
