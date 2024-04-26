@@ -1,6 +1,4 @@
-# JOD - Specs: Pillar/Range
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Pillar/Range
 
 The range pillar can represent a value in a range. Range states can represent a
 number (with floating point)

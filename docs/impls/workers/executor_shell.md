@@ -1,6 +1,4 @@
-# JOD - Workers/Executor/Shell
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Executor/Shell
 
 When an [JOD Action](../../specs/pillars.md#actions) must be executed, this executor executes
 the ```cmd``` using the `JavaExecProcess::execCmdConcat(String cmd)`

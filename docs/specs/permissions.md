@@ -1,6 +1,4 @@
-# JOD - Specs: Object Permissions
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Object Permissions
 
 In the JOSP EcoSystem, permissions are handled by objects. **Each object know
 which JOSP Service and user pair can access to himself.**
@@ -43,9 +41,9 @@ also a connection type**: ```OnlyLocal/LocalAndCloud```. If 'OnlyLocal' is set,
 the permission can be applied to a service/user pair only if the JOSP Service is
 connected via Direct Communication.
 
-When objects and services interact via JCP ([Cloud Communication](/docs/features/communication.md#cloud-communication)),
-the [JCP Gateway](/docs/comps/jcp/core/gws/README.md) caches permissions
-table for each connected object, then use those tables to route all messages.
+When objects and services interact via JCP ([Cloud Communication](/docs/specs/communication_cloud.md)),
+the JCP Gateway caches permissions table for each connected object, then use
+those tables to route all messages.
 
 **Permission examples:**
 
@@ -62,7 +60,7 @@ table for each connected object, then use those tables to route all messages.
 
 JOD Agent allow **different ways to add, update or remove object's permission**.
 
-The most easy way is to use the [JCP FrontEnd](/docs/comps/jcp/core/fe/README.md)
+The most easy way is to use the JCP FrontEnd
 at [www.johnosproject.org/frontend](https://www.johnosproject.org/frontend).
 After you logged in, you can go to the object's Access Control page and update
 his permissions table.
@@ -95,7 +93,7 @@ permissions are generated and stored in the file.<br/>
 New permission are also generated on object's owner change.
 
 When permission are generated, the JOD Agent try to generate them via JOSP Core
-/ Permissions get method from [JCP APIs](/docs/comps/jcp/core/apis/README.md).
+/ Permissions get method from JCP APIs
 This method accepts the 'strategy' param that is read from the ```jod.permissions.generation_strategy```
 property from [JOD Agent configs](jod_yml).
 

@@ -1,6 +1,4 @@
-# JOD - Workers/Executor/File
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Executor/File
 
 When an [JOD Action](../../specs/pillars.md#actions) must be executed, this
 executor writes Action Execution Formatted Content to ```path``` file.

@@ -1,6 +1,4 @@
-# JOD - Workers/Puller/Shell
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Puller/Shell
 
 Each ```freq``` seconds, this puller executes the ```cmd``` using the
 `JavaExecProcess::execCmd(String cmd)` method , then update the [JOD State](../../specs/pillars.md#states).

@@ -1,6 +1,4 @@
-# JOD - Specs: Object ID
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Object ID
 
 **The Object ID is the unique code that identify a JOSP Object in a JOSP EcoSystem**.
 
@@ -21,8 +19,8 @@ XXXXX-XXXXX-XXXXX
 JOD Agent store his object's id in the main config file ```configs/jod.yml```
 with the property ```jod.obj.id_cloud```.
 
-_If you are using the JOD Agent inside a [JOD Distribution](/docs/comps/tools.md)
-you can execute the ```state.sh|ps1``` [JOD Dist Cmds](https://bitbucket.org/johnosproject_shared/com.robypomper.josp.jod.template/src/develop/docs/dists/dists.md)
+_If you are using the JOD Agent inside a JOD Distribution
+you can execute the ```state.sh|ps1``` [JOD Dist Cmds](https://github.com/johnosproject/com.robypomper.josp.jod.template/blob/main/docs/dists/dists.md)
 to print corresponding object's id._
 
 ---
@@ -30,12 +28,11 @@ to print corresponding object's id._
 ## Uniqueness
 
 To guarantee that each JOSP Object have a unique id, the code generation is
-demanded to the [John Cloud Platform](/docs/comps/jcp/README.md).
+demanded to the John Cloud Platform.
 
 Each time a JOD Agent starts, check the ```jod.obj.id_cloud``` property in the
 ```configs/jod.yml``` file.
-If it's empty or not set, then the JOD Agent ask the [JCP APIs](/docs/comps/jcp/core/apis/README.md)
-for a new unique code.
+If it's empty or not set, then the JOD Agent ask the JCP APIs for a new unique code.
 
 Generated code will always start with the ```jod.obj.id_hw``` property from
 ```configs/jod.yml``` file.

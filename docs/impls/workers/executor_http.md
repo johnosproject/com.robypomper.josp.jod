@@ -1,6 +1,4 @@
-# JOD - Workers/Executor/HTTP
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Executor/HTTP
 
 When an [action](../../specs/pillars.md#actions) must be executed, this
 executor performs an HTTP Request defined via [HTTP Request](#firmware-configs---http-request)
@@ -32,8 +30,7 @@ and [Action Placeholder](../../specs/workers_placeholders.md#state) on executing
 
 ## Firmware Configs - Http request
 
-HTTP Requests are performed using the [DefaultHTTPClient](/src/jospCommons/java/com/robypomper/josp/clients/DefaultHTTPClient.java)
-from the [JOSP Commons](/docs/comps/josp/commons/README.md)
+HTTP Requests are performed using the `DefaultHTTPClient from the [JOSP Commons](https://github.com/johnosproject/com.robypomper.josp.api)
 library.
 
 Following Firmware Configs allow you to customize the request that must be performed

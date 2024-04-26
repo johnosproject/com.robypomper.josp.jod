@@ -1,6 +1,4 @@
-# JOD - Specs: Pillar/Boolean
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Pillar/Boolean
 
 The boolean pillar can represent any state or action that can be included 2
 values/actions.

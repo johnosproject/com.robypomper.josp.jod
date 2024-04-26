@@ -1,6 +1,4 @@
-# JOD - Specs: Workers
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Workers
 
 Workers are the components that act as **a bridge between the JOD Agent's Pillars
 and his firmware**.<br/>

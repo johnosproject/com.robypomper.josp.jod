@@ -1,6 +1,4 @@
-# JOD - Specs: Pillars
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Pillars
 
 Pillars are the **base config element for each feature exposed by a JOSP Object
 to the JOSP Services**. They expose, in a standard way, to JOSP Services a complex

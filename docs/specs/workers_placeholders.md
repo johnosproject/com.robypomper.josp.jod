@@ -1,6 +1,4 @@
-# JOD - Specs: Workers/Placeholders
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Workers/Placeholders
 
 With Worker Configs Placeholder, **Makers can setups dynamic configs for their
 [Pillar's](pillars.md) firmware**.
@@ -25,7 +23,7 @@ Depending on worker implementation, it can update some Firmware Config with
 Check the worker's documentation for placeholder replacement info.
 
 **NB!**: At the JOD Version 2.2.3 this class was updated and also some placeholders.
-Please see the JavaDoc page related to the [Substitutions](https://www.javadoc.io/static/com.robypomper.josp/jospJOD/2.2.3/com/robypomper/josp/jod/executor/Substitutions.html)
+Please see the JavaDoc page related to the [Substitutions](/src/main/java/com/robypomper/josp/jod/executor/Substitutions.java)
 class for more info.
 
 ## Pillar

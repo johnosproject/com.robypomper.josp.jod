@@ -1,10 +1,8 @@
-# JOD LICENCE
+# # JOSP Object Daemon - Licence
 
 [README](README.md) | [SPECS](docs/specs.md) | [IMPLS](docs/impls.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
 
----
-```
 The John Object Daemon is the agent software to connect "objects" to
 an IoT EcoSystem, like the John Operating System Platform one.
 Copyright (C) 2021 Roberto Pompermaier
@@ -25,10 +23,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Roberto Pompermaier
 robypomper@johnosproject.com
-Via Tre Santi, 5 - Bolzano (ITALY)
 
-
-
+---
+```
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

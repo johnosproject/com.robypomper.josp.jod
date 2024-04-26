@@ -1,6 +1,4 @@
-# JOD - Specs: Workers/Custom
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Workers/Custom
 
 <span style={{color: 'red'}}>
 This page is not yet documented. Please, come back in a few days, there may be news.<br/>
