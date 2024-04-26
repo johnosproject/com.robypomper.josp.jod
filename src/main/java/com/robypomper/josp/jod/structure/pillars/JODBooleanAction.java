@@ -148,6 +148,7 @@ public class JODBooleanAction extends JODBooleanState implements JODAction {
 
         public interface Executor {
 
+            // TODO remove cmdAction parameter because it is reachable using `(JOSPBoolean)(commandAction.getCommand())`
             boolean exec(JOSPProtocol.ActionCmd commandAction, JOSPBoolean cmdAction);
 
         }
