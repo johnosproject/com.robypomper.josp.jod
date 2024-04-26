@@ -29,30 +29,26 @@ import com.robypomper.josp.jsl.objs.structure.JSLComponent;
 import com.robypomper.josp.jsl.objs.structure.JSLContainer;
 import com.robypomper.josp.jsl.objs.structure.JSLRoot;
 import com.robypomper.josp.jsl.objs.structure.JSLRoot_Jackson;
-import com.robypomper.josp.test.mocks.jod.MockJODExecutorManager;
-import com.robypomper.josp.test.mocks.jod.MockJODHistory;
-import com.robypomper.josp.test.mocks.jod.MockJODStructure;
-import com.robypomper.josp.test.mocks.jsl.MockJSLRemoteObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+@ExtendWith(MockitoExtension.class)
 public class JOSPStructIntegration {
 
     @Test
-    public void integrationTest() throws IOException {
+    public void integrationTest(@Mock JODStructure jodStructure, @Mock JODExecutorMngr jodExecutorMngr, @Mock JODHistory jodHistory, @Mock JSLRemoteObject remoteObject) throws IOException {
         // File containing jod structure in json
         String resourceName = "struct.jod";
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource(resourceName)).getFile());
 
         System.out.println("\nDESERIALIZE STRUCT.JOD");
-        // Support objects
-        JODStructure structure = new MockJODStructure();
-        JODExecutorMngr executorMngr = new MockJODExecutorManager();
-        JODHistory history = new MockJODHistory();
 
         JODRoot_Jackson jodRoot;
         // From: JODRoot JODStructure_002::loadStructure(String)
@@ -79,8 +75,6 @@ public class JOSPStructIntegration {
         System.out.println(jodStructureStr);
 
         System.out.println("\nDESERIALIZE STRUCT.JSL");
-        // Support objects
-        JSLRemoteObject remoteObject = new MockJSLRemoteObject();
 
         mapper = new ObjectMapper();
         injectVars = new InjectableValues.Std();

@@ -51,6 +51,8 @@ configurations {
 
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:${project.ext.get("version.junit-jupiter")}"
+    testImplementation "org.mockito:mockito-core:${project.ext.get("version.junit-jupiter")}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${project.ext.get("version.junit-jupiter")}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation "com.robypomper.josp:jospJSL:${project.ext.get("version.deps.jospJSL")}"
     testImplementation sourceSets.main.output

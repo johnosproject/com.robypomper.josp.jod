@@ -28,9 +28,13 @@ import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeState;
 import com.robypomper.josp.protocol.JOSPActionCommandParams;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.josp.test.mocks.jod.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -109,25 +113,33 @@ public class SubstitutionsTest {
         }
     }
 
-    private final static JODObjectInfo DEF_OBJ_INFO = new MockJODObjectInfo();
-    private final static JODComponent DEF_COMPONENT = new MockJODComponent();
-    private final static JODWorker DEF_WORKER = new MockJODWorker();
-    private final static JODBooleanState DEF_STATE_BOOLEAN = MockJODBooleanState.create();
-    private final static JODRangeState DEF_STATE_RANGE = MockJODRangeState.create();
-    private final static JOSPProtocol.ActionCmd DEF_ACTION_BOOLEAN = new MockActionCmd(
+    @Mock private static JODObjectInfo DEF_OBJ_INFO;
+    @Mock private static JODComponent DEF_COMPONENT;
+    @Mock private static JODWorker DEF_WORKER;
+    @Mock private static JODBooleanState DEF_STATE_BOOLEAN;
+    @Mock private static JODRangeState DEF_STATE_RANGE;
+    private final static String DEF_OBJ_ID = "...";
+    private final static String DEF_JOD_VERSION = "...";
+    private final static String DEF_OBJ_NAME = "...";
+    private final static String DEF_OBJ_OWNER = "...";
+    private final static String DEF_OBJ_MODEL = "...";
+    private final static String DEF_OBJ_BRAND = "...";
+    private final static String DEF_COMP_NAME = "...";
+    private final static String DEF_COMP_TYPE = "...";
+    private static JOSPProtocol.ActionCmd DEF_ACTION_BOOLEAN = new MockActionCmd(
             "xxxxx-xxxxx-xxxxx",
             JOSPConstants.ANONYMOUS_ID,
             "yyyyy",
-            MockJODObjectInfo.DEF_OBJ_ID,
-            "comp/path", //MockJODComponent.DEF_COMP_PATH,
+            DEF_OBJ_ID,
+            "comp/path", //DEF_COMP_PATH,
             new JODBooleanAction.JOSPBoolean("false,true")
     );
     private final static JOSPProtocol.ActionCmd DEF_ACTION_RANGE = new MockActionCmd(
             "xxxxx-xxxxx-xxxxx",
             JOSPConstants.ANONYMOUS_ID,
             "yyyyy",
-            MockJODObjectInfo.DEF_OBJ_ID,
-            "comp/path", //MockJODComponent.DEF_COMP_PATH,
+            DEF_OBJ_ID,
+            "comp/path", //DEF_COMP_PATH,
             new JODRangeAction.JOSPRange("0,5")
     );
 
@@ -139,12 +151,18 @@ public class SubstitutionsTest {
                 + Substitutions.OBJ_OWNER + ", "
                 + Substitutions.OBJ_MODEL + ", "
                 + Substitutions.OBJ_BRAND;
-        String strExpected = MockJODObjectInfo.DEF_JOD_VERSION + ", "
-                + MockJODObjectInfo.DEF_OBJ_ID + ", "
-                + MockJODObjectInfo.DEF_OBJ_NAME + ", "
-                + MockJODObjectInfo.DEF_OBJ_OWNER + ", "
-                + MockJODObjectInfo.DEF_OBJ_MODEL + ", "
-                + MockJODObjectInfo.DEF_OBJ_BRAND;
+        when(DEF_OBJ_INFO.getJODVersion()).thenReturn(DEF_JOD_VERSION);
+        when(DEF_OBJ_INFO.getObjId()).thenReturn(DEF_OBJ_ID);
+        when(DEF_OBJ_INFO.getObjName()).thenReturn(DEF_OBJ_NAME);
+        when(DEF_OBJ_INFO.getOwnerId()).thenReturn(DEF_OBJ_OWNER);
+        when(DEF_OBJ_INFO.getModel()).thenReturn(DEF_OBJ_MODEL);
+        when(DEF_OBJ_INFO.getBrand()).thenReturn(DEF_OBJ_BRAND);
+        String strExpected = DEF_JOD_VERSION + ", "
+                + DEF_OBJ_ID + ", "
+                + DEF_OBJ_NAME + ", "
+                + DEF_OBJ_OWNER + ", "
+                + DEF_OBJ_MODEL + ", "
+                + DEF_OBJ_BRAND;
 
         String substitutionResult = new Substitutions(strWithPlaceholders)
                 .substituteObject(DEF_OBJ_INFO)
@@ -159,8 +177,10 @@ public class SubstitutionsTest {
                 + Substitutions.COMP_PATH + ", "
                 + Substitutions.COMP_PARENT_NAME + ", "
                 + Substitutions.COMP_PARENT_PATH;
-        String strExpected = MockJODComponent.DEF_COMP_NAME + ", "
-                + MockJODComponent.DEF_COMP_TYPE + ", "
+        when(DEF_COMPONENT.getName()).thenReturn(DEF_COMP_NAME);
+        when(DEF_COMPONENT.getType()).thenReturn(DEF_COMP_TYPE);
+        String strExpected = DEF_COMP_NAME + ", "
+                + DEF_COMP_TYPE + ", "
                 + "N/A, "
                 + "N/A, "
                 + "N/A";

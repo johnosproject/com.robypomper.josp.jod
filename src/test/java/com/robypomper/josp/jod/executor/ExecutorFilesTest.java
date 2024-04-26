@@ -28,20 +28,25 @@ import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPMsgParams;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.josp.test.mocks.jod.MockActionCmd;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 public class ExecutorFilesTest {
 
     private final String ITEMS_SEP = JOSPMsgParams.ITEMS_SEP;
 
     @Test
-    public void executorTest() throws InterruptedException, IOException, JODWorker.MissingPropertyException {
+    public void executorTest(@Mock JOSPProtocol.ActionCmd commandAction) throws InterruptedException, IOException, JODWorker.MissingPropertyException {
         String name = "executorTest";
         String proto = "files";
         String filePathStr = "listenerFilesTest.txt";
@@ -64,7 +69,6 @@ public class ExecutorFilesTest {
             };
         } catch (JODStructure.ComponentInitException ignore) {}
         ExecutorFiles e = new ExecutorFiles(name, proto, configs, state);
-        JOSPProtocol.ActionCmd commandAction = new MockActionCmd();
 
         System.out.println("\nEXECUTE BOOLEAN ACTION");
         String updStr = ExecutorShellTest.formatUpdStr(true, false);
