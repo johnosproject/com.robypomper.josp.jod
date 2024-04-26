@@ -88,19 +88,11 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODBooleanAction.JOSPBoolean cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %b%n", cmdAction.newState);
-        System.out.printf("\toldState %b%n", cmdAction.oldState);
-
         return exec(commandAction);
     }
 
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODRangeAction.JOSPRange cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %f%n", cmdAction.newState);
-        System.out.printf("\toldState %f%n", cmdAction.oldState);
-
         return exec(commandAction);
     }
 

@@ -105,19 +105,30 @@ public class JODBooleanAction extends JODBooleanState implements JODAction {
 
     @Override
     public boolean execAction(JOSPProtocol.ActionCmd commandAction) {
-        log.debug(String.format("Executing component '%s' action", getName()));
-        if (commandAction.getCommand() instanceof JOSPBoolean) {
-            JOSPBoolean cmdAction = (JOSPBoolean) commandAction.getCommand();
-            if (exec instanceof JOSPBoolean.Executor)
-                if (!((JOSPBoolean.Executor) exec).exec(commandAction, cmdAction)) {
-                    log.warn(String.format("Error on executing component '%s' action", getName()));
-                    return false;
-                }
-        } else {
-            log.warn(String.format("Error on executing component '%s' action because command type '%s' not supported", getName(), commandAction.getCommand().getType()));
+        if (!(commandAction.getCommand() instanceof JOSPBoolean)) {
+            log.warn(String.format("Error on execute Boolean Action on %s::%s because command is not a Boolean Action (found '%s')", commandAction.getObjectId(), commandAction.getComponentPath(), commandAction.getCommand().getType()));
             return false;
         }
-        log.debug(String.format("Component '%s' executed action", getName()));
+        if (!(exec instanceof JOSPBoolean.Executor)) {
+            log.warn(String.format("Error on execute Boolean Action on %s::%s because executor do not support Boolean Actions", commandAction.getObjectId(), commandAction.getComponentPath()));
+            return false;
+        }
+        if (!exec.isEnabled()) {
+            log.warn(String.format("Error on execute Boolean Action on %s::%s because executor disabled", commandAction.getObjectId(), commandAction.getComponentPath()));
+            return false;
+        }
+
+        JOSPBoolean cmdAction = (JOSPBoolean) commandAction.getCommand();
+        log.info(String.format("Executing Boolean Action on %s::%s component from %s::%s (srv::usr)", commandAction.getObjectId(), commandAction.getComponentPath(), commandAction.getServiceId(), commandAction.getUserId()));
+        log.debug(String.format("Executing Boolean Action on %s::%s (new = %b, old = %b)", commandAction.getObjectId(), commandAction.getComponentPath(), cmdAction.newState, cmdAction.oldState));
+
+        // TODO remove cmdAction parameter because it is reachable using `(JOSPBoolean)(commandAction.getCommand())`
+        if (!((JOSPBoolean.Executor) exec).exec(commandAction, cmdAction)) {
+            log.warn(String.format("Error on execute Boolean Action on %s::%s component", commandAction.getObjectId(), commandAction.getComponentPath()));
+            return false;
+        }
+
+        log.info(String.format("Boolean Action executed successfully on %s::%s component", commandAction.getObjectId(), commandAction.getComponentPath()));
         return true;
     }
 

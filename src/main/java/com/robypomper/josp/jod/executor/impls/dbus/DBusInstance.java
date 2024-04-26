@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * TODO remove System.out.println statement and replace with CustomException
+ */
 public class DBusInstance extends AbstractPropertiesChangedHandler implements AutoCloseable {
 
     public interface ListenerChanged {
@@ -165,7 +168,7 @@ public class DBusInstance extends AbstractPropertiesChangedHandler implements Au
 
         Object res = null;
         if (noResponse) {
-            System.out.printf("Executed method '%s' with NO result%n", method_name);
+            //System.out.printf("Executed method '%s' with NO result%n", method_name);
             return null;
         }
 
@@ -185,7 +188,7 @@ public class DBusInstance extends AbstractPropertiesChangedHandler implements Au
             System.err.printf("Error parsing '%s' method response: %s%n", method_name, e);
         }
 
-        System.out.printf("Executed method '%s' with result '%s'%n", method_name, res);
+        //System.out.printf("Executed method '%s' with result '%s'%n", method_name, res);
         return res;
     }
 

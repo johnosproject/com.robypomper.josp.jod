@@ -281,7 +281,6 @@ public class JODHistory_002 implements JODHistory {
             }
         };
 
-        System.out.printf("History buffered %d statuses on file %d%n", histories.countBuffered(), histories.countFile());
         if (HistoryLimits.isLatestCount(limits))
             return histories.tryLatest(filter, limits.getLatestCount());
 

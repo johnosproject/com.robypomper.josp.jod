@@ -168,7 +168,7 @@ public class JODStructure_002 implements JODStructure {
      */
     @Override
     public void startAutoRefresh() {
-        log.warn("JODStructure AutoRefresh can't started: not implemented");
+        log.debug("JODStructure AutoRefresh can't started: not implemented");
     }
 
     /**
@@ -176,7 +176,7 @@ public class JODStructure_002 implements JODStructure {
      */
     @Override
     public void stopAutoRefresh() {
-        log.warn("JODStructure AutoRefresh can't stopped: not implemented");
+        log.debug("JODStructure AutoRefresh can't stopped: not implemented");
     }
 
     /**

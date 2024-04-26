@@ -98,10 +98,6 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODBooleanAction.JOSPBoolean cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %b%n", cmdAction.newState);
-        System.out.printf("\toldState %b%n", cmdAction.oldState);
-
         log.debug(String.format("Executing '%s' executor", getName()));
         if (!isEnabled()) {
             log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
@@ -184,18 +180,6 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
 
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODRangeAction.JOSPRange cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %f%n", cmdAction.newState);
-        System.out.printf("\toldState %f%n", cmdAction.oldState);
-
-
-        log.debug(String.format("Executing '%s' executor", getName()));
-        if (!isEnabled()) {
-            log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
-            return false;
-        }
-
-        // Do something...
         String method_args_as_str = new Substitutions(dbus_method_params)
                 //.substituteObject(jod.getObjectInfo())
                 //.substituteObjectConfigs(jod.getObjectInfo())
