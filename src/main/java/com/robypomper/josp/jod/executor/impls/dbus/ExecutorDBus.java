@@ -119,7 +119,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
         Vector<String> method_args_as_str_generated = new Vector<>();
         for (Object o : method_args)
             method_args_as_str_generated.add(String.format("%s:%s", o.toString(), o.getClass().getSimpleName()));
-        log.info(String.format("Executor '%s' executed method '%s(%s)' => '%s'",
+        log.debug(String.format("Executor '%s' executed method '%s(%s)' => '%s'",
                 getName(), dbus_method, String.join(",", method_args_as_str_generated), res));
 
         ((JODState) getComponent()).forceCheckState();
