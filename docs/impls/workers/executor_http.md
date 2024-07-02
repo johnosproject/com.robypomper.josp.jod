@@ -1,14 +1,12 @@
-# JOD - Workers/Executor/HTTP
+# JOSP Object Daemon - Workers/Executor/HTTP
 
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
-
-When an [action](../specs/pillars.md#actions) must be executed, this
+When an [action](../../specs/pillars.md#actions) must be executed, this
 executor performs an HTTP Request defined via [HTTP Request](#firmware-configs---http-request)
 configs.
 
 Before execute the request, the ```requestUrl``` and the ```requestBody``` strings
-are updated and all their placeholder are replaced with current [Pillar](../specs/workers/placeholders.md#pillar),
-[State](../specs/workers/placeholders.md#state) and [Action](../specs/workers/placeholders.md#action)
+are updated and all their placeholder are replaced with current [Pillar](../../specs/workers_placeholders.md#pillar),
+[State](../../specs/workers_placeholders.md#state) and [Action](../../specs/workers_placeholders.md#action)
 properties.<br/>
 After that execute the HTTP Request with updated url and body.
 
@@ -20,25 +18,24 @@ After that execute the HTTP Request with updated url and body.
 
 String format used to generate the HTTP Request body. Default value ''.
 
-This string can contain [Pillar's](../specs/workers/placeholders.md#pillar), [State's](../specs/workers/placeholders.md#state)
-and [Action's Placeholder](../specs/workers/placeholders.md#action) that will be replaced
+This string can contain [Pillar's](../../specs/workers_placeholders.md#pillar), [State's](../../specs/workers_placeholders.md#state)
+and [Action's Placeholder](../../specs/workers_placeholders.md#action) that will be replaced
 before executing the HTTP Request.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
-and [Action Placeholder](../specs/workers/placeholders.md#state) on executing action.
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
+and [Action Placeholder](../../specs/workers_placeholders.md#state) on executing action.
 
 ---
 
 ## Firmware Configs - Http request
 
-HTTP Requests are performed using the [DefaultHTTPClient](/src/jospCommons/java/com/robypomper/josp/clients/DefaultHTTPClient.java)
-from the [JOSP Commons](/docs/comps/josp/commons/README.md)
+HTTP Requests are performed using the `DefaultHTTPClient from the [JOSP Commons](https://github.com/johnosproject/com.robypomper.josp.api)
 library.
 
 Following Firmware Configs allow you to customize the request that must be performed
 on worker execution.<br/>
-Those configs are defined and used by [HTTPInternal](/src/jospJOD/java/com/robypomper/josp/jod/executor/impls/http/HTTPInternal.java)
+Those configs are defined and used by [HTTPInternal](/src/main/java/com/robypomper/josp/jod/executor/impls/http/HTTPInternal.java)
 class.
 
 ### ```requestUrl```
@@ -49,8 +46,8 @@ This string is used to format the final url for the HTTP Request.<br/>
 The ```requestUrl``` string is updated during worker initialization and then each
 time the executor execute an action.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
 on pulling state.
 
 ### ```requestVerb```
@@ -70,14 +67,14 @@ This string can be one of the following values:
 
 Those values are coming from the [Scribe Java library](https://github.com/scribejava/scribejava).
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```requestTimeOut```
 
-The HTTP Request's timeout in seconds. Default '30'.
+The HTTP Request's timeout in seconds. Default `30`.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```requestIgnoreSSLHosts```
@@ -87,17 +84,17 @@ Set this string to 'True' to ignore "SSL: Invalid Hostname" error. Default 'fals
 If the HTTP Server that receive the HTTP Request is set to use the SSL encryption
 but his certificate or hostname are not valid.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```availabilityRetrySeconds```
 
 When the HTTP Server is not reachable, this property define how many seconds wait
-before retry contacting the server. Default '10'.
+before retry contacting the server. Default `10`.
 
 *This property is not used in the Executor HTTP worker execution.*
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ---

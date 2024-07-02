@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,15 @@
 package com.robypomper.josp.jod.history;
 
 import com.robypomper.java.JavaJSONArrayToFile;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
+import com.robypomper.josp.protocol.JOSPHistory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
-public class StatusHistoryArray extends JavaJSONArrayToFile<JOSPStatusHistory, Long> {
+public class StatusHistoryArray extends JavaJSONArrayToFile<JOSPHistory, Long> {
 
-    public StatusHistoryArray(File jsonFile) throws IOException {
-        super(jsonFile, JOSPStatusHistory.class);
+    public StatusHistoryArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize, int maxFileSize, int releaseFileSize) throws FileException {
+        super(jsonFile, JOSPHistory.class, keepInMemory, maxBufferSize, releaseBufferSize, maxFileSize, releaseFileSize);
     }
 
     @Override
@@ -38,12 +37,12 @@ public class StatusHistoryArray extends JavaJSONArrayToFile<JOSPStatusHistory, L
     }
 
     @Override
-    protected Long getItemId(JOSPStatusHistory value) {
+    protected Long getItemId(JOSPHistory value) {
         return value.getId();
     }
 
     @Override
-    protected Date getItemDate(JOSPStatusHistory value) {
+    protected Date getItemDate(JOSPHistory value) {
         return value.getUpdatedAt();
     }
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 package com.robypomper.josp.jod.executor;
 
 import com.robypomper.josp.jod.structure.JODComponent;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -32,7 +32,7 @@ public abstract class AbsJODExecutor extends AbsJODWorker implements JODExecutor
 
     // Internal vars
 
-    protected static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(AbsJODExecutor.class);
     private boolean enabled = false;
 
 
@@ -64,17 +64,17 @@ public abstract class AbsJODExecutor extends AbsJODWorker implements JODExecutor
      */
     @Override
     public boolean exec() {
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Executing '%s' executor", getName()));
+        log.debug(String.format("Executing '%s' executor", getName()));
         if (!enabled) {
-            log.warn(Mrk_JOD.JOD_EXEC_SUB, String.format("Error on exec '%s' executor because disabled", getName()));
+            log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
             return false;
         }
 
         // Do something...
-        log.trace(Mrk_JOD.JOD_EXEC_SUB, "Do something...");
+        log.trace("Do something...");
 
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, String.format("Executor '%s' executed", getName()));
+        log.debug(String.format("Executor '%s' executed", getName()));
         return true;
     }
 
@@ -86,13 +86,10 @@ public abstract class AbsJODExecutor extends AbsJODWorker implements JODExecutor
      */
     @Override
     public void enable() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Enable '%s' executor", getName()));
+        log.debug(String.format("                                   Enable '%s' executor", getName()));
         if (isEnabled()) return;
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Enabling executor");
         enabled = true;
-
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Executor enabled");
     }
 
     /**
@@ -100,12 +97,10 @@ public abstract class AbsJODExecutor extends AbsJODWorker implements JODExecutor
      */
     @Override
     public void disable() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Disable '%s' executor", getName()));
+        log.debug(String.format("                                   Disable '%s' executor", getName()));
         if (!isEnabled()) return;
 
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Disabling executor");
         enabled = false;
-        log.debug(Mrk_JOD.JOD_EXEC_SUB, "Executor disabled");
     }
 
 }

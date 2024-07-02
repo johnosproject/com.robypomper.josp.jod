@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,13 @@
 
 package com.robypomper.josp.jod;
 
+import com.robypomper.discovery.impl.Avahi;
 import com.robypomper.josp.protocol.JOSPPerm;
 import com.robypomper.settings.DefaultSettings;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
@@ -31,6 +33,7 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     //@formatter:off
     public static final String JCP_CONNECT              = "jcp.connect";
     public static final String JCP_CONNECT_DEF          = "true";
+    /** Used as `connectionTimerDelaySeconds` value into DefaultJCPClient2. */
     public static final String JCP_REFRESH_TIME         = "jcp.client.refresh";
     public static final String JCP_REFRESH_TIME_DEF     = "30";
     public static final String JCP_SSL                  = "jcp.client.ssl";
@@ -50,6 +53,13 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public static final String JODOBJ_IDCLOUD_DEF       = "";
     public static final String JODOBJ_IDHW              = "jod.obj.id_hw";
     public static final String JODOBJ_IDHW_DEF          = "";
+    /**
+     * Path to use as main dir for all relative paths, like the `jod.comm.local.ks.path`.
+     * By default, it's an empty string that means to use the working directory as base path.
+     */
+    // TODO rename to JODOBJ_BASE_PATH
+    public static final String JODOBJ_BASE_DIR          = "jod.obj.baseDir";
+    public static final String JODOBJ_BASE_DIR_DEF      = "";
 
     public static final String JODPULLER_IMPLS          = "jod.executor_mngr.pullers";
     public static final String JODPULLER_IMPLS_DEF      = "";
@@ -70,15 +80,194 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
     public static final String JODPERM_OWNER            = "jod.permissions.owner";
     public static final String JODPERM_OWNER_DEF        = JOSPPerm.WildCards.USR_ANONYMOUS_ID.toString();
 
+    /**
+     * If 'true' the server for Local Communication will be enabled, otherwise
+     * it will not be started.
+     * <p>
+     * Default `true`.
+     */
     public static final String JODCOMM_LOCAL_ENABLED    = "jod.comm.local.enabled";
     public static final String JODCOMM_LOCAL_ENABLED_DEF = "true";
+    /**
+     * Discovery implementation for the Local Communication server.
+     * <p>
+     * It must be one of the following values:
+     * - `Auto`: it will choose the best implementation based on the platform.
+     * - `{@link Avahi#IMPL_NAME}`: it will use the avahi cmdline tool.
+     * - `{@link com.robypomper.discovery.impl.JmDNS#IMPL_NAME}`: it will use the JmDNS library.
+     * - `{@link com.robypomper.discovery.impl.JmmDNS#IMPL_NAME}`: it will use the JmDNS library.
+     * - `{@link com.robypomper.discovery.impl.DNSSD#IMPL_NAME}`: it will use the DNSSD cmdline tool.
+     * <p>
+     * Default `Auto`.
+     */
     public static final String JODCOMM_LOCAL_DISCOVERY  = "jod.comm.local.discovery";
     public static final String JODCOMM_LOCAL_DISCOVERY_DEF = "Auto";
+    /**
+     * Port for the Local Communication server. If it is `0`, then the server
+     * will choose a random port.
+     * <p>
+     * Default `0`.
+     */
     public static final String JODCOMM_LOCAL_PORT       = "jod.comm.local.port";
     public static final String JODCOMM_LOCAL_PORT_DEF   = "0";
+    /**
+     * If 'true' the local server will use SSL, otherwise it will use plain TCP.
+     * <p>
+     * Default `false`.
+     */
+    public static final String JODCOMM_LOCAL_SSL_ENABLED    = "jod.comm.local.enableSSL";
+    public static final String JODCOMM_LOCAL_SSL_ENABLED_DEF = "false";
+    /**
+     * If 'true' the local server expose a {@link com.robypomper.comm.server.ServerCertSharing}
+     * server to exchange certificates with local JOSP Services.
+     * <p>
+     * Default `true`.
+     */
+    public static final String JODCOMM_LOCAL_SSL_SHARING_ENABLED    = "jod.comm.local.sslSharingEnabled";
+    public static final String JODCOMM_LOCAL_SSL_SHARING_ENABLED_DEF = "true";
+    /**
+     * Path for the service's local keystore. It can be absolute or relative to `jod.obj.baseDir`.
+     */
+    public static final String JODCOMM_LOCAL_KS_PATH    = "jod.comm.local.ks.path";
+    public static final String JODCOMM_LOCAL_KS_PATH_DEF = "./configs/local_ks.jks";
+    /**
+     * Password for the service's local keystore. 
+     * It must be at least 6 characters long.
+     */
+    public static final String JODCOMM_LOCAL_KS_PASS    = "jod.comm.local.ks.pass";
+    public static final String JODCOMM_LOCAL_KS_PASS_DEF = "123456";
+    /**
+     * Alias of the certificate stored into the service's local keystore. 
+     * By default, it's an empty string that means `$SRV_ID-LocalCert`.
+     */
+    public static final String JODCOMM_LOCAL_KS_ALIAS    = "jod.comm.local.ks.alias";
+    public static final String JODCOMM_LOCAL_KS_ALIAS_DEF = "";
 
     public static final String JODCOMM_CLOUD_ENABLED = "jod.comm.cloud.enabled";
     public static final String JODCOMM_CLOUD_ENABLED_DEF = "true";
+
+    /**
+     * If 'true' the history file will be retained in memory and any access to
+     * the underling file will be done using the same instance. Otherwise, the
+     * file is completely read every access.
+     *
+     * Default `false`.
+     */
+    public static final String JODHISTORY_KEEP_IN_MEMORY = "jod.history.keep_in_memory";
+    public static final String JODHISTORY_KEEP_IN_MEMORY_DEF = "false";
+    /**
+     * Size of the history buffer.
+     * <p>
+     * When the buffer is full, then 'jod.history.buffer_release_size' items
+     * are written to the file and removed from the buffer.
+     * <p>
+     * Default `250`.
+     */
+    public static final String JODHISTORY_BUFFER_SIZE = "jod.history.buffer_size";
+    public static final String JODHISTORY_BUFFER_SIZE_DEF = "250";
+    /**
+     * Number of history's items to flush on the file when the buffer is full.
+     * <p>
+     * It must be a value lower than `jod.history.buffer_size`, otherwise it will
+     * flush all history to the file.
+     * <p>
+     * Default `200`.
+     */
+    public static final String JODHISTORY_BUFFER_RELEASE_SIZE = "jod.history.buffer_release_size";
+    public static final String JODHISTORY_BUFFER_RELEASE_SIZE_DEF = "200";
+    /**
+     * Size of the history file.
+     * <p>
+     * When the file is full, then 'jod.history.file_release_size' items
+     * are deleted permanently and removed from the file.
+     * <p>
+     * Default `10000`.
+     */
+    public static final String JODHISTORY_FILE_SIZE = "jod.history.file_size";
+    public static final String JODHISTORY_FILE_SIZE_DEF = "10000";
+
+    /**
+     * Number of history's items to delete from the file when it is full.
+     * <p>
+     * It must be a value lower than `jod.history.buffer_size`, otherwise it will
+     * delete all items from the file.
+     * <p>
+     * Default `2000`.
+     */
+    public static final String JODHISTORY_FILE_RELEASE_SIZE = "jod.history.file_release_size";
+    public static final String JODHISTORY_FILE_RELEASE_SIZE_DEF = "2000";
+    /**
+     * File path for history's file items.
+     */
+    public static final String JODHISTORY_FILE_ARRAY_PATH = "jod.history.file_array";
+    public static final String JODHISTORY_FILE_ARRAY_PATH_DEF = "./cache/history.jbs";
+    /**
+     * File path for history's file stats.
+     */
+    public static final String JODHISTORY_FILE_STATS_PATH = "jod.history.file_stats";
+    public static final String JODHISTORY_FILE_STATS_PATH_DEF = "./cache/history.jst";
+
+    /**
+     * If 'true' the events file will be retained in memory and any access to
+     * the underling file will be done using the same instance. Otherwise, the
+     * file is completely read every access.
+     *
+     * Default `false`.
+     */
+    public static final String JODEVENTS_KEEP_IN_MEMORY = "jod.events.keep_in_memory";
+    public static final String JODEVENTS_KEEP_IN_MEMORY_DEF = "false";
+    /**
+     * Size of the events buffer.
+     * <p>
+     * When the buffer is full, then 'jod.events.buffer_release_size' items
+     * are written to the file and removed from the buffer.
+     * <p>
+     * Default `250`.
+     */
+    public static final String JODEVENTS_BUFFER_SIZE = "jod.events.buffer_size";
+    public static final String JODEVENTS_BUFFER_SIZE_DEF = "250";
+    /**
+     * Number of event's items to flush on the file when the buffer is full.
+     * <p>
+     * It must be a value lower than `jod.events.buffer_size`, otherwise it will
+     * flush all events to the file.
+     * <p>
+     * Default `200`.
+     */
+    public static final String JODEVENTS_BUFFER_RELEASE_SIZE = "jod.events.buffer_release_size";
+    public static final String JODEVENTS_BUFFER_RELEASE_SIZE_DEF = "200";
+    /**
+     * Size of the events file.
+     * <p>
+     * When the file is full, then 'jod.events.file_release_size' items
+     * are deleted permanently and removed from the file.
+     * <p>
+     * Default `10000`.
+     */
+    public static final String JODEVENTS_FILE_SIZE = "jod.events.file_size";
+    public static final String JODEVENTS_FILE_SIZE_DEF = "10000";
+    /**
+     * Number of event's items to delete from the file when it is full.
+     * <p>
+     * It must be a value lower than `jod.events.file_size`, otherwise it will
+     * delete all items from the file.
+     * <p>
+     * Default `2000`.
+     */
+    public static final String JODEVENTS_FILE_RELEASE_SIZE = "jod.events.file_release_size";
+    public static final String JODEVENTS_FILE_RELEASE_SIZE_DEF = "2000";
+    /**
+     * File path for event's file items.
+     */
+    public static final String JODEVENTS_FILE_ARRAY_PATH = "jod.events.file_array";
+    public static final String JODEVENTS_FILE_ARRAY_PATH_DEF = "cache/events.jbe";
+    /**
+     * File path for event's file stats.
+     */
+    public static final String JODEVENTS_FILE_STATS_PATH = "jod.events.file_stats";
+    public static final String JODEVENTS_FILE_STATS_PATH_DEF = "cache/events.jst";
+
+
     //@formatter:on
 
 
@@ -103,37 +292,30 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // JCP Client
 
-    //@Override
     public boolean getJCPConnect() {
         return getBoolean(JCP_CONNECT, JCP_CONNECT_DEF);
     }
 
-    //@Override
     public int getJCPRefreshTime() {
         return getInt(JCP_REFRESH_TIME, JCP_REFRESH_TIME_DEF);
     }
 
-    //@Override
     public boolean getJCPUseSSL() {
         return getBoolean(JCP_SSL, JCP_SSL_DEF);
     }
 
-    //@Override
     public String getJCPUrlAPIs() {
         return getString(JCP_URL_APIS, JCP_URL_DEF_APIS);
     }
 
-    //@Override
     public String getJCPUrlAuth() {
         return getString(JCP_URL_AUTH, JCP_URL_DEF_AUTH);
     }
 
-    //@Override
     public String getJCPId() {
         return getString(JCP_CLIENT_ID, JCP_CLIENT_ID_DEF);
     }
 
-    //@Override
     public String getJCPSecret() {
         return getString(JCP_CLIENT_SECRET, JCP_CLIENT_SECRET_DEF);
     }
@@ -141,50 +323,46 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // Object info
 
-    //@Override
     public String getObjName() {
         return getString(JODOBJ_NAME, JODOBJ_NAME_DEF);
     }
 
-    //@Override
     public void setObjName(String objName) {
         store(JODOBJ_NAME, objName, true);
     }
 
-    //@Override
     public String getObjIdCloud() {
         return getString(JODOBJ_IDCLOUD, JODOBJ_IDCLOUD_DEF);
     }
 
-    //@Override
     public void setObjIdCloud(String objId) {
         store(JODOBJ_IDCLOUD, objId, true);
     }
 
-    //@Override
     public String getObjIdHw() {
         return getString(JODOBJ_IDHW, JODOBJ_IDHW_DEF);
     }
 
-    //@Override
     public void setObjIdHw(String objIdHw) {
         store(JODOBJ_IDHW, objIdHw, true);
+    }
+
+    // TODO make getObjBaseDir() method return a File instance
+    public String getObjBaseDir() {
+        return getString(JODOBJ_BASE_DIR, JODOBJ_BASE_DIR_DEF);
     }
 
 
     // Executor Manager
 
-    //@Override
     public String getJODPullerImpls() {
         return getString(JODPULLER_IMPLS, JODPULLER_IMPLS_DEF);
     }
 
-    //@Override
     public String getJODListenerImpls() {
         return getString(JODLISTENER_IMPLS, JODLISTENER_IMPLS_DEF);
     }
 
-    //@Override
     public String getJODExecutorImpls() {
         return getString(JODEXECUTOR_IMPLS, JODEXECUTOR_IMPLS_DEF);
     }
@@ -192,7 +370,6 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // Structure
 
-    //@Override
     public File getStructurePath() {
         return getFile(JODSTRUCT_PATH, JODSTRUCT_PATH_DEF);
     }
@@ -200,17 +377,14 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
 
     // Permissions
 
-    //@Override
     public File getPermissionsPath() {
         return getFile(JODPERM_PATH, JODPERM_PATH_DEF);
     }
 
-    //@Override
     public int getPermissionsRefreshTime() {
         return getInt(JODPERM_REFRESH, JODPERM_REFRESH_DEF);
     }
 
-    //@Override
     public JOSPPerm.GenerateStrategy getPermissionsGenerationStrategy() {
         String val = getString(JODPERM_GENSTARTEGY, JODPERM_GENSTARTEGY_DEF);
         return JOSPPerm.GenerateStrategy.valueOf(val.toUpperCase());
@@ -236,37 +410,117 @@ public class JODSettings_002 extends DefaultSettings implements JOD.Settings {
      * - store on local configs
      * - set owner on cloud
      */
-    //@Override
     public String getOwnerId() {
         return getString(JODPERM_OWNER, JODPERM_OWNER_DEF);
     }
 
-    //@Override
     public void setOwnerId(String ownerId) {
         store(JODPERM_OWNER, ownerId, true);
     }
 
 
-    // Communication local
+    // Communication
 
-    //@Override
     public boolean getLocalEnabled() {
         return getBoolean(JODCOMM_LOCAL_ENABLED, JODCOMM_LOCAL_ENABLED_DEF);
     }
 
-    //@Override
+    public boolean getLocalSSLEnabled() {
+        return getBoolean(JODCOMM_LOCAL_SSL_ENABLED, JODCOMM_LOCAL_SSL_ENABLED_DEF);
+    }
+
+    public boolean getLocalSSLSharingEnabled() {
+        return getBoolean(JODCOMM_LOCAL_SSL_SHARING_ENABLED, JODCOMM_LOCAL_SSL_SHARING_ENABLED_DEF);
+    }
+
+    // TODO make getLocalKeyStorePath() method return a File instance
+    public String getLocalKeyStorePath() {
+        String path = getString(JODCOMM_LOCAL_KS_PATH, JODCOMM_LOCAL_KS_PATH_DEF);
+        if (!Paths.get(path).isAbsolute())
+            path = Paths.get(getObjBaseDir(), path).toString();
+        return path;
+    }
+
+    public String getLocalKeyStorePass() {
+        return getString(JODCOMM_LOCAL_KS_PASS, JODCOMM_LOCAL_KS_PASS_DEF);
+    }
+
+    public String getLocalKeyStoreAlias() {
+        return getString(JODCOMM_LOCAL_KS_ALIAS, JODCOMM_LOCAL_KS_ALIAS_DEF);
+    }
+
     public String getLocalDiscovery() {
         return getString(JODCOMM_LOCAL_DISCOVERY, JODCOMM_LOCAL_DISCOVERY_DEF);
     }
 
-    //@Override
     public int getLocalServerPort() {
         return getInt(JODCOMM_LOCAL_PORT, JODCOMM_LOCAL_PORT_DEF);
     }
 
-    //@Override
     public boolean getCloudEnabled() {
         return getBoolean(JODCOMM_CLOUD_ENABLED, JODCOMM_CLOUD_ENABLED_DEF);
+    }
+
+
+    // History
+
+    public boolean getHistoryKeepInMemory() {
+        return getBoolean(JODHISTORY_KEEP_IN_MEMORY, JODHISTORY_KEEP_IN_MEMORY_DEF);
+    }
+
+    public int getHistoryBufferSize() {
+        return getInt(JODHISTORY_BUFFER_SIZE, JODHISTORY_BUFFER_SIZE_DEF);
+    }
+
+    public int getHistoryBufferReleaseSize() {
+        return getInt(JODHISTORY_BUFFER_RELEASE_SIZE, JODHISTORY_BUFFER_RELEASE_SIZE_DEF);
+    }
+
+    public int getHistoryFileSize() {
+        return getInt(JODHISTORY_FILE_SIZE, JODHISTORY_FILE_SIZE_DEF);
+    }
+
+    public int getHistoryFileReleaseSize() {
+        return getInt(JODHISTORY_FILE_RELEASE_SIZE, JODHISTORY_FILE_RELEASE_SIZE_DEF);
+    }
+
+    public File getHistoryFileArrayPath() {
+        return getFile(JODHISTORY_FILE_ARRAY_PATH, JODHISTORY_FILE_ARRAY_PATH_DEF);
+    }
+
+    public File getHistoryFileStatsPath() {
+        return getFile(JODHISTORY_FILE_STATS_PATH, JODHISTORY_FILE_STATS_PATH_DEF);
+    }
+
+
+    // Events
+
+    public boolean getEventsKeepInMemory() {
+        return getBoolean(JODEVENTS_KEEP_IN_MEMORY, JODEVENTS_KEEP_IN_MEMORY_DEF);
+    }
+
+    public int getEventsBufferSize() {
+        return getInt(JODEVENTS_BUFFER_SIZE, JODEVENTS_BUFFER_SIZE_DEF);
+    }
+
+    public int getEventsBufferReleaseSize() {
+        return getInt(JODEVENTS_BUFFER_RELEASE_SIZE, JODEVENTS_BUFFER_RELEASE_SIZE_DEF);
+    }
+
+    public int getEventsFileSize() {
+        return getInt(JODEVENTS_FILE_SIZE, JODEVENTS_FILE_SIZE_DEF);
+    }
+
+    public int getEventsFileReleaseSize() {
+        return getInt(JODEVENTS_FILE_RELEASE_SIZE, JODEVENTS_FILE_RELEASE_SIZE_DEF);
+    }
+
+    public File getEventsFileArrayPath() {
+        return getFile(JODEVENTS_FILE_ARRAY_PATH, JODEVENTS_FILE_ARRAY_PATH_DEF);
+    }
+
+    public File getEventsFileStatsPath() {
+        return getFile(JODEVENTS_FILE_STATS_PATH, JODEVENTS_FILE_STATS_PATH_DEF);
     }
 
 }

@@ -1,0 +1,52 @@
+{
+    "model": "JOD Test Object 2.0",
+    "brand": "John OS",
+    "descr": "Object to use in design testing",
+    "descr_long": "This structure provide an object with basic pillars and structured examples.",
+
+    "contains": {
+        "PythonTest": {
+            "type": "JODContainer",
+            "contains": {
+                "BooleanProp" : {
+                    "type": "BooleanState",
+                    "listener" : "dbus://dbus_name=com.test.dbus;dbus_iface=com.test.dbus.ITest;dbus_prop=property0;init_data=1;"
+                },
+                "RangeProp" : {
+                    "type": "RangeState",
+                    "listener" : "dbus://dbus_name=com.test.dbus;dbus_iface=com.test.dbus.ITest;dbus_prop=property1;init_data=1;",
+                    "min": "0",
+                    "max": "20",
+                    "step": "0.1"
+                }
+            }
+        },
+        "FWVictron": {
+            "type": "JODContainer",
+            "contains": {
+                "Load State" : {
+                    "type": "BooleanState",
+                    "listener" : "dbus://dbus_name=com.victron;dbus_obj_path=/smartsolar_mppt;dbus_iface=com.victron.SmartSolarMPPT;dbus_prop=load_state;init_data=1;"
+                },
+                "Battery Voltage" : {
+                    "type": "RangeState",
+                    "listener" : "dbus://dbus_name=com.victron;dbus_obj_path=/smartsolar_mppt;dbus_iface=com.victron.SmartSolarMPPT;dbus_prop=battery_voltage;init_data=1;",
+                    "min": "0",
+                    "max": "20",
+                    "step": "0.1"
+                }
+            }
+        },
+        "DBusVLC": {
+            "type": "JODContainer",
+            "contains": {
+                "Play/Pause" : {
+                    "type": "BooleanAction",
+                    "listener" : "dbus://dbus_name=org.mpris.MediaPlayer2.vlc;dbus_obj_path=/org/mpris/MediaPlayer2;dbus_iface=org.mpris.MediaPlayer2.Player;dbus_prop=PlaybackStatus;init_data=1;eval=httpResult.toLowerCase()=='playing'?'TRUE':'FALSE'",
+                    "executor" : "dbus://dbus_name=org.mpris.MediaPlayer2.vlc;dbus_obj_path=/org/mpris/MediaPlayer2;dbus_iface=org.mpris.MediaPlayer2.Player;dbus_method=PlayPause;dbus_method_params=%A_VAL%:Boolean, %A_VAL%:String, %A_VAL_BIN%:Float;"
+                }
+            }
+        }
+    }
+
+}

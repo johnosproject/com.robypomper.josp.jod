@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,9 @@ import com.robypomper.josp.clients.HTTPClient;
 import com.robypomper.josp.jod.executor.AbsJODPuller;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
-import com.robypomper.log.Mrk_JOD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ import java.util.Map;
  * JOD Puller test.
  */
 public class PullerHTTP extends AbsJODPuller {
-    class CachedResponse {
+    static class CachedResponse {
         Date date;
         String response;
     }
@@ -48,6 +49,7 @@ public class PullerHTTP extends AbsJODPuller {
 
     // Internal vars
 
+    private static final Logger log = LoggerFactory.getLogger(PullerHTTP.class);
     private final HTTPInternal http;
     private final FormatterInternal formatter;
     private final EvaluatorInternal evaluator;
@@ -55,7 +57,7 @@ public class PullerHTTP extends AbsJODPuller {
     private final int cache_timeout_ms;
     private String lastResponse = "";
     private String lastResult = "";
-    private static Map<String, CachedResponse> cache = new HashMap();
+    private final static Map<String, CachedResponse> cache = new HashMap();
 
 
     // Constructor
@@ -69,7 +71,7 @@ public class PullerHTTP extends AbsJODPuller {
      */
     public PullerHTTP(String name, String proto, String configsStr, JODComponent component) throws ParsingPropertyException, MissingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTML for component '%s' init with config string '%s://%s'.", getName(), proto, configsStr));
+        log.trace(String.format("PullerHTML for component '%s' init with config string '%s://%s'.", getName(), proto, configsStr));
 
         http = new HTTPInternal(this, name, proto, configsStr, component);
         formatter = new FormatterInternal(this, name, proto, configsStr, component);
@@ -92,7 +94,7 @@ public class PullerHTTP extends AbsJODPuller {
      */
     @Override
     public void pull() {
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTML '%s' of proto '%s' pulling", getName(), getProto()));
+        log.trace(String.format("PullerHTML '%s' of proto '%s' pulling", getName(), getProto()));
 
         String requestUrl = http.getStateRequest();
 
@@ -102,7 +104,7 @@ public class PullerHTTP extends AbsJODPuller {
             if (cachedRes != null) {
                 Date lastAcceptableDate = new Date(JavaDate.getNowDate().getTime() - cache_timeout_ms);
                 if (cachedRes.date.after(lastAcceptableDate)) {
-                    log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' use cached response", getName(), getProto()));
+                    log.debug(String.format("PullerHTTP '%s' of proto '%s' use cached response", getName(), getProto()));
                     response = cachedRes.response;
                 }
             }
@@ -112,7 +114,7 @@ public class PullerHTTP extends AbsJODPuller {
                     response = http.execRequest(requestUrl);
 
                 } catch (HTTPClient.RequestException | MalformedURLException | HTTPClient.ResponseException e) {
-                    log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' error on exec request '%s' because '%s'", getName(), getProto(), requestUrl, e.getMessage()), e);
+                    log.warn(String.format("PullerHTTP '%s' of proto '%s' error on exec request '%s' because '%s'", getName(), getProto(), requestUrl, e.getMessage()), e);
                     return;
                 }
 
@@ -122,7 +124,7 @@ public class PullerHTTP extends AbsJODPuller {
                 cache.put(requestUrl, toCacheRes);
 
                 if (lastResponse.compareTo(response) == 0) {
-                    log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' get same response as last attempt, skip it", getName(), getProto()));
+                    log.debug(String.format("PullerHTTP '%s' of proto '%s' get same response as last attempt, skip it", getName(), getProto()));
                     return;
                 }
                 lastResponse = response;
@@ -133,15 +135,15 @@ public class PullerHTTP extends AbsJODPuller {
         try {
             result = formatter.parse(response);
         } catch (FormatterInternal.ParsingException | FormatterInternal.PathNotFoundException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' error on parsing request '%s''s response because '%s'", getName(), getProto(), requestUrl, e.getMessage()), e);
-            log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' error on parsing response '%s'", getName(), getProto(), response));
+            log.warn(String.format("PullerHTTP '%s' of proto '%s' error on parsing request '%s''s response because '%s'", getName(), getProto(), requestUrl, e.getMessage()), e);
+            log.debug(String.format("PullerHTTP '%s' of proto '%s' error on parsing response '%s'", getName(), getProto(), response));
             return;
         }
 
-        log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' read state '%s'", getName(), getProto(), result));
+        log.debug(String.format("PullerHTTP '%s' of proto '%s' read state '%s'", getName(), getProto(), result));
 
         if (lastResult.compareTo(result) == 0){
-            log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' get same result as last attempt, skip it", getName(), getProto()));
+            log.debug(String.format("PullerHTTP '%s' of proto '%s' get same result as last attempt, skip it", getName(), getProto()));
             return;
         }
         lastResult = result;
@@ -150,15 +152,15 @@ public class PullerHTTP extends AbsJODPuller {
         try {
             resultEvaluated = evaluator.evaluate(result);
         } catch (EvaluatorInternal.EvaluationException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' error on evaluating request '%s''s result because '%s'", getName(), getProto(), requestUrl, e.getMessage()), e);
-            log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTTP '%s' of proto '%s' error on evaluating result '%s'", getName(), getProto(), result));
+            log.warn(String.format("PullerHTTP '%s' of proto '%s' error on evaluating request '%s''s result because '%s'", getName(), getProto(), requestUrl, e.getMessage()), e);
+            log.debug(String.format("PullerHTTP '%s' of proto '%s' error on evaluating result '%s'", getName(), getProto(), result));
             return;
         }
 
-        log.debug(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerHTML '%s' of proto '%s' pulling url '%s' and get '%s' value from '%s' result", getName(), getProto(), http.getLastUrl(), resultEvaluated, result));
+        log.debug(String.format("PullerHTML '%s' of proto '%s' pulling url '%s' and get '%s' value from '%s' result", getName(), getProto(), http.getLastUrl(), resultEvaluated, result));
 
         if (!convertAndSetStatus(resultEvaluated))
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
+            log.warn(String.format("ListenerFiles for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
         //// For each JODState supported
         //if (getComponent() instanceof JODBooleanState)
         //    ((JODBooleanState) getComponent()).setUpdate(Boolean.parseBoolean(resultEvaluated));

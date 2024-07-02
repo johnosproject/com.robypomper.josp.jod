@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,13 @@ import java.util.List;
 /**
  * Interface for Object's communication system.
  * <p>
- * The communication system provide channels for local and cloud communication.
+ * is responsible for the JOSP communications and the relative message routing.
+ * To communicate with JOSP Services, the JOD Agent support both JOSP Communications
+ * types:
+ * <ul>
+ *     <li>Direct/Local communication via {@link JODLocalServer}</li>
+ *     <li>Cloud/Remote communication via {@link JODGwO2SClient}</li>
+ * </ul>
  * <p>
  * The local communication include an SSL TCP server, his publication on the
  * ZeroConf protocol and local client management.
@@ -47,10 +53,61 @@ public interface JODCommunication {
 
     // To Service Msg
 
-    boolean sendToServices(String msg, JOSPPerm.Type minPermReq);
+    /**
+     * Is the main method, used by the JOSP Object to communicate with all the JOSP Services
+     * (both local and remote). It is mostly used to send state update messages, but
+     * also to synchronize the JOSP Object (the object's info, structure and permissions)
+     * with all JOSP Services.
+     * <p>
+     * JOSP Protocol messages that can be sent using this method are:
+     * <ul>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectStateUpdMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectInfoMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectPermsMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectStructMsg}</li>
+     * </ul>
+     *
+     * @param msg message to send to all JOSP Services (local and remote).
+     * @param minReqPerm minimum required permission to send the message.
+     * @return true if the message was sent to at least one JOSP Service, false otherwise.
+     */
+    boolean sendToServices(String msg, JOSPPerm.Type minReqPerm);
 
+    /**
+     * Is used by the JOSP Object to send a message only to the JCP GWs.
+     * <p>
+     * JOSP Protocol messages that can be sent using this method are:<br/>
+     * N/A
+     *
+     * @param msg message to send to the cloud.
+     * @return true if the message was sent to the cloud, false otherwise.
+     * @throws CloudNotConnected if the cloud is not connected.
+     */
     boolean sendToCloud(String msg) throws CloudNotConnected;
 
+    /**
+     * Is used by the JOSP Object to send a message only to a specific JSL service.
+     * <p>
+     * It is fist used to send the JOSP Object's presentation message to the JOSP Service
+     * on local connection, but also to send response messages to the JOSP Services'
+     * requests (like the History messages).
+     * <p>
+     * JOSP Protocol messages that can be sent using this method are:
+     * <ul>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectInfoMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectStructMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectPermsMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createServicePermMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createHistoryResMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createEventsResMsg} </li>
+     * </ul>
+     *
+     * @param locConn the local client info of the service to send the message to.
+     * @param msg message to send to the service.
+     * @param minReqPerm minimum required permission to send the message.
+     * @return true if the message was sent to the service, false otherwise.
+     * @throws ServiceNotConnected if the service is not connected.
+     */
     boolean sendToSingleLocalService(JODLocalClientInfo locConn, String msg, JOSPPerm.Type minReqPerm) throws ServiceNotConnected;
 
     /**
@@ -92,7 +149,7 @@ public interface JODCommunication {
     JODLocalServer getLocalServer();
 
     /**
-     * @return an array containing all local connections.
+     * @return a list containing all local connections.
      */
     List<JODLocalClientInfo> getAllLocalClientsInfo();
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,10 @@ package com.robypomper.josp.jod.structure;
 
 import com.robypomper.josp.jod.history.JODHistory;
 import com.robypomper.josp.protocol.HistoryLimits;
-import com.robypomper.josp.protocol.JOSPStatusHistory;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.robypomper.josp.protocol.JOSPHistory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public abstract class AbsJODComponent implements JODComponent {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(AbsJODComponent.class);
     private final JODStructure structure;
     private final JODHistory history;
     private JODContainer parent = null;
@@ -67,7 +66,7 @@ public abstract class AbsJODComponent implements JODComponent {
         this.name = name;
         this.descr = descr != null ? descr : "";
 
-        log.info(Mrk_JOD.JOD_STRU_SUB, String.format("Initialized JODComponent/%s instance for '%s' component", this.getClass().getSimpleName(), name));
+        log.debug(String.format("                                   Initialized JODComponent/%s instance for '%s' component", this.getClass().getSimpleName(), name));
     }
 
 
@@ -114,7 +113,7 @@ public abstract class AbsJODComponent implements JODComponent {
      * {@inheritDoc}
      */
     @Override
-    public List<JOSPStatusHistory> getHistoryStatus(HistoryLimits limits) {
+    public List<JOSPHistory> getHistoryStatus(HistoryLimits limits) {
         return getHistory().getHistoryStatus(this,limits);
     }
 

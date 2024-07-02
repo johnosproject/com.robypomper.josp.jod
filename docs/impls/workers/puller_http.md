@@ -1,14 +1,12 @@
-# JOD - Workers/Puller/HTTP
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Puller/HTTP
 
 Each ```freq``` seconds, this puller performs the HTTP Request defined via
 [HTTP Request](#firmware-configs---http-request) configs , then update the
-[JOD State](../specs/pillars.md#states).
+[JOD State](../../specs/pillars.md#states).
 
 Before execute the request, the ```requestUrl``` string is updated and all his
-placeholder are replaced with current [Pillar](../specs/workers/placeholders.md#pillar) and
-[State](../specs/workers/placeholders.md#state) properties. Once executed the HTTP Request,
+placeholder are replaced with current [Pillar](../../specs/workers_placeholders.md#pillar) and
+[State](../../specs/workers_placeholders.md#state) properties. Once executed the HTTP Request,
 his response body is [formatted](#firmware-configs---formatter) and [evaluated](#firmware-configs---evaluator).
 Finally, the evaluated HTTP Response's body is passed as new Pillar's state,
 independently to the Pillar's type.
@@ -19,15 +17,15 @@ independently to the Pillar's type.
 
 ### ```freq```
 
-Pulling frequency in seconds. By default '5'.
+Pulling frequency in seconds. By default, `5`.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 
 ### ```cache_timeout```
 
-Cache timeout in seconds. By default '30'.
+Cache timeout in seconds. By default `30`.
 
 Once an url is required by any instance of Puller Http worker, his response is
 retrained in a cache memory for ```cache_timeout``` seconds.<br/>
@@ -36,20 +34,19 @@ instance) to the same url receive cached response.<br/>
 That prevent HTTP server overload, especially when multiple HTTP Puller workers
 get their value from the same web page or API method.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ---
 
 ## Firmware Configs - HTTP Request
 
-HTTP Requests are performed using the [DefaultHTTPClient](/src/jospCommons/java/com/robypomper/josp/clients/DefaultHTTPClient.java)
-from the [JOSP Commons](/docs/comps/josp/commons/README.md)
-library.
+HTTP Requests are performed using the `DefaultHTTPClient`
+from the JOSP Commons library.
 
 Following Firmware Configs allow you to customize the request that must be performed
 on worker execution.<br/>
-Those configs are defined and used by [HTTPInternal](/src/jospJOD/java/com/robypomper/josp/jod/executor/impls/http/HTTPInternal.java) class.
+Those configs are defined and used by [HTTPInternal](/src/main/java/com/robypomper/josp/jod/executor/impls/http/HTTPInternal.java) class.
 
 ### ```requestUrl```
 
@@ -59,8 +56,8 @@ This string is used to format the final url for the HTTP Request.<br/>
 The ```requestUrl``` string is updated during worker initialization and then each
 time the puller pulls for pillar state.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
 on pulling state.
 
 ### ```requestVerb```
@@ -80,14 +77,14 @@ This string can be one of the following values:
 
 Those values are coming from the [Scribe Java library](https://github.com/scribejava/scribejava).
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```requestTimeOut```
 
-The HTTP Request's timeout in seconds. Default '30'.
+The HTTP Request's timeout in seconds. Default `30`.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```requestIgnoreSSLHosts```
@@ -97,17 +94,17 @@ Set this string to 'True' to ignore "SSL: Invalid Hostname" error. Default 'fals
 If the HTTP Server that receive the HTTP Request is set to use the SSL encryption
 but his certificate or hostname are not valid.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```availabilityRetrySeconds```
 
 When the HTTP Server is not reachable, this property define how many seconds wait
-before retry contacting the server. Default '10'.
+before retry contacting the server. Default `10`.
 
 *This property is not used in the Puller HTTP worker execution.*
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ---
@@ -122,28 +119,28 @@ Then can be extracted part of the response, using the ```formatPathType``` and
 ```formatPath``` configs. Finally, only the extracted string is used as Pillar's
 state.
 
-To avoid any response alteration, you can use the ```TEXT``` value in the ```formatType```
+To avoid any response alteration, you can use the ```TXT``` value in the ```formatType```
 config. That will thread the HTTP Response Body as raw text and, all contents from
 the response body are used as Pillar's state.
 
-Those configs are defined and used by [FormatterInternal](/src/jospJOD/java/com/robypomper/josp/jod/executor/impls/http/FormatterInternal.java) class.
+Those configs are defined and used by [FormatterInternal](/src/main/java/com/robypomper/josp/jod/executor/impls/http/FormatterInternal.java) class.
 
 ### ```formatType```
 
-HTTP Response's body format. Default 'HTML'.
+HTTP Response's body format. Default 'TXT'.
 
 Please set this FirmwareConfigs according to the expected response type.<br/>
 You can choose one of the following values:
 
-* ```TEXT```: raw text response, this format does not alter the response body.
+* ```TXT```: raw text response, this format does not alter the response body.
 * ```HTML```: for HTML responses that can be queried with XPath expression or with a TagName (Not Yet Implemented).
 * ```XML```: for XML responses (Not Yet Implemented).
 * ```JSON```: for JSON responses that can be queried with JSONPath expression.
 * ```YML```: for YML responses (Not Yet Implemented).
 
-Those values are coming from the [FormatterInternal::FormatType](/src/jospJOD/java/com/robypomper/josp/jod/executor/impls/http/FormatterInternal.java) enum.
+Those values are coming from the [FormatterInternal::FormatType](/src/main/java/com/robypomper/josp/jod/executor/impls/http/FormatterInternal.java) enum.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```formatPath```
@@ -158,7 +155,7 @@ Depending on the ```formatPathType``` value you can use different path syntax:
 * ```TAG_NAME```: just write the tag name, then his content will be used as formatted response
 * ```JSONPATH```: an expression format to identify nodes in JSON documents ([Jayway JsonPath](https://github.com/json-path/JsonPath), [JsonPath.com: Online JsonPath Tester](https://jsonpath.com/))
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ### ```formatPathType```
@@ -172,9 +169,9 @@ You can choose one of the following values:
 * ```TAG_NAME```: to query HTTP Responses with HTML and XML bodies (Not Yet Implemented).
 * ```JSONPATH```: to query HTTP Responses with JSON bodies.
 
-Those values are coming from the [FormatterInternal](/src/jospJOD/java/com/robypomper/josp/jod/executor/impls/http/FormatterInternal.java) class.
+Those values are coming from the [FormatterInternal](/src/main/java/com/robypomper/josp/jod/executor/impls/http/FormatterInternal.java) class.
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
 on worker initialization.
 
 ---
@@ -185,7 +182,7 @@ If you are not yet satisfy from the result after the HTTP Response body format,
 you can continue customizing it within a configurable JavaScript script.
 
 For example, if after response format, it still contains unwanted chars; or also
-if you configured the worker for handle a raw response  (```formatType=TEXT```).
+if you configured the worker for handle a raw response  (```formatType=TXT```).
 Then you need to edit the obtained response before passing it as new Pillar's
 state value.
 
@@ -193,12 +190,17 @@ To edit obtained result, after the response's body format, you must use the
 ```eval``` Firmware Config.<br/>
 Default ```eval``` value, or an empty string, prevents any response alteration.
 
-Those configs are defined and used by [EvaluatorInternal](/src/jospJOD/java/com/robypomper/josp/jod/executor/impls/http/EvaluatorInternal.java) class.
+Those configs are defined and used by [EvaluatorInternal](/src/main/java/com/robypomper/josp/jod/executor/impls/http/EvaluatorInternal.java) class.
 
 ### ```eval```
 
 JavaScript code to evaluate HTTP Response body after formatting it. Default
 '{httpResult}'.
+
+As an example the following string handle `httpResult` as a string and return
+`TRUE` only if it contains the `Playing` string.
+
+`httpResult.toLowerCase()=='playing'?'TRUE':'FALSE'`
 
 This config accepts any JavaScript script and response the evaluation function
 returns his output.
@@ -210,8 +212,8 @@ After alter this string, the script must print the desired result.
 Script are executed as [Java ScriptEngine](https://docs.oracle.com/javase/8/docs/api/javax/script/ScriptEngine.html).<br/>
 More details on how to write JavaScript for the Java ScriptEngine at [Oracle: Java Scripting Programmer's Guide](https://docs.oracle.com/javase/7/docs/technotes/guides/scripting/programmer_guide/).
 
-This property is updated with [Pillar's Placeholder](../specs/workers/placeholders.md#pillar)
-on worker initialization and with [State Placeholder](../specs/workers/placeholders.md#state)
+This property is updated with [Pillar's Placeholder](../../specs/workers_placeholders.md#pillar)
+on worker initialization and with [State Placeholder](../../specs/workers_placeholders.md#state)
 on pulling state.
 
 ---

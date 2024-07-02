@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,8 @@ import com.robypomper.josp.jod.permissions.JODPermissions;
 import com.robypomper.josp.jod.structure.JODStructure;
 import com.robypomper.josp.states.JODState;
 import com.robypomper.josp.states.StateException;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -88,7 +87,7 @@ public abstract class AbsJOD implements JOD {
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(AbsJOD.class);
     private final JavaEnum.Synchronizable<JODState> state = new JavaEnum.Synchronizable<>(JODState.STOP);
 
 
@@ -125,7 +124,7 @@ public abstract class AbsJOD implements JOD {
         this.events = events;
         this.history = history;
 
-        log.info(Mrk_JOD.JOD_MAIN, String.format("Initialized AbsJOD/%s instance for '%s' ('%s') object", this.getClass().getSimpleName(), objInfo.getObjName(), objInfo.getObjId()));
+        log.info(String.format("Initialized AbsJOD/%s instance for '%s' ('%s') object", this.getClass().getSimpleName(), objInfo.getObjName(), objInfo.getObjId()));
     }
 
 
@@ -153,8 +152,8 @@ public abstract class AbsJOD implements JOD {
      */
     @Override
     public void startup() throws StateException {
-        log.info(Mrk_JOD.JOD_MAIN, String.format("Start JOD instance for '%s' object", objInfo.getObjId()));
-        log.trace(Mrk_JOD.JOD_MAIN, String.format("JOD state is %s", getState()));
+        log.info(String.format("Start JOD instance for '%s' object", objInfo.getObjId()));
+        log.trace(String.format("JOD state is %s", getState()));
 
         if (state.enumEquals(JODState.RUN))
             return; // Already done
@@ -169,10 +168,10 @@ public abstract class AbsJOD implements JOD {
             startupInstance();
 
         else if (state.enumEquals(JODState.SHOUTING)) {
-            throw new StateException("Can't startup JOD daemon instance because is shuting down, try again later");
+            throw new StateException("Can't startup JOD daemon instance because is shutting down, try again later");
         }
 
-        log.trace(Mrk_JOD.JOD_MAIN, String.format("JOD state is %s", getState()));
+        log.trace(String.format("JOD state is %s", getState()));
 
     }
 
@@ -190,8 +189,8 @@ public abstract class AbsJOD implements JOD {
      */
     @Override
     public void shutdown() throws StateException {
-        log.info(Mrk_JOD.JOD_MAIN, String.format("Shuting down JOD instance for '%s' object", objInfo.getObjId()));
-        log.trace(Mrk_JOD.JOD_MAIN, String.format("JOD state is %s", getState()));
+        log.info(String.format("Shutting down JOD instance for '%s' object", objInfo.getObjId()));
+        log.trace(String.format("JOD state is %s", getState()));
 
         if (state.enumEquals(JODState.RUN))
             try {
@@ -212,7 +211,7 @@ public abstract class AbsJOD implements JOD {
         else if (state.enumEquals(JODState.SHOUTING))
             return; // Already in progress
 
-        log.trace(Mrk_JOD.JOD_MAIN, String.format("JOD state is %s", getState()));
+        log.trace(String.format("JOD state is %s", getState()));
     }
 
     /**
@@ -222,8 +221,8 @@ public abstract class AbsJOD implements JOD {
      */
     @Override
     public boolean restart() throws StateException {
-        log.info(Mrk_JOD.JOD_MAIN, String.format("Shuting down JOD instance for '%s' object", objInfo.getObjId()));
-        log.trace(Mrk_JOD.JOD_MAIN, String.format("JOD state is %s", getState()));
+        log.info(String.format("Shutting down JOD instance for '%s' object", objInfo.getObjId()));
+        log.trace(String.format("JOD state is %s", getState()));
 
         if (state.enumEquals(JODState.RUN))
             restartInstance();
@@ -238,84 +237,84 @@ public abstract class AbsJOD implements JOD {
             restartInstance();
 
         else if (state.enumEquals(JODState.SHOUTING))
-            throw new StateException("Can't restart JOD daemon instance because is shuting down, try again later");
+            throw new StateException("Can't restart JOD daemon instance because is shutting down, try again later");
 
-        log.trace(Mrk_JOD.JOD_MAIN, String.format("JOD state is %s", getState()));
+        log.trace(String.format("JOD state is %s", getState()));
         return state.enumEquals(JODState.STARTING);
     }
 
     @Override
     public void printInstanceInfo() {
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("JOD Object '%s' started", objInfo.getObjId()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JOD Obj status           = %s", status()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JOSP JOD version         = %s", version()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JOSP protocol supported  = %s", Arrays.asList(versionsJOSPProtocol())));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JCP APIs supported       = %s", Arrays.asList(versionsJCPAPIs())));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    Cloud comm.              = %s", comm.isCloudConnected()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    Local comm.              = %s", comm.isLocalRunning()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JOD Obj id               = %s", objInfo.getObjId()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JOD Obj name             = %s", objInfo.getObjName()));
-        //log.info(Mrk_JOD.JOD_MAIN, String.format("    JOD Obj owner id         = %s", objInfo.getOwnerId()));
+        //log.info(String.format("JOD Object '%s' started", objInfo.getObjId()));
+        //log.info(String.format("    JOD Obj status           = %s", status()));
+        //log.info(String.format("    JOSP JOD version         = %s", version()));
+        //log.info(String.format("    JOSP protocol supported  = %s", Arrays.asList(versionsJOSPProtocol())));
+        //log.info(String.format("    JCP APIs supported       = %s", Arrays.asList(versionsJCPAPIs())));
+        //log.info(String.format("    Cloud comm.              = %s", comm.isCloudConnected()));
+        //log.info(String.format("    Local comm.              = %s", comm.isLocalRunning()));
+        //log.info(String.format("    JOD Obj id               = %s", objInfo.getObjId()));
+        //log.info(String.format("    JOD Obj name             = %s", objInfo.getObjName()));
+        //log.info(String.format("    JOD Obj owner id         = %s", objInfo.getOwnerId()));
 
-        log.info(Mrk_JOD.JOD_MAIN, "JOD Obj");
-        log.info(Mrk_JOD.JOD_MAIN, " -- IDs");
-        log.info(Mrk_JOD.JOD_MAIN, "        JOD Obj");
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            ID                = %s", objInfo.getObjId()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            name              = %s", objInfo.getObjName()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            brand             = %s", objInfo.getBrand()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            model             = %s", objInfo.getModel()));
-        log.info(Mrk_JOD.JOD_MAIN, "        Owner");
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            ID                = %s", objInfo.getOwnerId()));
-        log.info(Mrk_JOD.JOD_MAIN, " -- Ver.s");
-        log.info(Mrk_JOD.JOD_MAIN, String.format("    JOD Srv state             = %s", getState()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("    JOD Srv version           = %s", version()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("    JOSP protocol supported   = %s", Arrays.asList(versionsJOSPProtocol())));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("    JCP APIs supported        = %s", Arrays.asList(versionsJCPAPIs())));
-        log.info(Mrk_JOD.JOD_MAIN, " -- Comm.s");
-        log.info(Mrk_JOD.JOD_MAIN, "        JCP APIs");
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            State             = %s", comm.getCloudAPIs().getState()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            Url               = %s", comm.getCloudAPIs().getAPIsUrl()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            HostName          = %s", comm.getCloudAPIs().getAPIsHostname()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            IsConnected       = %s", comm.getCloudAPIs().isConnected()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            IsAuth            = %s", comm.getCloudAPIs().isUserAuthenticated()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            LastConn          = %s", comm.getCloudAPIs().getLastConnection()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            LastDiscon        = %s", comm.getCloudAPIs().getLastDisconnection()));
-        log.info(Mrk_JOD.JOD_MAIN, "        Cloud Comm.");
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            State (Client)    = %s", comm.getCloudConnection().getState()));
+        log.debug("                                   JOD Obj");
+        log.debug("                                   +  -- IDs");
+        log.debug("                                   +         JOD Obj");
+        log.debug(String.format("                                   +             ID                = %s", objInfo.getObjId()));
+        log.debug(String.format("                                   +             name              = %s", objInfo.getObjName()));
+        log.debug(String.format("                                   +             brand             = %s", objInfo.getBrand()));
+        log.debug(String.format("                                   +             model             = %s", objInfo.getModel()));
+        log.debug("                                   +         Owner");
+        log.debug(String.format("                                   +             ID                = %s", objInfo.getOwnerId()));
+        log.debug("                                   +  -- Ver.s");
+        log.debug(String.format("                                   +     JOD Srv state             = %s", getState()));
+        log.debug(String.format("                                   +     JOD Srv version           = %s", version()));
+        log.debug(String.format("                                   +     JOSP protocol supported   = %s", Arrays.asList(versionsJOSPProtocol())));
+        log.debug(String.format("                                   +     JCP APIs supported        = %s", Arrays.asList(versionsJCPAPIs())));
+        log.debug("                                   +  -- Comm.s");
+        log.debug("                                   +         JCP APIs");
+        log.debug(String.format("                                   +             State             = %s", comm.getCloudAPIs().getState()));
+        log.debug(String.format("                                   +             Url               = %s", comm.getCloudAPIs().getAPIsUrl()));
+        log.debug(String.format("                                   +             HostName          = %s", comm.getCloudAPIs().getAPIsHostname()));
+        log.debug(String.format("                                   +             IsConnected       = %s", comm.getCloudAPIs().isConnected()));
+        log.debug(String.format("                                   +             IsAuth            = %s", comm.getCloudAPIs().isUserAuthenticated()));
+        log.debug(String.format("                                   +             LastConn          = %s", comm.getCloudAPIs().getLastConnection()));
+        log.debug(String.format("                                   +             LastDiscon        = %s", comm.getCloudAPIs().getLastDisconnection()));
+        log.debug("                                   +         Cloud Comm.");
+        log.debug(String.format("                                   +             State (Client)    = %s", comm.getCloudConnection().getState()));
         InetAddress cloudAddr = comm.getCloudConnection().getConnectionInfo().getRemoteInfo().getAddr();
         Integer cloudPort = comm.getCloudConnection().getConnectionInfo().getRemoteInfo().getPort();
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            HostName          = %s", (cloudAddr != null ? cloudAddr.getHostName() : "N/A")));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            IPAddr            = %s", (cloudAddr != null ? cloudAddr.getHostAddress() : "N/A")));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            Port              = %s", (cloudPort != null ? cloudPort : "N/A")));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            IsConnected       = %s", comm.getCloudConnection().getState().isConnected()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            LastConn          = %s", comm.getCloudConnection().getConnectionInfo().getStats().getLastConnection()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            LastDiscon        = %s", comm.getCloudConnection().getConnectionInfo().getStats().getLastDisconnection()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("            LastDisconReason  = %s", comm.getCloudConnection().getDisconnectionReason()));
-        log.info(Mrk_JOD.JOD_MAIN, "        Local Comm.");
+        log.debug(String.format("                                   +             HostName          = %s", (cloudAddr != null ? cloudAddr.getHostName() : "N/A")));
+        log.debug(String.format("                                   +             IPAddr            = %s", (cloudAddr != null ? cloudAddr.getHostAddress() : "N/A")));
+        log.debug(String.format("                                   +             Port              = %s", (cloudPort != null ? cloudPort : "N/A")));
+        log.debug(String.format("                                   +             IsConnected       = %s", comm.getCloudConnection().getState().isConnected()));
+        log.debug(String.format("                                   +             LastConn          = %s", comm.getCloudConnection().getConnectionInfo().getStats().getLastConnection()));
+        log.debug(String.format("                                   +             LastDiscon        = %s", comm.getCloudConnection().getConnectionInfo().getStats().getLastDisconnection()));
+        log.debug(String.format("                                   +             LastDisconReason  = %s", comm.getCloudConnection().getDisconnectionReason()));
+        log.debug("                                   +         Local Comm.");
         if (comm.getLocalServer() != null) {
-            log.info(Mrk_JOD.JOD_MAIN, String.format("            State (Server)    = %s", comm.getLocalServer().getState()));
-            log.info(Mrk_JOD.JOD_MAIN, String.format("            ClientsCount      = %s", comm.getAllLocalClientsInfo().size()));
-            //log.info(Mrk_JOD.JOD_MAIN, String.format("            ClientsConn       = %d", comm.getLocalConnections().getConnectedCount()));
-            //log.info(Mrk_JOD.JOD_MAIN, String.format("            ClientsDisconn    = %d", comm.getLocalConnections().getDisconnectedCount()));
-            InetAddress localAddr = comm.getLocalServer().getServerPeerInfo().getAddr();
-            Integer localPort = comm.getLocalServer().getServerPeerInfo().getPort();
-            log.info(Mrk_JOD.JOD_MAIN, String.format("            HostName          = %s", (localAddr != null ? localAddr.getHostName() : "N/A")));
-            log.info(Mrk_JOD.JOD_MAIN, String.format("            IPAddr            = %s", (localAddr != null ? localAddr.getHostAddress() : "N/A")));
-            log.info(Mrk_JOD.JOD_MAIN, String.format("            Port              = %s", (localPort != null ? localPort : "N/A")));
-            log.info(Mrk_JOD.JOD_MAIN, String.format("            IsRunning         = %s", comm.getLocalServer().getState().isRunning()));
-            //log.info(Mrk_JOD.JOD_MAIN, String.format("            lastStart         = %s", comm.getLocalConnections().getLastStartup()));
-            //log.info(Mrk_JOD.JOD_MAIN, String.format("            lastStop          = %s", comm.getLocalConnections().getLastShutdown()));
-            //log.info(Mrk_JOD.JOD_MAIN, String.format("            lastConn          = %s", comm.getLocalConnections().getLastObjConnection()));
-            //log.info(Mrk_JOD.JOD_MAIN, String.format("            lastDiscon        = %s", comm.getLocalConnections().getLastObjDisconnection()));
+            log.debug(String.format("                                   +             State (Server)    = %s", comm.getLocalServer().getState()));
+            log.debug(String.format("                                   +             ClientsCount      = %s", comm.getAllLocalClientsInfo().size()));
+            //log.debug(String.format("                                   +             ClientsConn       = %d", comm.getLocalConnections().getConnectedCount()));
+            //log.debug(String.format("                                   +             ClientsDisconn    = %d", comm.getLocalConnections().getDisconnectedCount()));
+            InetAddress localAddr = comm.getLocalServer().getAddr();
+            Integer localPort = comm.getLocalServer().getPort();
+            log.debug(String.format("                                   +             HostName          = %s", (localAddr != null ? localAddr.getHostName() : "N/A")));
+            log.debug(String.format("                                   +             IPAddr            = %s", (localAddr != null ? localAddr.getHostAddress() : "N/A")));
+            log.debug(String.format("                                   +             Port              = %s", (localPort != null ? localPort : "N/A")));
+            log.debug(String.format("                                   +             IsRunning         = %s", comm.getLocalServer().getState().isRunning()));
+            //log.debug(String.format("                                   +             lastStart         = %s", comm.getLocalConnections().getLastStartup()));
+            //log.debug(String.format("                                   +             lastStop          = %s", comm.getLocalConnections().getLastShutdown()));
+            //log.debug(String.format("                                   +             lastConn          = %s", comm.getLocalConnections().getLastObjConnection()));
+            //log.debug(String.format("                                   +             lastDiscon        = %s", comm.getLocalConnections().getLastObjDisconnection()));
         } else
-            log.info(Mrk_JOD.JOD_MAIN, "            State (Server)    = N/A");
+            log.debug("                                   +             State (Server)    = N/A");
         List<JODLocalClientInfo> srvsList = getCommunication().getAllLocalClientsInfo();
         StringBuilder srvNames = new StringBuilder();
         for (JODLocalClientInfo ci : srvsList)
             srvNames.append(ci.getFullSrvId()).append(", ");
-        log.info(Mrk_JOD.JOD_MAIN, " -- Objs Mngr");
-        log.info(Mrk_JOD.JOD_MAIN, String.format("        Count                 = %s", srvsList.size()));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("        List                  = %s", srvNames));
+        log.debug("                                   +  -- Objs Mngr");
+        log.debug(String.format("                                   +         Count                 = %s", srvsList.size()));
+        log.debug(String.format("                                   +         List                  = %s", srvNames));
     }
 
     private void startupInstance() {
@@ -339,21 +338,24 @@ public abstract class AbsJOD implements JOD {
 
             try {
                 boolean startLocal = ((JODSettings_002) settings).getLocalEnabled();
-                log.info(Mrk_JOD.JOD_MAIN, String.format("JODCommunication local communication %s", startLocal ? "enabled" : "disabled"));
+                log.info(String.format("JODCommunication local communication %s", startLocal ? "enabled" : "disabled"));
                 if (startLocal) comm.startLocal();
 
             } catch (JODCommunication.LocalCommunicationException e) {
-                log.warn(Mrk_JOD.JOD_MAIN, String.format("Error on starting local communication of '%s' object because %s", objInfo.getObjId(), e.getMessage()), e);
+                log.warn(String.format("Error on starting local communication of '%s' object because %s", objInfo.getObjId(), e.getMessage()), e);
             }
 
             try {
                 boolean startCloud = ((JODSettings_002) settings).getCloudEnabled();
-                log.info(Mrk_JOD.JOD_MAIN, String.format("JCP GWs client %s", startCloud ? "enabled" : "disabled"));
+                log.info(String.format("JCP GWs client %s", startCloud ? "enabled" : "disabled"));
                 if (startCloud)
                     comm.getCloudConnection().connect();
 
             } catch (PeerConnectionException e) {
-                log.warn(Mrk_JOD.JOD_MAIN, "JCP GWs client not connected, retry later", e);
+                if (!comm.getCloudAPIs().isConnected())
+                    log.warn("Can't connect GWs client because JCP API not available, retry when JCP API become reachable");
+                else
+                    log.warn("JCP GWs client not connected, retry later", e);
             }
 
             long time = new Date().getTime() - start;
@@ -363,7 +365,7 @@ public abstract class AbsJOD implements JOD {
                 state.set(JODState.RUN);
         }
 
-        log.info(Mrk_JOD.JOD_MAIN, String.format("JOD Object '%s' started", objInfo.getObjId()));
+        log.info(String.format("JOD Object '%s' started", objInfo.getObjId()));
 
         printInstanceInfo();
     }
@@ -381,39 +383,39 @@ public abstract class AbsJOD implements JOD {
 
             Events.registerJODStop("Stopping sub-system");
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JODCommunication stop server and disconnect from JCP");
+            log.trace("JODCommunication stop server and disconnect from JCP");
             try {
                 comm.stopLocal();
 
             } catch (JODCommunication.LocalCommunicationException e) {
-                log.warn(Mrk_JOD.JOD_MAIN, String.format("Error on hiding local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
+                log.warn(String.format("Error on hiding local communication object's server '%s' because %s", objInfo.getObjId(), e.getMessage()), e);
             }
 
             try {
                 comm.getCloudConnection().disconnect();
 
             } catch (PeerDisconnectionException e) {
-                log.warn(Mrk_JOD.JOD_MAIN, String.format("Error on disconnecting cloud communication of '%s' object because %s", objInfo.getObjId(), e.getMessage()), e);
+                log.warn(String.format("Error on disconnecting cloud communication of '%s' object because %s", objInfo.getObjId(), e.getMessage()), e);
             }
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JODExecutor disable all workers");
+            log.trace("JODExecutor disable all workers");
             executor.deactivateAll();
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JODObjectInfo stopping");
+            log.trace("JODObjectInfo stopping");
             objInfo.stopAutoRefresh();
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JODPermission stopping");
+            log.trace("JODPermission stopping");
             permissions.stopAutoRefresh();
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JODStructure stopping");
+            log.trace("JODStructure stopping");
             structure.stopAutoRefresh();
 
             try {
                 history.storeCache();
             } catch (IOException e) {
-                log.warn(Mrk_JOD.JOD_MAIN, "Can't flush status on file, continue shutdown JOD");
+                log.warn("Can't flush status on file, continue shutdown JOD");
             }
-            log.trace(Mrk_JOD.JOD_MAIN, "JODHistory stopping");
+            log.trace("JODHistory stopping");
             history.stopCloudSync();
 
             long time = new Date().getTime() - start;
@@ -421,16 +423,16 @@ public abstract class AbsJOD implements JOD {
             try {
                 Events.storeCache();
             } catch (IOException e) {
-                log.warn(Mrk_JOD.JOD_MAIN, "Can't flush events on file, continue shutdown JOD");
+                log.warn("Can't flush events on file, continue shutdown JOD");
             }
-            log.trace(Mrk_JOD.JOD_MAIN, "JODEvents stopping");
+            log.trace("JODEvents stopping");
             events.stopCloudSync();
 
             if (state.enumNotEquals(JODState.RESTARTING))
                 state.set(JODState.STOP);
         }
 
-        log.info(Mrk_JOD.JOD_MAIN, String.format("JOD Object '%s' stopped", objInfo.getObjId()));
+        log.info(String.format("JOD Object '%s' stopped", objInfo.getObjId()));
     }
 
     private void restartInstance() {
@@ -441,17 +443,17 @@ public abstract class AbsJOD implements JOD {
         synchronized (state) {
             state.set(JODState.RESTARTING);
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JOD shout down for restarting");
+            log.trace("JOD shout down for restarting");
             if (state.enumEquals(JODState.RUN))
                 shutdownInstance();
 
-            log.trace(Mrk_JOD.JOD_MAIN, "JOD startup for restarting");
+            log.trace("JOD startup for restarting");
             startupInstance();
 
             state.set(JODState.RUN);
         }
 
-        log.info(Mrk_JOD.JOD_MAIN, String.format("JOD Object '%s' restarted", objInfo.getObjId()));
+        log.info(String.format("JOD Object '%s' restarted", objInfo.getObjId()));
     }
 
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,9 @@ package com.robypomper.josp.jod.executor;
 import com.robypomper.java.JavaFileWatcher;
 import com.robypomper.java.JavaFiles;
 import com.robypomper.josp.jod.structure.JODComponent;
-import com.robypomper.log.Mrk_JOD;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -48,7 +47,7 @@ public class ListenerFiles extends AbsJODListener {
 
     // Internal vars
 
-    protected static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(ListenerFiles.class);
     protected final String filePath;
     protected boolean isWatching = false;
 
@@ -64,18 +63,18 @@ public class ListenerFiles extends AbsJODListener {
      */
     public ListenerFiles(String name, String proto, String configsStr, JODComponent component) throws MissingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ListenerFiles for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
 
         Map<String, String> configs = splitConfigsStrings(configsStr);
         filePath = parseConfigString(configs, PROP_FILE_PATH);
 
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' listen for changes on file '%s'", getName(), filePath));
+        log.trace(String.format("ListenerFiles for component '%s' listen for changes on file '%s'", getName(), filePath));
         try {
             JavaFiles.createParentIfNotExist(filePath);
 
         } catch (IOException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' file '%s' not exist and can't create watcher file", getName(), new File(filePath).getAbsolutePath()), e);
+            log.warn(String.format("ListenerFiles for component '%s' file '%s' not exist and can't create watcher file", getName(), new File(filePath).getAbsolutePath()), e);
         }
     }
 
@@ -98,7 +97,7 @@ public class ListenerFiles extends AbsJODListener {
      */
     @Override
     public void listen() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Start '%s' listener", getName()));
+        log.debug(String.format("                                   Start '%s' listener", getName()));
         if (isEnabled()) return;
 
         try {
@@ -106,7 +105,7 @@ public class ListenerFiles extends AbsJODListener {
             isWatching = true;
 
         } catch (IOException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' can't register watcher on '%s' file", getName(), filePath), e);
+            log.warn(String.format("ListenerFiles for component '%s' can't register watcher on '%s' file", getName(), filePath), e);
         }
     }
 
@@ -115,7 +114,7 @@ public class ListenerFiles extends AbsJODListener {
      */
     @Override
     public void halt() {
-        log.info(Mrk_JOD.JOD_EXEC_SUB, String.format("Stop '%s' listener server", getName()));
+        log.debug(String.format("                                   Stop '%s' listener server", getName()));
         if (!isEnabled()) return;
 
         try {
@@ -123,7 +122,7 @@ public class ListenerFiles extends AbsJODListener {
             isWatching = false;
 
         } catch (IOException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' can't register watcher on '%s' file", getName(), filePath), e);
+            log.warn(String.format("ListenerFiles for component '%s' can't register watcher on '%s' file", getName(), filePath), e);
         }
     }
 
@@ -141,7 +140,7 @@ public class ListenerFiles extends AbsJODListener {
             state = JavaFiles.readString(filePath);
 
         } catch (IOException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' can't read status from '%s' file because %s", getName(), filePath, e.getMessage()), e);
+            log.warn(String.format("ListenerFiles for component '%s' can't read status from '%s' file because %s", getName(), filePath, e.getMessage()), e);
             return null;
         }
 
@@ -153,7 +152,7 @@ public class ListenerFiles extends AbsJODListener {
 
     private void updateStatus(String newStatus) {
         if (!convertAndSetStatus(newStatus))
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerFiles for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
+            log.warn(String.format("ListenerFiles for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
     }
 
 

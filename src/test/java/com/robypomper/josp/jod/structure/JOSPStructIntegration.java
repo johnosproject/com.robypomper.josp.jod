@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Operating System Project is the collection of software and configurations
  * to generate IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,47 +29,37 @@ import com.robypomper.josp.jsl.objs.structure.JSLComponent;
 import com.robypomper.josp.jsl.objs.structure.JSLContainer;
 import com.robypomper.josp.jsl.objs.structure.JSLRoot;
 import com.robypomper.josp.jsl.objs.structure.JSLRoot_Jackson;
-import com.robypomper.josp.test.mocks.jod.MockJODExecutorManager;
-import com.robypomper.josp.test.mocks.jod.MockJODHistory;
-import com.robypomper.josp.test.mocks.jod.MockJODStructure;
-import com.robypomper.josp.test.mocks.jsl.MockJSLRemoteObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+@ExtendWith(MockitoExtension.class)
 public class JOSPStructIntegration {
 
     @Test
-    public void integrationTest() throws IOException {
+    public void integrationTest(@Mock JODStructure jodStructure, @Mock JODExecutorMngr jodExecutorMngr, @Mock JODHistory jodHistory, @Mock JSLRemoteObject remoteObject) throws IOException {
         // File containing jod structure in json
         String resourceName = "struct.jod";
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource(resourceName)).getFile());
 
         System.out.println("\nDESERIALIZE STRUCT.JOD");
-        // Support objects
-        JODStructure structure = new MockJODStructure();
-        JODExecutorMngr executorMngr = new MockJODExecutorManager();
-        JODHistory history = new MockJODHistory();
 
         JODRoot_Jackson jodRoot;
         // From: JODRoot JODStructure_002::loadStructure(String)
-        try {
-            ObjectMapper objMapper = new ObjectMapper();
-            InjectableValues.Std injectVars = new InjectableValues.Std();
-            injectVars.addValue(JODStructure.class, structure);
-            injectVars.addValue(JODExecutorMngr.class, executorMngr);
-            injectVars.addValue(JODHistory.class, history);
-            objMapper.setInjectableValues(injectVars);
+        ObjectMapper objMapper = new ObjectMapper();
+        InjectableValues.Std injectVars = new InjectableValues.Std();
+        injectVars.addValue(JODStructure.class, jodStructure);
+        injectVars.addValue(JODExecutorMngr.class, jodExecutorMngr);
+        injectVars.addValue(JODHistory.class, jodHistory);
+        objMapper.setInjectableValues(injectVars);
 
-            jodRoot = objMapper.readerFor(JODRoot_Jackson.class).readValue(file);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        jodRoot = objMapper.readerFor(JODRoot_Jackson.class).readValue(file);
         System.out.println("JOD struct");
         printJODRoot(jodRoot);
         System.out.println("JOD paths");
@@ -79,23 +69,15 @@ public class JOSPStructIntegration {
         System.out.println("\nSERIALIZE STRUCT.JSL");
         String jodStructureStr;
         // From: String JODStructure_002::getStructForJSL()
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            jodStructureStr = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jodRoot);
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        jodStructureStr = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jodRoot);
 
         System.out.println(jodStructureStr);
 
         System.out.println("\nDESERIALIZE STRUCT.JSL");
-        // Support objects
-        JSLRemoteObject remoteObject = new MockJSLRemoteObject();
 
-        ObjectMapper mapper = new ObjectMapper();
-        InjectableValues.Std injectVars = new InjectableValues.Std();
+        mapper = new ObjectMapper();
+        injectVars = new InjectableValues.Std();
         injectVars.addValue(JSLRemoteObject.class, remoteObject);
         mapper.setInjectableValues(injectVars);
         JSLRoot jslRoot = mapper.readValue(jodStructureStr, JSLRoot_Jackson.class);

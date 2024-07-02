@@ -1,6 +1,4 @@
-# JOD - Specs: Pillar/Boolean
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Pillar/Boolean
 
 The boolean pillar can represent any state or action that can be included 2
 values/actions.
@@ -35,17 +33,17 @@ them as Boolean states and actions like:
 
 Or even features more customized like: Alarm/Ok, Problem/Ok...
 
-**Boolean State can be configured to use any kind of Workers as [listener](../workers.md#listeners)
-or [puller](../workers.md#pullers).** Because all Listeners and Pullers use the
+**Boolean State can be configured to use any kind of Workers as [listener](workers.md#listeners)
+or [puller](workers.md#pullers).** Because all Listeners and Pullers use the
 AbsJODWorker::convertAndSetStatus(String) method to parse and update current
 pillar status (independently to the pillar type).
 
 On the other side, the **Boolean Actions can be configured to use as
-[executor](../workers.md#executors) only Workers that implements the
+[executor](workers.md#executors) only Workers that implements the
 ```JODBooleanAction.JOSPBoolean.Executor``` interface**:
-* [Shell](../../workers/executor_shell.md): on action request received, execute configured bash or powershell command
-* [File](../../workers/executor_file.md): on action request received, write configured value to a file
-* [Http](../../workers/executor_http.md): on action request received, query configured url
+* [Shell](../impls/workers/executor_shell.md): on action request received, execute configured bash or powershell command
+* [File](../impls/workers/executor_file.md): on action request received, write configured value to a file
+* [Http](../impls/workers/executor_http.md): on action request received, query configured url
 
 ---
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@ import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanState;
 import com.robypomper.josp.jod.structure.pillars.JODRangeState;
-import com.robypomper.log.Mrk_JOD;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -37,6 +39,11 @@ import com.robypomper.log.Mrk_JOD;
  */
 public class ListenerTest extends AbsJODListenerLoop {
 
+    // Internal vars
+
+    private static final Logger log = LoggerFactory.getLogger(ListenerTest.class);
+
+
     // Constructor
 
     /**
@@ -48,7 +55,7 @@ public class ListenerTest extends AbsJODListenerLoop {
      */
     public ListenerTest(String name, String proto, String configsStr, JODComponent component) {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTest for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ListenerTest for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
     }
 
 
@@ -61,10 +68,10 @@ public class ListenerTest extends AbsJODListenerLoop {
      */
     @Override
     protected void getServerLoop() {
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTest for component '%s' of proto '%s' running", getName(), getProto()));
+        log.trace(String.format("ListenerTest for component '%s' of proto '%s' running", getName(), getProto()));
 
         while (!mustShoutingDown()) {
-            log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTest for component '%s' of proto '%s' listened", getName(), getProto()));
+            log.trace(String.format("ListenerTest for component '%s' of proto '%s' listened", getName(), getProto()));
 
             // For each JODState supported
             if (getComponent() instanceof JODBooleanState)
@@ -80,7 +87,7 @@ public class ListenerTest extends AbsJODListenerLoop {
             }
         }
 
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ListenerTest for component '%s' terminated", getName()));
+        log.trace(String.format("ListenerTest for component '%s' terminated", getName()));
     }
 
 }

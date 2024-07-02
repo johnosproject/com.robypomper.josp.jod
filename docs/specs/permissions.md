@@ -1,6 +1,4 @@
-# JOD - Specs: Object Permissions
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Object Permissions
 
 In the JOSP EcoSystem, permissions are handled by objects. **Each object know
 which JOSP Service and user pair can access to himself.**
@@ -14,10 +12,10 @@ connected service.
 same permission as the lower levels.<br/>
 Here the permission levels list ordered from lower to higher:
 
-* [NONE](/docs/features/permissions.md#none): list object but can't get object's info or structure
-* [STATUS](/docs/features/permissions.md#state): read object's structure and contained [Pillar's states](pillars.md#states)
-* [ACTION](/docs/features/permissions.md#action): require [Pillar's actions](pillars.md#actions) executions
-* [OWNER](/docs/features/permissions.md#owner): edit object's name, owner or permissions
+* [NONE](/docs/specs/permissions.md): list object but can't get object's info or structure
+* [STATE](/docs/specs/permissions.md): read object's structure and contained [Pillar's states](pillars.md#states)
+* [ACTION](/docs/specs/permissions.md): require [Pillar's actions](pillars.md#actions) executions
+* [OWNER](/docs/specs/permissions.md): edit object's name, owner or permissions
 
 **JOD Agent assigns a permission level to JOSP Services** using an internal
 permission table. This table includes a **service id, a user id and a level permission**.
@@ -43,9 +41,9 @@ also a connection type**: ```OnlyLocal/LocalAndCloud```. If 'OnlyLocal' is set,
 the permission can be applied to a service/user pair only if the JOSP Service is
 connected via Direct Communication.
 
-When objects and services interact via JCP ([Cloud Communication](/docs/features/communication.md#cloud-communication)),
-the [JCP Gateway](/docs/comps/jcp/core/gws/README.md) caches permissions
-table for each connected object, then use those tables to route all messages.
+When objects and services interact via JCP ([Cloud Communication](/docs/specs/communication_cloud.md)),
+the JCP Gateway caches permissions table for each connected object, then use
+those tables to route all messages.
 
 **Permission examples:**
 
@@ -62,7 +60,7 @@ table for each connected object, then use those tables to route all messages.
 
 JOD Agent allow **different ways to add, update or remove object's permission**.
 
-The most easy way is to use the [JCP FrontEnd](/docs/comps/jcp/core/fe/README.md)
+The most easy way is to use the JCP FrontEnd
 at [www.johnosproject.org/frontend](https://www.johnosproject.org/frontend).
 After you logged in, you can go to the object's Access Control page and update
 his permissions table.
@@ -95,7 +93,7 @@ permissions are generated and stored in the file.<br/>
 New permission are also generated on object's owner change.
 
 When permission are generated, the JOD Agent try to generate them via JOSP Core
-/ Permissions get method from [JCP APIs](/docs/comps/jcp/core/apis/README.md).
+/ Permissions get method from JCP APIs
 This method accepts the 'strategy' param that is read from the ```jod.permissions.generation_strategy```
 property from [JOD Agent configs](jod_yml).
 
@@ -117,5 +115,5 @@ object is offline.
 
 Because object's permission can be updated when object was not connected to JCP,
 it requires a sync system between object and cloud.<br/>
-JOSP Services can edit object's permissions also via [Direct Communication](/docs/features/communication.md#direct-communication).
+JOSP Services can edit object's permissions also via [Direct Communication](/docs/specs/communication_local.md).
 So when an object connects again to JCP, it must synchronize the cloud permissions table.

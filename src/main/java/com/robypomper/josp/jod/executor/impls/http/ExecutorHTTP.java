@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,9 @@ import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.log.Mrk_JOD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
 
     // Internal vars
 
+    private static final Logger log = LoggerFactory.getLogger(ExecutorHTTP.class);
     // Configs
     private final String requestBody;
     private final String requestSuccess;
@@ -67,7 +69,7 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     public ExecutorHTTP(String name, String proto, String configsStr, JODComponent component) throws ParsingPropertyException, MissingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ExecutorHTTP for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
 
         http = new HTTPInternal(this, name, proto, configsStr, component);
         formatter = new FormatterInternal(this, name, proto, configsStr, component);
@@ -86,19 +88,11 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODBooleanAction.JOSPBoolean cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %b%n", cmdAction.newState);
-        System.out.printf("\toldState %b%n", cmdAction.oldState);
-
         return exec(commandAction);
     }
 
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODRangeAction.JOSPRange cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %f%n", cmdAction.newState);
-        System.out.printf("\toldState %f%n", cmdAction.oldState);
-
         return exec(commandAction);
     }
 
@@ -116,7 +110,7 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
             response = http.execRequest(requestUrl, requestBodyStr);
 
         } catch (HTTPClient.RequestException | MalformedURLException | HTTPClient.ResponseException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP '%s' of proto '%s' error on pulling url '%s'", getName(), getProto(), http.getLastUrl()));
+            log.warn(String.format("ExecutorHTTP '%s' of proto '%s' error on pulling url '%s'", getName(), getProto(), http.getLastUrl()));
             return true;
         }
 
@@ -125,14 +119,14 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
             result = formatter.parse(response);
 
         } catch (FormatterInternal.ParsingException | FormatterInternal.PathNotFoundException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP '%s' of proto '%s' error on parsing response '%s'", getName(), getProto(), response), e);
+            log.warn(String.format("ExecutorHTTP '%s' of proto '%s' error on parsing response '%s'", getName(), getProto(), response), e);
             return true;
         }
 
         try {
             result = evaluator.evaluate(result,commandAction);
         } catch (EvaluatorInternal.EvaluationException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorHTTP '%s' of proto '%s' error on evaluating result '%s'", getName(), getProto(), result), e);
+            log.warn(String.format("ExecutorHTTP '%s' of proto '%s' error on evaluating result '%s'", getName(), getProto(), result), e);
             return true;
         }
 

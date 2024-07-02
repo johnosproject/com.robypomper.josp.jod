@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ public class FormatterInternal {
 
         // Parse configs
         Map<String, String> configs = AbsJODWorker.splitConfigsStrings(configsStr);
-        formatType = FormatType.valueOf(worker.parseConfigString(configs, PROP_FORMAT_TYPE, FormatType.HTML.name()));
+        formatType = FormatType.valueOf(worker.parseConfigString(configs, PROP_FORMAT_TYPE, FormatType.TXT.name()));
         formatPath = worker.parseConfigString(configs, PROP_FORMAT_PATH, PROP_FORMAT_PATH_DEF);
         formatPathType = worker.parseConfigString(configs, PROP_FORMAT_PATH_TYPE, "");
     }
@@ -129,8 +129,7 @@ public class FormatterInternal {
         if (formatPathType.compareToIgnoreCase(PROP_FORMAT_PATH_TYPE_HTML_XPATH) == 0) {
             try {
                 TagNode tagNode = new HtmlCleaner().clean(str);
-                org.w3c.dom.Document doc = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
-                return doc;
+                return new DomSerializer(new CleanerProperties()).createDOM(tagNode);  // org.w3c.dom.Document object
 
             } catch (ParserConfigurationException e) {
                 throw new ParsingException(e);

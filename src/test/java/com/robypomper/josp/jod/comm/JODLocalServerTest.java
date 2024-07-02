@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Operating System Project is the collection of software and configurations
  * to generate IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,29 @@ package com.robypomper.josp.jod.comm;
 import com.robypomper.comm.exception.ServerShutdownException;
 import com.robypomper.comm.exception.ServerStartupException;
 import com.robypomper.comm.server.ServerClient;
-import com.robypomper.josp.test.mocks.jod.MockJODCommunication;
-import com.robypomper.josp.test.mocks.jod.MockJODObjectInfo;
-import com.robypomper.josp.test.mocks.jod.MockJODPermissions;
-import com.robypomper.log.Mrk_Test;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.robypomper.java.JavaThreads;
+import com.robypomper.josp.jod.JODSettings_002;
+import com.robypomper.josp.jod.objinfo.JODObjectInfo;
+import com.robypomper.josp.jod.permissions.JODPermissions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
+
+@ExtendWith(MockitoExtension.class)
 public class JODLocalServerTest {
 
     // Class constants
@@ -48,7 +56,7 @@ public class JODLocalServerTest {
 
     // Internal vars
 
-    protected static Logger log = LogManager.getLogger();
+    protected static Logger log = LoggerFactory.getLogger(JODLocalServerTest.class);
     protected static int port = 1234;
 
 
@@ -56,8 +64,8 @@ public class JODLocalServerTest {
 
     @BeforeEach
     public void setUp() {
-        log.debug(Mrk_Test.TEST_SPACER, "########## ########## ########## ########## ##########");
-        log.debug(Mrk_Test.TEST_METHODS, "setUp");
+        log.debug("########## ########## ########## ########## ##########");
+        log.debug("setUp");
 
         // Create test dir
         File testDirFiles = new File(TEST_FILES_PREFIX);
@@ -66,7 +74,7 @@ public class JODLocalServerTest {
 
         port += 2;
 
-        log.debug(Mrk_Test.TEST_METHODS, "test");
+        log.debug("test");
     }
 
     @AfterEach
@@ -85,8 +93,9 @@ public class JODLocalServerTest {
     // Start and stop
 
     @Test
-    public void testLocalStartAndStop() throws ServerStartupException, ServerShutdownException {
-        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+    public void testLocalStartAndStop(@Mock JODCommunication jodComm, @Mock JODObjectInfo jodObjectInfo, @Mock JODPermissions jodPerms)
+            throws ServerStartupException, ServerShutdownException, JODCommunication.LocalCommunicationException {
+        JODLocalServer jodServer = new JODLocalServer(jodComm, jodObjectInfo, jodPerms, new JODSettings_002(new HashMap<>()));
         Assertions.assertFalse(jodServer.getState().isRunning());
 
         System.out.println("\nJOD LOCAL SERVER START");
@@ -98,16 +107,24 @@ public class JODLocalServerTest {
         Assertions.assertFalse(jodServer.getState().isRunning());
     }
 
+    /**
+     * During the following test, the startup of the second server should fail.
+     * This is because both servers are trying to bind the same port.
+     */
     @Test
-    public void testLocalDoubleStart_FAIL() throws ServerStartupException, ServerShutdownException {
-        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+    public void testLocalDoubleStart_FAIL(@Mock JODCommunication jodComm, @Mock JODObjectInfo jodObjectInfo, @Mock JODPermissions jodPerms)
+            throws ServerStartupException, ServerShutdownException, JODCommunication.LocalCommunicationException {
+        Map<String, Object> jodSettingsMap = new HashMap<>();
+        jodSettingsMap.put("jod.comm.local.port", "1234");
+        JODLocalServer jodServer = new JODLocalServer(jodComm, jodObjectInfo, jodPerms, new JODSettings_002(jodSettingsMap));
         Assertions.assertFalse(jodServer.getState().isRunning());
 
         System.out.println("\nJOD LOCAL SERVER START");
         jodServer.startup();
+        JavaThreads.softSleep(100);
         Assertions.assertTrue(jodServer.getState().isRunning());
 
-        JODLocalServer jodServer2 = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+        JODLocalServer jodServer2 = new JODLocalServer(jodComm, jodObjectInfo, jodPerms, new JODSettings_002(jodSettingsMap));
         Assertions.assertFalse(jodServer2.getState().isRunning());
 
         System.out.println("\nJOD LOCAL SERVER 2nd START");
@@ -123,9 +140,9 @@ public class JODLocalServerTest {
     // Client and connections status
 
 //    @Test
-//    public void testLocalConnectionAndDisconnection() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException {
+//    public void testLocalConnectionAndDisconnection() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException, JODCommunication.LocalCommunicationException {
 //        System.out.println("\nJOD LOCAL SERVER START");
-//        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+//        JODLocalServer jodServer = new JODLocalServer(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), new JODSettings_002(new HashMap<>()));
 //        jodServer.startup();
 //
 //        System.out.println("\nJSL LOCAL CLIENT CONNECT");
@@ -154,9 +171,9 @@ public class JODLocalServerTest {
 //    }
 //
 //    @Test
-//    public void testLocalConnectionAndDisconnectionTwoClients() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException {
+//    public void testLocalConnectionAndDisconnectionTwoClients() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException, JODCommunication.LocalCommunicationException {
 //        System.out.println("\nJOD LOCAL SERVER START");
-//        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+//        JODLocalServer jodServer = new JODLocalServer(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), new JODSettings_002(new HashMap<>()));
 //        jodServer.startup();
 //
 //        System.out.println("\nJSL LOCAL CLIENT CONNECT (x2)");
@@ -198,9 +215,9 @@ public class JODLocalServerTest {
 //    }
 //
 //    @Test
-//    public void testLocalConnectionAndDisconnectionTwoClientsSameIds() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException {
+//    public void testLocalConnectionAndDisconnectionTwoClientsSameIds() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException, JODCommunication.LocalCommunicationException {
 //        System.out.println("\nJOD LOCAL SERVER START");
-//        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+//        JODLocalServer jodServer = new JODLocalServer(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), new JODSettings_002(new HashMap<>()));
 //        jodServer.startup();
 //
 //        System.out.println("\nJSL LOCAL CLIENT CONNECT");
@@ -234,9 +251,9 @@ public class JODLocalServerTest {
 //    }
 //
 //    @Test
-//    public void testLocalConnectionAndDisconnectionTwoClientsSameIdsDiffInstances() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException {
+//    public void testLocalConnectionAndDisconnectionTwoClientsSameIdsDiffInstances() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException, JODCommunication.LocalCommunicationException {
 //        System.out.println("\nJOD LOCAL SERVER START");
-//        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+//        JODLocalServer jodServer = new JODLocalServer(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), new JODSettings_002(new HashMap<>()));
 //        jodServer.startup();
 //
 //        System.out.println("\nJSL LOCAL CLIENT CONNECT");
@@ -270,9 +287,9 @@ public class JODLocalServerTest {
 //    }
 //
 //    @Test
-//    public void testLocalConnectionAndServerStop() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException {
+//    public void testLocalConnectionAndServerStop() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException, JODCommunication.LocalCommunicationException {
 //        System.out.println("\nJOD LOCAL SERVER START");
-//        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+//        JODLocalServer jodServer = new JODLocalServer(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), new JODSettings_002(new HashMap<>()));
 //        jodServer.startup();
 //
 //        System.out.println("\nJSL LOCAL CLIENT CONNECT");
@@ -298,9 +315,9 @@ public class JODLocalServerTest {
 //    }
 //
 //    @Test
-//    public void testLocalConnectionAndServerStopTwoClients() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException {
+//    public void testLocalConnectionAndServerStopTwoClients() throws ServerStartupException, ServerShutdownException, StateException, Client.AAAException, IOException, JODCommunication.LocalCommunicationException {
 //        System.out.println("\nJOD LOCAL SERVER START");
-//        JODLocalServer jodServer = JODLocalServer.instantiate(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), port);
+//        JODLocalServer jodServer = new JODLocalServer(new MockJODCommunication(), new MockJODObjectInfo(), new MockJODPermissions(), new JODSettings_002(new HashMap<>()));
 //        jodServer.startup();
 //
 //        System.out.println("\nJSL LOCAL CLIENT CONNECT (x2)");
@@ -358,7 +375,8 @@ public class JODLocalServerTest {
     private void switchThread() {
         try {
             Thread.sleep(100);
-        } catch (InterruptedException ignore) {}
+        } catch (InterruptedException ignore) {
+        }
     }
 
 }

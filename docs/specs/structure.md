@@ -1,6 +1,4 @@
-# JOD - Specs: `struct.jod`
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: `struct.jod`
 
 A JOSP Object expose to the JOSP EcoSystem all features defined in his structure.
 

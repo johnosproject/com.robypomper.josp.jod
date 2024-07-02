@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,9 @@ package com.robypomper.josp.jod.executor;
 import com.robypomper.java.JavaExecProcess;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
-import com.robypomper.log.Mrk_JOD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class PullerShell extends AbsJODPuller {
 
     // Internal vars
 
+    private static final Logger log = LoggerFactory.getLogger(PullerShell.class);
     private final String cmd;
     private final int freq_ms;
 
@@ -62,7 +64,7 @@ public class PullerShell extends AbsJODPuller {
      */
     public PullerShell(String name, String proto, String configsStr, JODComponent component) throws MissingPropertyException, ParsingPropertyException {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerShell for component '%s' init with config string '%s://%s'.", getName(), proto, configsStr));
+        log.trace(String.format("PullerShell for component '%s' init with config string '%s://%s'.", getName(), proto, configsStr));
 
         Map<String, String> configs = splitConfigsStrings(configsStr);
         cmd = parseConfigString(configs, PROP_CMD);
@@ -81,7 +83,7 @@ public class PullerShell extends AbsJODPuller {
      */
     @Override
     public void pull() {
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerShell '%s' of proto '%s' pulling (cmd='%s')", getName(), getProto(), cmd));
+        log.trace(String.format("PullerShell '%s' of proto '%s' pulling (cmd='%s')", getName(), getProto(), cmd));
 
         String cmdFormatted = new Substitutions(cmd)
             //.substituteObject(jod.getObjectInfo())
@@ -96,13 +98,13 @@ public class PullerShell extends AbsJODPuller {
             state = JavaExecProcess.execCmd(cmdFormatted).trim();
 
         } catch (IOException | JavaExecProcess.ExecStillAliveException e) {
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerShell error on executing cmd '%s' for component '%s' because '%s'", cmdFormatted, getName(), e.getMessage()), e);
+            log.warn(String.format("PullerShell error on executing cmd '%s' for component '%s' because '%s'", cmdFormatted, getName(), e.getMessage()), e);
             return;
         }
-        log.info(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerShell '%s' of proto '%s' read state '%s'", getName(), getProto(), state));
+        log.info(String.format("PullerShell '%s' of proto '%s' read state '%s'", getName(), getProto(), state));
 
         if (!convertAndSetStatus(state))
-            log.warn(Mrk_JOD.JOD_EXEC_IMPL, String.format("PullerShell for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
+            log.warn(String.format("PullerShell for component '%s' can't update his component because not supported (%s)", getName(), getComponent().getClass().getSimpleName()));
     }
 
 }

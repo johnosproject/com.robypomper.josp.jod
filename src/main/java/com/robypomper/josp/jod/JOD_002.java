@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 package com.robypomper.josp.jod;
 
+import com.robypomper.java.JavaThreads;
 import com.robypomper.java.JavaVersionUtils;
 import com.robypomper.josp.clients.JCPAPIsClientObj;
 import com.robypomper.josp.clients.JCPClient2;
@@ -40,11 +41,8 @@ import com.robypomper.josp.jod.structure.JODStructure;
 import com.robypomper.josp.jod.structure.JODStructure_002;
 import com.robypomper.josp.protocol.JOSPProtocol;
 import com.robypomper.josp.states.StateException;
-import com.robypomper.BuildInfo;
-import com.robypomper.log.Mrk_JOD;
-import com.robypomper.log.Mrk_JSL;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Random;
@@ -53,13 +51,13 @@ public class JOD_002 extends AbsJOD {
 
     // Class constants
 
-    public static final String VERSION = BuildInfo.current.versionBuild;
+    public static final String VERSION = BuildInfoJospJOD.current.buildVersion;
     private static final int MAX_INSTANCE_ID = 10000;
 
 
     // Internal vars
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LoggerFactory.getLogger(JOD_002.class);
 
 
     // Constructor
@@ -85,30 +83,10 @@ public class JOD_002 extends AbsJOD {
         Events.setInstance(events);
 
         String instanceId = Integer.toString(new Random().nextInt(MAX_INSTANCE_ID));
-        log.info(Mrk_JOD.JOD_MAIN, String.format("Init JOD instance id '%s'", instanceId));
-
+        log.info(String.format("Init JOD instance id '%s'", instanceId));
         Events.registerJODStart("Start sub-system creation", instanceId);
-        JCPAPIsClientObj jcpClient = new JCPAPIsClientObj(
-                settings.getJCPUseSSL(),
-                settings.getJCPId(),
-                settings.getJCPSecret(),
-                settings.getJCPUrlAPIs(),
-                settings.getJCPUrlAuth());
 
-        if (settings.getJCPConnect())
-            try {
-                jcpClient.connect();
-                Events.registerJCPConnection("JCP Connected", jcpClient);
-
-            } catch (JCPClient2.AuthenticationException e) {
-                log.debug(Mrk_JSL.JSL_MAIN, String.format("Error on user authentication to the JCP %s", e.getMessage()), e);
-                log.warn(Mrk_JSL.JSL_MAIN, "Error on user authentication please check JCP client's id and secret in your object's configurations");
-                //log.warn(Mrk_JSL.JSL_MAIN, String.format("Error on user authentication to the JCP %s, retry", e.getMessage()), e);
-                //jcpClient.connect();
-
-            } catch (StateException e) {
-                assert false : "Exception StateException can't be thrown because connect() was call after client creation.";
-            }
+        JCPAPIsClientObj jcpClient = initJCPClient(settings);
         events.setJCPClient(jcpClient);
 
         JODObjectInfo_002 objInfo = new JODObjectInfo_002(settings, jcpClient, VERSION);
@@ -141,6 +119,44 @@ public class JOD_002 extends AbsJOD {
         Events.registerJODStart("End sub-system creation", time);
 
         return new JOD_002(settings, jcpClient, objInfo, structure, comm, executor, permissions, events, history);
+    }
+
+    private static JCPAPIsClientObj initJCPClient(JODSettings_002 settings) throws JCPClient2.AuthenticationException {
+        JCPAPIsClientObj jcpClient = null;
+        try {
+            jcpClient = new JCPAPIsClientObj(
+                    settings.getJCPUseSSL(),
+                    settings.getJCPId(),
+                    settings.getJCPSecret(),
+                    settings.getJCPUrlAPIs(),
+                    settings.getJCPUrlAuth(),
+                    settings.getJCPRefreshTime());
+        } catch (StateException ignore) {}
+        assert jcpClient != null : "Can't throw exceptions during initialization";
+
+        if (settings.getJCPConnect()) {
+            try {
+                jcpClient.connect();
+                JavaThreads.softSleep(100); // wait to create the connection
+                if (jcpClient.isConnected()) {
+                    log.info("JCP Client initialized and connected successfully");
+                    Events.registerJCPConnection("JCP Connected", jcpClient);
+                }
+                else
+                    log.warn(String.format("JCP Client initialized but not connected, retry every %d seconds.", settings.getJCPRefreshTime()));
+
+            } catch (JCPClient2.AuthenticationException e) {
+                log.debug(String.format("Error on user authentication to the JCP %s", e.getMessage()), e);
+                log.warn("Error on user authentication please check JCP client's id and secret in your object's configurations");
+                log.warn("Current instance will NOT be able to communicate with the configured JCP, but direct communication still available.");
+
+            } catch (StateException e) {
+                assert false : "Exception StateException can't be thrown because connect() was call after client creation.";
+            }
+        } else
+            log.info("JCP Client initialized but not connected as required by settings.");
+
+        return jcpClient;
     }
 
     @Override

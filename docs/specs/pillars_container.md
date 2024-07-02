@@ -1,6 +1,4 @@
-# JOD - Specs: Pillar/Container
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Pillar/Container
 
 Container pillar can contain only other Pillars. This pillar allows Makers to
 create hierarchical object's structures.

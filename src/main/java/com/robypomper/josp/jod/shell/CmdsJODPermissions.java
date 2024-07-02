@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ public class CmdsJODPermissions {
                 || typeStr.compareToIgnoreCase("States") == 0
                 || typeStr.compareToIgnoreCase("Status") == 0
                 || typeStr.compareToIgnoreCase("Statuses") == 0)
-            return JOSPPerm.Type.Status;
+            return JOSPPerm.Type.State;
 
         if (typeStr.compareToIgnoreCase("None") == 0
                 || typeStr.compareToIgnoreCase("No") == 0)

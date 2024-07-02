@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,12 @@ import com.robypomper.java.JavaJSONArrayToFile;
 import com.robypomper.josp.protocol.JOSPEvent;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
 public class EventsArray extends JavaJSONArrayToFile<JOSPEvent, Long> {
 
-    public EventsArray(File jsonFile) throws IOException {
-        super(jsonFile, JOSPEvent.class);
+    public EventsArray(File jsonFile, boolean keepInMemory, int maxBufferSize, int releaseBufferSize, int maxFileSize, int releaseFileSize) throws FileException {
+        super(jsonFile, JOSPEvent.class, keepInMemory, maxBufferSize, releaseBufferSize, maxFileSize, releaseFileSize);
     }
 
     @Override

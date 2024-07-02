@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ package com.robypomper.josp.jod.comm;
 import com.robypomper.comm.exception.PeerDisconnectionException;
 import com.robypomper.comm.server.ServerClient;
 import com.robypomper.josp.protocol.JOSPProtocol_Service;
+import com.robypomper.josp.protocol.JOSPSecurityLevel;
 
 import java.net.InetAddress;
 
@@ -38,6 +39,7 @@ public class DefaultJODLocalClientInfo implements JODLocalClientInfo {
     private final String srvId;
     private final String usrId;
     private final String instId;
+    private final JOSPSecurityLevel security;
 
 
     // Constructor
@@ -47,14 +49,16 @@ public class DefaultJODLocalClientInfo implements JODLocalClientInfo {
      * and instance).
      *
      * @param client the communication level's client's info.
+     * @param fullSrvId the full service id (service, user and instance).
      */
-    public DefaultJODLocalClientInfo(ServerClient client) {
+    public DefaultJODLocalClientInfo(ServerClient client, String fullSrvId,
+                                     boolean useSSL, boolean useShared, boolean useCertificatedId) {
         this.client = client;
-
-        fullSrvId = client.getRemoteId();
-        this.srvId = JOSPProtocol_Service.fullSrvIdToSrvId(fullSrvId);
-        this.usrId = JOSPProtocol_Service.fullSrvIdToUsrId(fullSrvId);
-        this.instId = JOSPProtocol_Service.fullSrvIdToInstId(fullSrvId);
+        this.fullSrvId = fullSrvId;
+        this.srvId = JOSPProtocol_Service.fullSrvIdToSrvId(this.fullSrvId);
+        this.usrId = JOSPProtocol_Service.fullSrvIdToUsrId(this.fullSrvId);
+        this.instId = JOSPProtocol_Service.fullSrvIdToInstId(this.fullSrvId);
+        this.security = JOSPSecurityLevel.tryCalculate(useSSL, useShared, useCertificatedId, JOSPSecurityLevel.NoSSL);
     }
 
 
@@ -90,6 +94,11 @@ public class DefaultJODLocalClientInfo implements JODLocalClientInfo {
     @Override
     public String getInstanceId() {
         return instId;
+    }
+
+    @Override
+    public JOSPSecurityLevel getSecurityLevel() {
+        return security;
     }
 
 

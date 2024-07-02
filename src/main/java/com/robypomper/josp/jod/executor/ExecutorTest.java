@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@ import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.log.Mrk_JOD;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -36,6 +38,10 @@ import com.robypomper.log.Mrk_JOD;
  * was not yet implemented.
  */
 public class ExecutorTest extends AbsJODExecutor implements JODBooleanAction.JOSPBoolean.Executor, JODRangeAction.JOSPRange.Executor {
+
+    // Internal vars
+
+    private static final Logger log = LoggerFactory.getLogger(ExecutorTest.class);
 
 
     // Constructor
@@ -49,7 +55,7 @@ public class ExecutorTest extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     public ExecutorTest(String name, String proto, String configsStr, JODComponent component) {
         super(name, proto, component);
-        log.trace(Mrk_JOD.JOD_EXEC_IMPL, String.format("ExecutorTest for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
+        log.trace(String.format("ExecutorTest for component '%s' init with config string '%s://%s'", getName(), proto, configsStr));
     }
 
 
