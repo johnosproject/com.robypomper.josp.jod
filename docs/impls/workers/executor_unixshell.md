@@ -1,6 +1,4 @@
-# JOD - Workers/Executor/UnixShell
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Executor/UnixShell
 
 Deprecated class for [Executor Shell](executor_shell) class.
 

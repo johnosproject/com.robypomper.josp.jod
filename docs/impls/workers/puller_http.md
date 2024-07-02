@@ -1,6 +1,4 @@
-# JOD - Workers/Puller/HTTP
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Puller/HTTP
 
 Each ```freq``` seconds, this puller performs the HTTP Request defined via
 [HTTP Request](#firmware-configs---http-request) configs , then update the
@@ -43,9 +41,8 @@ on worker initialization.
 
 ## Firmware Configs - HTTP Request
 
-HTTP Requests are performed using the [DefaultHTTPClient](/src/jospCommons/java/com/robypomper/josp/clients/DefaultHTTPClient.java)
-from the [JOSP Commons](/docs/comps/josp/commons/README.md)
-library.
+HTTP Requests are performed using the `DefaultHTTPClient`
+from the JOSP Commons library.
 
 Following Firmware Configs allow you to customize the request that must be performed
 on worker execution.<br/>

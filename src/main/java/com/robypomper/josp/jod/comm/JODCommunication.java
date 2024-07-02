@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +98,8 @@ public interface JODCommunication {
      *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectStructMsg}</li>
      *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createObjectPermsMsg}</li>
      *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createServicePermMsg}</li>
-     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createHistoryCompStatusMsg}</li>
-     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createHistoryEventsMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createHistoryResMsg}</li>
+     *     <li>{@link com.robypomper.josp.protocol.JOSPProtocol_ObjectToService#createEventsResMsg} </li>
      * </ul>
      *
      * @param locConn the local client info of the service to send the message to.
@@ -149,7 +149,7 @@ public interface JODCommunication {
     JODLocalServer getLocalServer();
 
     /**
-     * @return an array containing all local connections.
+     * @return a list containing all local connections.
      */
     List<JODLocalClientInfo> getAllLocalClientsInfo();
 

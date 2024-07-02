@@ -1,6 +1,4 @@
-# JOD - Workers/Executor/DBus
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Executor/DBus
 
 
 This listener monitors ```dbus_prop``` property of the specified DBus Object,

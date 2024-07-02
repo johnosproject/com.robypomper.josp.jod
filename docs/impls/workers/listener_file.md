@@ -1,6 +1,4 @@
-# JOD - Workers/Listener/File
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Listener/File
 
 This listener monitors ```path``` file and read his content on any file change,
 then update the [JOD State](../../specs/pillars.md#states).

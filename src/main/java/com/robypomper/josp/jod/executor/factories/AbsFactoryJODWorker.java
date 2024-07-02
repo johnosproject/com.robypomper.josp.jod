@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ public abstract class AbsFactoryJODWorker<T extends AbsJODWorker> {
     public abstract String getType();
 
     /**
-     * @return the list of registered protocols/implementations.
+     * @return the map of registered protocols/implementations.
      */
     public Map<String, Class<? extends T>> getProtocols() {
         return Collections.unmodifiableMap(implClasses);
@@ -131,8 +131,7 @@ public abstract class AbsFactoryJODWorker<T extends AbsJODWorker> {
 
         try {
             Constructor<? extends T> c = implClasses.get(proto).getConstructor(String.class, String.class, String.class, JODComponent.class);
-            T t = c.newInstance(name, proto, configStr, componentWorker.getComponent());
-            return t;
+            return c.newInstance(name, proto, configStr, componentWorker.getComponent());
 
         } catch (NoSuchMethodException e) {
             throw new T.FactoryException("Error on init JOD " + getType() + ", required constructor not found.", e);

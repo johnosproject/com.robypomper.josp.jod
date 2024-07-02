@@ -1,6 +1,4 @@
-# JOD - Specs: Shell
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Shell
 
 The JOD Shell is the interactive command line provided with the JOD Agent.
 
@@ -336,7 +334,7 @@ Object to use in design testing
 
 ## Workers
 
-### TODO
+TODO describe worker's commands for JOD Shell
 
 | abbrev | name                    | params                         |
 |--------|-------------------------|--------------------------------|

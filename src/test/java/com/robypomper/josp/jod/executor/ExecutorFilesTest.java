@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Operating System Project is the collection of software and configurations
  * to generate IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,20 +28,25 @@ import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPMsgParams;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.josp.test.mocks.jod.MockActionCmd;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 public class ExecutorFilesTest {
 
     private final String ITEMS_SEP = JOSPMsgParams.ITEMS_SEP;
 
     @Test
-    public void executorTest() throws InterruptedException, IOException, JODWorker.MissingPropertyException {
+    public void executorTest(@Mock JOSPProtocol.ActionCmd commandAction) throws InterruptedException, IOException, JODWorker.MissingPropertyException {
         String name = "executorTest";
         String proto = "files";
         String filePathStr = "listenerFilesTest.txt";
@@ -62,11 +67,8 @@ public class ExecutorFilesTest {
                     return "JODStateMock";
                 }
             };
-        } catch (JODStructure.ComponentInitException e) {
-            e.printStackTrace();
-        }
+        } catch (JODStructure.ComponentInitException ignore) {}
         ExecutorFiles e = new ExecutorFiles(name, proto, configs, state);
-        JOSPProtocol.ActionCmd commandAction = new MockActionCmd();
 
         System.out.println("\nEXECUTE BOOLEAN ACTION");
         String updStr = ExecutorShellTest.formatUpdStr(true, false);

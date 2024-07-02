@@ -1,6 +1,4 @@
-# JOD - Specs: Workers
-
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
+# JOSP Object Daemon - Specs: Workers
 
 Workers are the components that act as **a bridge between the JOD Agent's Pillars
 and his firmware**.<br/>
@@ -43,7 +41,7 @@ Any Firmware Configs can contain placeholder that are replaced with pillar's pro
 For example you can set a Firmware Config for a file path using the pillar's name.<br/>
 Each worker's documentation specify when each Firmware Configs is updated.
 
-More info about Firmware Configs Placeholders on [JOD Workers Placeholder](workers/placeholders.md) page.
+More info about Firmware Configs Placeholders on [JOD Workers Placeholder](workers_placeholders.md) page.
 
 **Example:**
 
@@ -67,13 +65,13 @@ others. More details on firmware protocols params on the next section.
 
 
 ## Pullers
-  * [Shell](../workers/puller_shell.md): On pulling,execute bash or powershell commands and use their output as state's value
-  * [Http](../workers/puller_http.md): On pulling, query configured url and parse the response as state's value
+  * [Shell](../impls/workers/puller_shell.md): On pulling,execute bash or powershell commands and use their output as state's value
+  * [Http](../impls/workers/puller_http.md): On pulling, query configured url and parse the response as state's value
 
 ## Listeners
-  * [File](../workers/listener_file.md): On startup, start a watchdog service that listen for configured file changes; when the file is updated use his content as state's value
+  * [File](../impls/workers/listener_file.md): On startup, start a watchdog service that listen for configured file changes; when the file is updated use his content as state's value
 
 ## Executors
-  * [Shell](../workers/executor_shell.md): on action request received, execute configured bash or powershell command
-  * [File](../workers/executor_file.md): on action request received, write configured value to a file
-  * [Http](../workers/executor_http.md): on action request received, query configured url
+  * [Shell](../impls/workers/executor_shell.md): on action request received, execute configured bash or powershell command
+  * [File](../impls/workers/executor_file.md): on action request received, write configured value to a file
+  * [Http](../impls/workers/executor_http.md): on action request received, query configured url

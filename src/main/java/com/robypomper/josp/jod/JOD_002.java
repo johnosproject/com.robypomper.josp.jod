@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ package com.robypomper.josp.jod;
 import com.robypomper.java.JavaThreads;
 import com.robypomper.java.JavaVersionUtils;
 import com.robypomper.josp.clients.JCPAPIsClientObj;
-import com.robypomper.josp.clients.JCPAPIsClientSrv;
 import com.robypomper.josp.clients.JCPClient2;
 import com.robypomper.josp.defs.core.Versions;
 import com.robypomper.josp.jod.comm.JODCommunication;
@@ -42,7 +41,6 @@ import com.robypomper.josp.jod.structure.JODStructure;
 import com.robypomper.josp.jod.structure.JODStructure_002;
 import com.robypomper.josp.protocol.JOSPProtocol;
 import com.robypomper.josp.states.StateException;
-import com.robypomper.josp.jod.BuildInfoJospJOD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

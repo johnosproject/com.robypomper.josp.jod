@@ -1,5 +1,3 @@
-# JOD - Specs: Authentication
+# JOSP Object Daemon - Specs: Authentication
 
-[SPECS](../specs.md) | [IMPLS](../impls.md) | [CHANGELOG](../../CHANGELOG.md) | [TODOs](../../TODOs.md) | [LICENCE](../../LICENCE.md)
-
-...
+TODO describe how authentication works and how configure it

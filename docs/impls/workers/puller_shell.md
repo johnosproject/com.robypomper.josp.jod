@@ -1,10 +1,7 @@
-# JOD - Workers/Puller/Shell
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Puller/Shell
 
 Each ```freq``` seconds, this puller executes the ```cmd``` using the
-[JavaExecProcess::execCmd(String cmd)](/src/jospCommons/java/com/robypomper/java/JavaExecProcess.java)
-method , then update the [JOD State](../../specs/pillars.md#states).
+`JavaExecProcess::execCmd(String cmd)` method , then update the [JOD State](../../specs/pillars.md#states).
 
 Before execute the command, the ```cmd``` string is updated and all his placeholder
 are replaced with current [Pillar](../../specs/workers_placeholders.md#pillar) and
@@ -18,7 +15,7 @@ state, independently to the Pillar's type.
 
 ### ```cmd```
 
-String containing the shell command to execute via [JavaExecProcess::execCmd(String cmd)](/src/jospCommons/java/com/robypomper/java/JavaExecProcess.java)
+String containing the shell command to execute via `JavaExecProcess::execCmd(String cmd)`
 method. **It's mandatory.**
 
 The ```cmd``` string can contain any available command on running machine and

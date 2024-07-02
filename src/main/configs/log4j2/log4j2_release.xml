@@ -2,7 +2,7 @@
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ The John Service Library is the software library to connect "software"
   ~ to an IoT EcoSystem, like the John Operating System Platform one.
-  ~ Copyright (C) 2021 Roberto Pompermaier
+  ~ Copyright (C) 2024 Roberto Pompermaier
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
 
 <Configuration xmlns:xi="http://www.w3.org/2001/XInclude" status="warn">
     <Properties>
-        <Property name="filename_base">jospJSL</Property>
-        <Property name="artifact_package">com.robypomper.josp.jsl</Property>
+        <Property name="filename_base">jospJOD</Property>
+        <Property name="artifact_package">com.robypomper.josp.jod</Property>
         <Property name="josp_libs_package">com.robypomper.josp</Property>
 
         <Property name="level_artifact_console" >INFO</Property>

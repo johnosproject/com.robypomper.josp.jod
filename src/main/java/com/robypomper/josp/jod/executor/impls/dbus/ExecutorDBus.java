@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,10 +98,6 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODBooleanAction.JOSPBoolean cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %b%n", cmdAction.newState);
-        System.out.printf("\toldState %b%n", cmdAction.oldState);
-
         log.debug(String.format("Executing '%s' executor", getName()));
         if (!isEnabled()) {
             log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
@@ -123,7 +119,7 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
         Vector<String> method_args_as_str_generated = new Vector<>();
         for (Object o : method_args)
             method_args_as_str_generated.add(String.format("%s:%s", o.toString(), o.getClass().getSimpleName()));
-        log.info(String.format("Executor '%s' executed method '%s(%s)' => '%s'",
+        log.debug(String.format("Executor '%s' executed method '%s(%s)' => '%s'",
                 getName(), dbus_method, String.join(",", method_args_as_str_generated), res));
 
         ((JODState) getComponent()).forceCheckState();
@@ -184,18 +180,6 @@ public class ExecutorDBus extends AbsJODExecutor implements JODBooleanAction.JOS
 
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODRangeAction.JOSPRange cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %f%n", cmdAction.newState);
-        System.out.printf("\toldState %f%n", cmdAction.oldState);
-
-
-        log.debug(String.format("Executing '%s' executor", getName()));
-        if (!isEnabled()) {
-            log.warn(String.format("Error on exec '%s' executor because disabled", getName()));
-            return false;
-        }
-
-        // Do something...
         String method_args_as_str = new Substitutions(dbus_method_params)
                 //.substituteObject(jod.getObjectInfo())
                 //.substituteObjectConfigs(jod.getObjectInfo())

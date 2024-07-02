@@ -1,6 +1,4 @@
-# JOD - Workers/Executor/DBus
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Executor/DBus
 
 When an [JOD Action](../../specs/pillars.md#actions) must be executed, this
 executor calls a Remote Method via DBus. DBus name, object's path and all others

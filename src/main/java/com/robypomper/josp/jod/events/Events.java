@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ public class Events {
         String payload;
         payload = "{";
         payload += String.format("\"count\": \"%s\"", permissions.size());
-        if (permissions.size() > 0)
+        if (!permissions.isEmpty())
             payload += String.format(", \"objId\": \"%s\"", permissions.get(0).getObjId());
         payload += "}";
         register(EventType.JOD_PERMS_LOAD, phase, payload);

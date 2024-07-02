@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.robypomper.josp.jod.executor.impls.http;
 import com.robypomper.josp.clients.HTTPClient;
 import com.robypomper.josp.jod.executor.AbsJODExecutor;
 import com.robypomper.josp.jod.executor.Substitutions;
-import com.robypomper.josp.jod.executor.impls.dbus.ExecutorDBus;
 import com.robypomper.josp.jod.structure.JODComponent;
 import com.robypomper.josp.jod.structure.JODState;
 import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
@@ -89,19 +88,11 @@ public class ExecutorHTTP extends AbsJODExecutor implements JODBooleanAction.JOS
      */
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODBooleanAction.JOSPBoolean cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %b%n", cmdAction.newState);
-        System.out.printf("\toldState %b%n", cmdAction.oldState);
-
         return exec(commandAction);
     }
 
     @Override
     public boolean exec(JOSPProtocol.ActionCmd commandAction, JODRangeAction.JOSPRange cmdAction) {
-        System.out.printf("\n\nReceived action command from %s::%s (srv::usr) for %s::%s (obj::component)%n", commandAction.getServiceId(), commandAction.getUserId(), commandAction.getObjectId(), commandAction.getComponentPath());
-        System.out.printf("\tnewState %f%n", cmdAction.newState);
-        System.out.printf("\toldState %f%n", cmdAction.oldState);
-
         return exec(commandAction);
     }
 

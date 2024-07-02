@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Operating System Project is the collection of software and configurations
  * to generate IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,18 @@ import com.robypomper.josp.jod.structure.pillars.JODBooleanAction;
 import com.robypomper.josp.jod.structure.pillars.JODRangeAction;
 import com.robypomper.josp.protocol.JOSPMsgParams;
 import com.robypomper.josp.protocol.JOSPProtocol;
-import com.robypomper.josp.test.mocks.jod.MockActionCmd;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 
+@ExtendWith(MockitoExtension.class)
 public class ExecutorShellTest {
 
     @Test
-    public void executorTest() throws InterruptedException, JODWorker.MissingPropertyException {
+    public void executorTest(@Mock JOSPProtocol.ActionCmd commandAction) throws InterruptedException, JODWorker.MissingPropertyException {
         String name = "executorTest";
         String proto = "shell";
         String echoParam = String.format("'read %s value at %s'", Substitutions.ACTION_VAL, new Date());
@@ -55,11 +58,8 @@ public class ExecutorShellTest {
                     return "JODStateMock";
                 }
             };
-        } catch (JODStructure.ComponentInitException e) {
-            e.printStackTrace();
-        }
+        } catch (JODStructure.ComponentInitException ignore) {}
         ExecutorShell e = new ExecutorShell(name, proto, configs, state);
-        JOSPProtocol.ActionCmd commandAction = new MockActionCmd();
 
         System.out.println("\nEXECUTE RANGE ACTION");
         String updStr = formatUpdStr(true, false);

@@ -1,6 +1,4 @@
-# JOD - Workers/Puller/UnixShell
-
-[SPECS](../../specs.md) | [IMPLS](../../impls.md) | [CHANGELOG](../../../CHANGELOG.md) | [TODOs](../../../TODOs.md) | [LICENCE](../../../LICENCE.md)
+# JOSP Object Daemon - Workers/Puller/UnixShell
 
 Deprecated class for [Puller Shell](puller_shell.md) class.
 

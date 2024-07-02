@@ -1,7 +1,7 @@
 /*******************************************************************************
  * The John Object Daemon is the agent software to connect "objects"
  * to an IoT EcoSystem, like the John Operating System Platform one.
- * Copyright (C) 2021 Roberto Pompermaier
+ * Copyright (C) 2024 Roberto Pompermaier
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,6 @@ public class JODHistory_002 implements JODHistory {
             }
         };
 
-        System.out.printf("History buffered %d statuses on file %d%n", histories.countBuffered(), histories.countFile());
         if (HistoryLimits.isLatestCount(limits))
             return histories.tryLatest(filter, limits.getLatestCount());
 
